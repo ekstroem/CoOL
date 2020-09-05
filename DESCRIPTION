@@ -1,0 +1,25 @@
+Package: SRCL
+Type: Package
+Title: Synergistic Risk Contributions Learning
+Version: 0.9.1
+Date: 2020-04-06
+Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
+Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
+Description: Implementing phase 2 of Synergistic Risk Contribution Learning.
+License: GPL-2
+Imports: 
+    Rcpp,
+    RcppArmadillo,
+    pROC,
+    fastcluster,
+    graphics,
+    stats,
+    plyr,
+    ggplot2,
+    ggtree
+LinkingTo: 
+  Rcpp, 
+  RcppArmadillo
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1

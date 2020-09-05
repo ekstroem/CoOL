@@ -1,0 +1,6 @@
+exportPattern("^[[:alpha:]]+")
+
+importFrom(Rcpp,sourceCpp)
+importFrom("graphics", "arrows", "par", "plot", "points", "text")
+importFrom("stats", "rnorm")
+useDynLib(SRCL, .registration = TRUE)
