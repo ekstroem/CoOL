@@ -15,7 +15,8 @@ SRCL_cpp_train_network_relu(
   B2_input,
   IPCW,
   lr = 0.01,
-  maxepochs = 100
+  maxepochs = 100,
+  L1 = 1e-05
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ SRCL_cpp_train_network_relu(
 \item{lr}{Initial learning rate}
 
 \item{maxepochs}{The maximum number of epochs}
+
+\item{baseline_risk_reward}{increasing parameter value at each iteration}
 }
 \value{
 A list of class "SCL" giving the estimated matrices and performance indicators

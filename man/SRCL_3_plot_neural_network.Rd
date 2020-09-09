@@ -4,7 +4,7 @@
 \alias{SRCL_3_plot_neural_network}
 \title{Plotting the monotonistic neural network}
 \usage{
-SRCL_3_plot_neural_network(model, names, arrow_size = 2)
+SRCL_3_plot_neural_network(model, names, arrow_size = 2, title = "Model")
 }
 \arguments{
 \item{model}{The fitted monotonistic neural network}

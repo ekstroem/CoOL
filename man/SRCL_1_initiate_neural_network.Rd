@@ -4,10 +4,12 @@
 \alias{SRCL_1_initiate_neural_network}
 \title{Initiates a monotonistc neural network}
 \usage{
-SRCL_1_initiate_neural_network(inputs, hidden, confounder = FALSE)
+SRCL_1_initiate_neural_network(inputs, output, hidden, confounder = FALSE)
 }
 \arguments{
 \item{inputs}{The number of exposures.}
+
+\item{output}{The outbut variable is used to calcualte the mean of it used to initiate the baseline risk.}
 
 \item{hidden}{Number of hidden nodes.}
 
