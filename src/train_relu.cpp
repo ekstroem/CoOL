@@ -57,7 +57,7 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //'
 //' @export
 // [[Rcpp::export]]
-Rcpp::List SRCL_cpp_train_network_relu(
+Rcpp::List CoOL_cpp_train_network_relu(
      const arma::mat & x,
 		 const arma::vec & y,
      const arma::mat & testx,
@@ -78,7 +78,7 @@ Rcpp::List SRCL_cpp_train_network_relu(
   int sparse_data = 0;
   double mean_y = accu(y) / nsamples;
 
-  Rprintf("%s \n", "SRCL");
+  Rprintf("%s \n", "CoOL");
 
   // Loaded initialized weights.
   arma::mat W1(nfeatures, hidden, arma::fill::zeros);  // Filled with standard normals
@@ -221,7 +221,8 @@ Rcpp::List SRCL_cpp_train_network_relu(
   }
 
  if (epoch % 10 == 0) {
-      Rprintf("%d epochs: Train performance of %f. Test performance of %f. Baseline risk estimated to %f.\n",epoch, mean_perform, mean_val_perform, B2(0,0));
+ //     Rprintf("%d epochs: Train performance of %f. Test performance of %f. Baseline risk estimated to %f.\n",epoch, mean_perform, mean_val_perform, B2(0,0));
+      Rprintf("%d epochs: Train performance of %f. Baseline risk estimated to %f.\n",epoch, mean_perform, B2(0,0));
   // Warnings:
   if (B2(0,0) > mean_y) {
   Rprintf("Warning: The baseline risk (%f) is higher than mean(Y) (%f)! Consider reducing the regularisation of the baseline risk.\n", B2(0,0), mean_y);
@@ -284,7 +285,7 @@ Rcpp::List SRCL_cpp_train_network_relu(
 //'
 //' @export
 // [[Rcpp::export]]
-Rcpp::List SRCL_cpp_train_network_relu_with_confounder(
+Rcpp::List CoOL_cpp_train_network_relu_with_confounder(
      const arma::mat & x,
      const arma::vec & y,
      const arma::mat & c,
@@ -305,7 +306,7 @@ Rcpp::List SRCL_cpp_train_network_relu_with_confounder(
   int hidden = W1_input.n_cols;
 
 
-  Rprintf("%s \n", "SRCL");
+  Rprintf("%s \n", "CoOL");
 
   // Loaded initialized weights.
   arma::mat W1(nfeatures, hidden, arma::fill::zeros);  // Filled with standard normals

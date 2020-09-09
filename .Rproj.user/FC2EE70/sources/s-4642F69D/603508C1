@@ -1,25 +1,26 @@
 {
-    "id": "3383502B",
+    "id": "603508C1",
     "path": "C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/scope_run.R",
     "project_path": null,
     "type": "r_source",
-    "hash": "844049942",
+    "hash": "1048147804",
     "contents": "",
     "dirty": false,
-    "created": 1599658783709.0,
+    "created": 1599664310642.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 2,
     "properties": {
         "docOutlineVisible": "1",
-        "cursorPosition": "1139,31",
-        "scrollLine": "1126"
+        "cursorPosition": "1146,0",
+        "scrollLine": "1126",
+        "source_window_id": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1599659136,
+    "lastKnownWriteTime": 1599668170,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1599659136827,
+    "last_content_update": 1599668170817,
     "read_only": false,
     "read_only_alternatives": []
 }
