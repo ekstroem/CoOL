@@ -10,9 +10,9 @@ CoOL_2_train_neural_network(
   X_test,
   Y_test,
   model,
-  lr = 0.01,
+  lr = c(1e-04, 1e-05, 1e-06),
   epochs = 50000,
-  patience = 500,
+  patience = 100,
   plot_and_evaluation_frequency = 50,
   IPCW = NA,
   L1 = 1e-05,
@@ -22,7 +22,7 @@ CoOL_2_train_neural_network(
 \arguments{
 \item{model}{The fitted monotonistic neural network}
 
-\item{lr}{Learning rate}
+\item{lr}{Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next)}
 
 \item{epochs}{Epochs}
 

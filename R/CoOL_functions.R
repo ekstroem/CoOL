@@ -74,9 +74,7 @@ CoOL_0_working_example <- function(n) {
 
 CoOL_0_binary_encore_exposure_data <- function(exposure_data) {
   for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- factor(exposure_data[,i])}
-  library(mltools)
-  library(data.table)
-  exposure_data <- one_hot(as.data.table(exposure_data))
+  exposure_data <- one_hot(data.table::as.data.table(exposure_data))
   return(exposure_data)
 }
 
