@@ -9,7 +9,7 @@
 #'
 #' @export
 rcpprelu <- function(x) {
-    .Call(`_SRCL_rcpprelu`, x)
+    .Call(`_CoOL_rcpprelu`, x)
 }
 
 #' Function used as part of other functions
@@ -20,7 +20,7 @@ rcpprelu <- function(x) {
 #'
 #' @export
 rcpprelu_neg <- function(x) {
-    .Call(`_SRCL_rcpprelu_neg`, x)
+    .Call(`_CoOL_rcpprelu_neg`, x)
 }
 
 #' Function used as part of other functions
@@ -44,7 +44,7 @@ rcpprelu_neg <- function(x) {
 #'
 #' @export
 SRCL_cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr = 0.01, maxepochs = 100, L1 = 0.00001) {
-    .Call(`_SRCL_SRCL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, L1)
+    .Call(`_CoOL_SRCL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, L1)
 }
 
 #' Function used as part of other functions
@@ -69,6 +69,6 @@ SRCL_cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, 
 #'
 #' @export
 SRCL_cpp_train_network_relu_with_confounder <- function(x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr = 0.01, maxepochs = 100) {
-    .Call(`_SRCL_SRCL_cpp_train_network_relu_with_confounder`, x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr, maxepochs)
+    .Call(`_CoOL_SRCL_cpp_train_network_relu_with_confounder`, x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr, maxepochs)
 }
 

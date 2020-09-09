@@ -3,7 +3,7 @@
     "path": "C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/scope_run.R",
     "project_path": null,
     "type": "r_source",
-    "hash": "1349587626",
+    "hash": "844049942",
     "contents": "",
     "dirty": false,
     "created": 1599658783709.0,
@@ -11,15 +11,15 @@
     "relative_order": 3,
     "properties": {
         "docOutlineVisible": "1",
-        "cursorPosition": "1129,39",
-        "scrollLine": "1106"
+        "cursorPosition": "1139,31",
+        "scrollLine": "1126"
     },
     "folds": "",
-    "lastKnownWriteTime": 1599658893,
+    "lastKnownWriteTime": 1599659136,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1599658893023,
+    "last_content_update": 1599659136827,
     "read_only": false,
     "read_only_alternatives": []
 }

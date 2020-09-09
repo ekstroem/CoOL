@@ -1,0 +1,44 @@
+[
+    {
+        "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
+        "file_last_write": 1599237879.0,
+        "definitions": [
+            {
+                "usr": "c:@F@rcpprelu#&1$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpprelu(const arma::mat &)",
+                "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
+                "line": 21,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@rcpprelu_neg#&1$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "rcpprelu_neg(const arma::mat &)",
+                "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
+                "line": 34,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@SRCL_cpp_train_network_relu#&1$@N@arma@S@Mat>#d#&1$@N@arma@S@Col>#d#S0_#S2_#S0_#S0_#S0_#S0_#S2_#d#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "SRCL_cpp_train_network_relu(const arma::mat &, const arma::vec &, const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::vec &, double, double, double)",
+                "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
+                "line": 60,
+                "column": 12
+            },
+            {
+                "usr": "c:@F@SRCL_cpp_train_network_relu_with_confounder#&1$@N@arma@S@Mat>#d#&1$@N@arma@S@Col>#d#S0_#S0_#S2_#S0_#S0_#S0_#S0_#S0_#S0_#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "SRCL_cpp_train_network_relu_with_confounder(const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, double, double)",
+                "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
+                "line": 287,
+                "column": 12
+            }
+        ]
+    }
+]

@@ -34,7 +34,7 @@ relu <- function(input) {
 
 ########## Wrappers ##############
 
-#' SRCL synthetic data
+#' CoOL synthetic data
 #'
 #' To reproduce the synthetic data from the paper Synergistic Cause Learning.
 #'
@@ -45,7 +45,7 @@ relu <- function(input) {
 
 
 
-SRCL_0_synthetic_data <- function(n) {
+CoOL_0_synthetic_data <- function(n) {
   #n = 20000
   Genes = sample(1:0,n,prob=c(0.05,0.95),replace=TRUE)
   Living_area = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -97,7 +97,7 @@ SRCL_0_synthetic_data <- function(n) {
 #'
 #' @param n number of observations for the synthetic data
 
-SRCL_0_working_example <- function(n) {
+CoOL_0_working_example <- function(n) {
   drug_a = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
   sex = sample(1:0,n,prob=c(0.5,0.5),replace=TRUE)
   drug_b = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -135,11 +135,11 @@ SRCL_0_working_example <- function(n) {
 #' }
 #'
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 #'
 
 
-SRCL_1_initiate_neural_network <- function(inputs,output,hidden,confounder=FALSE) {
+CoOL_1_initiate_neural_network <- function(inputs,output,hidden,confounder=FALSE) {
   # Weight initiation
   w1 <- abs(random(inputs,hidden,0.01))
   b1 <- -abs(random(1,hidden,0.01))
@@ -200,10 +200,10 @@ SRCL_1_initiate_neural_network <- function(inputs,output,hidden,confounder=FALSE
 #'
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
 
-SRCL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = 0.01,
+CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = 0.01,
                             epochs = 50000, patience = 500,
                             plot_and_evaluation_frequency = 50, IPCW = NA, L1=0.00001, spline_df=10) {
   if (is.na(IPCW)) IPCW <- rep(1,nrow(X_train))
@@ -213,7 +213,7 @@ SRCL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model,
   baseline_risk_monitor = model$baseline_risk_monitor
   par(mfrow=c(1,3));par(mar=c(3,5,3,1))
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
-      model <- SRCL_cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
+      model <- CoOL_cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
               W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, L1=L1)
       performance <- c(performance,model$train_performance)
@@ -260,16 +260,16 @@ SRCL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model,
 #' @details
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
-SRCL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.01,
+CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.01,
                                       epochs = 50000, patience = 500,
                                       plot_and_evaluation_frequency = 50) {
   C <- as.matrix(C)
   performance = model$train_performance
   par(mfrow=c(1,1));par(mar=c(3,5,3,1))
   for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
-    model <- SRCL_cpp_train_network_relu_with_confounder(as.matrix(X),as.matrix(Y),as.matrix(C),as.matrix(X),as.matrix(Y),as.matrix(C),
+    model <- CoOL_cpp_train_network_relu_with_confounder(as.matrix(X),as.matrix(Y),as.matrix(C),as.matrix(X),as.matrix(Y),as.matrix(C),
            lr = lr, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],W2_input = model[[3]],B2_input = model[[4]],C2_input = model[[5]])
     performance <- c(performance,model$train_performance)
     plot(performance, type='l',yaxs='i', ylab="Mean squared error",
@@ -292,9 +292,9 @@ SRCL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.0
 #' @param arrow_size defines the arrow_size for the model illustration in the reported training progress.
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
-SRCL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model") {
+CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model") {
   par(mar=c(0,0,2,0))
   plot(0,0,type='n',xlim=c(0,4),ylim=c(-max(nrow(model[[1]]),nrow(model[[3]]))-1,0),axes=FALSE,ylab="",xlab="",main=title)
   #abline(h=0)
@@ -332,10 +332,10 @@ SRCL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Mode
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
 
-SRCL_4_predict_risks <- function(X,model) {
+CoOL_4_predict_risks <- function(X,model) {
   H <- relu(t(t(as.matrix(X) %*% as.matrix(model[[1]])) + as.vector(model[[2]])))
   o = relu(as.vector(H %*% model[[3]][,1] + as.vector(model[[4]][1,1])))
   if(max(o)>1) print("Warning: Some predicted risks are above 1")
@@ -352,10 +352,10 @@ SRCL_4_predict_risks <- function(X,model) {
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
 
-SRCL_5_layerwise_relevance_propagation <- function(X,model) {
+CoOL_5_layerwise_relevance_propagation <- function(X,model) {
   #model <- model_2_c
   #X = X_flip
 
@@ -421,9 +421,9 @@ SRCL_5_layerwise_relevance_propagation <- function(X,model) {
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
-SRCL_6_sum_of_individual_effects <- function(X,model) {
+CoOL_6_sum_of_individual_effects <- function(X,model) {
 # All individuals has the baseline risk
     sum_of_individial_effects = rep(as.vector(model[[4]][1,1]),nrow(X))
   # Loop through each exposure with the actual values by the individuals
@@ -445,9 +445,9 @@ return(sum_of_individial_effects)
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under SRCL_0_synthetic_data
+#' #See the example under CoOL_0_synthetic_data
 
-SRCL_6_individual_effects_matrix <- function(X,model) {
+CoOL_6_individual_effects_matrix <- function(X,model) {
   ind_effect_matrix <- as.data.frame(matrix(0,nrow = nrow(X), ncol=ncol(X)+1)) # +1 for the baseline risk
     # Loop through each exposure with the actual values by the individuals
   for (i in 1:ncol(X)) {
