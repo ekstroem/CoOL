@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // rcpprelu
 arma::mat rcpprelu(const arma::mat& x);
-RcppExport SEXP _CoOL_rcpprelu(SEXP xSEXP) {
+RcppExport SEXP _SRCL_rcpprelu(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // rcpprelu_neg
 arma::mat rcpprelu_neg(const arma::mat& x);
-RcppExport SEXP _CoOL_rcpprelu_neg(SEXP xSEXP) {
+RcppExport SEXP _SRCL_rcpprelu_neg(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // CoOL_cpp_train_network_relu
 Rcpp::List CoOL_cpp_train_network_relu(const arma::mat& x, const arma::vec& y, const arma::mat& testx, const arma::vec& testy, const arma::mat& W1_input, const arma::mat& B1_input, const arma::mat& W2_input, const arma::mat& B2_input, const arma::vec& IPCW, double lr, double maxepochs, double L1);
-RcppExport SEXP _CoOL_CoOL_cpp_train_network_relu(SEXP xSEXP, SEXP ySEXP, SEXP testxSEXP, SEXP testySEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP IPCWSEXP, SEXP lrSEXP, SEXP maxepochsSEXP, SEXP L1SEXP) {
+RcppExport SEXP _SRCL_CoOL_cpp_train_network_relu(SEXP xSEXP, SEXP ySEXP, SEXP testxSEXP, SEXP testySEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP IPCWSEXP, SEXP lrSEXP, SEXP maxepochsSEXP, SEXP L1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -52,7 +52,7 @@ END_RCPP
 }
 // CoOL_cpp_train_network_relu_with_confounder
 Rcpp::List CoOL_cpp_train_network_relu_with_confounder(const arma::mat& x, const arma::vec& y, const arma::mat& c, const arma::mat& testx, const arma::vec& testy, const arma::mat& testc, const arma::mat& W1_input, const arma::mat& B1_input, const arma::mat& W2_input, const arma::mat& B2_input, const arma::mat& C2_input, double lr, double maxepochs);
-RcppExport SEXP _CoOL_CoOL_cpp_train_network_relu_with_confounder(SEXP xSEXP, SEXP ySEXP, SEXP cSEXP, SEXP testxSEXP, SEXP testySEXP, SEXP testcSEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP C2_inputSEXP, SEXP lrSEXP, SEXP maxepochsSEXP) {
+RcppExport SEXP _SRCL_CoOL_cpp_train_network_relu_with_confounder(SEXP xSEXP, SEXP ySEXP, SEXP cSEXP, SEXP testxSEXP, SEXP testySEXP, SEXP testcSEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP C2_inputSEXP, SEXP lrSEXP, SEXP maxepochsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -75,14 +75,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CoOL_rcpprelu", (DL_FUNC) &_CoOL_rcpprelu, 1},
-    {"_CoOL_rcpprelu_neg", (DL_FUNC) &_CoOL_rcpprelu_neg, 1},
-    {"_CoOL_CoOL_cpp_train_network_relu", (DL_FUNC) &_CoOL_CoOL_cpp_train_network_relu, 12},
-    {"_CoOL_CoOL_cpp_train_network_relu_with_confounder", (DL_FUNC) &_CoOL_CoOL_cpp_train_network_relu_with_confounder, 13},
+    {"_SRCL_rcpprelu", (DL_FUNC) &_SRCL_rcpprelu, 1},
+    {"_SRCL_rcpprelu_neg", (DL_FUNC) &_SRCL_rcpprelu_neg, 1},
+    {"_SRCL_CoOL_cpp_train_network_relu", (DL_FUNC) &_SRCL_CoOL_cpp_train_network_relu, 12},
+    {"_SRCL_CoOL_cpp_train_network_relu_with_confounder", (DL_FUNC) &_SRCL_CoOL_cpp_train_network_relu_with_confounder, 13},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_CoOL(DllInfo *dll) {
+RcppExport void R_init_SRCL(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

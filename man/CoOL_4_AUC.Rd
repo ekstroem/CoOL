@@ -4,7 +4,7 @@
 \alias{CoOL_4_AUC}
 \title{Predict the risk of the outcome using the fitted monotonistic neural network}
 \usage{
-CoOL_4_AUC(outcome_data, exposure_data, model)
+CoOL_4_AUC(outcome_data, exposure_data, model, title = "Accuracy")
 }
 \arguments{
 \item{model}{The fitted the monotonistic neural network}

@@ -1,25 +1,25 @@
 {
-    "id": "A13A119A",
+    "id": "04A3DC3F",
     "path": "C:/Users/lvb917/Dropbox/Post doc/CoOL/R/CoOL_functions.R",
     "project_path": "R/CoOL_functions.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1599662518248.0,
+    "created": 1599723244110.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
         "docOutlineVisible": "1",
-        "cursorPosition": "560,0",
-        "scrollLine": "540"
+        "cursorPosition": "61,0",
+        "scrollLine": "41"
     },
     "folds": "",
-    "lastKnownWriteTime": 1599720330,
+    "lastKnownWriteTime": 1599722129,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1599720330017,
+    "last_content_update": 1599722129,
     "read_only": false,
     "read_only_alternatives": []
 }

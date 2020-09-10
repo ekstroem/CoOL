@@ -320,10 +320,10 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 
-CoOL_4_AUC <- function(outcome_data,exposure_data,model) {
+CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Accuracy") {
 library(pROC)
 pred <- CoOL_4_predict_risks(exposure_data,model)
-plot(roc(outcome_data,pred),print.auc=TRUE,main="C) Accuracy")
+plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
 }
 
 
@@ -478,8 +478,12 @@ CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,t
   library(wesanderson)
   par(mar=c(5,3,2,2))
   colours <- c("grey",wes_palette("Darjeeling1"))
-  pred <- CoOL_4_predict_risks(exposure_data,model)
-  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,max(pred)),xaxs='i',yaxs='i',
+risk_max = 0
+    for (i in 1:max(sub_groups)) {
+    risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
+    risk_max = max(risk_max,risk)
+  }
+  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,risk_max*1.1),xaxs='i',yaxs='i',
        axes=FALSE,ylab="Risk",xlab="Prevalence",frame.plot=FALSE,main=title)
   axis(1,seq(0,1,.2));axis(2,seq(0,1,.05))
   rect(0,0,1,1)
@@ -491,7 +495,7 @@ CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,t
     prev0 = prev + prev0
     total = total + risk * prev
   }
-  arrows(x0=0,x1=1,y0=mean(risk_contributions$Baseline_risk),lty=1,length=0)
+  arrows(x0=0,x1=1,y0=mean(risk_contributions$Baseline_risk),lty=2,length=0)
 }
 
 
@@ -513,7 +517,6 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
-    rect(xleft = prev0,ybottom = 0,xright = prev+prev0,ytop = risk, col=colours[i])
     prev0 = prev + prev0
     total = total + risk * prev
   }
