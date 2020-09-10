@@ -1,25 +1,26 @@
 {
-    "id": "04A3DC3F",
-    "path": "C:/Users/lvb917/Dropbox/Post doc/CoOL/R/CoOL_functions.R",
-    "project_path": "R/CoOL_functions.R",
+    "id": "24EF5F83",
+    "path": "C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/scope_run.R",
+    "project_path": null,
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1599723244110.0,
+    "created": 1599724169512.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
         "docOutlineVisible": "1",
-        "cursorPosition": "61,0",
-        "scrollLine": "41"
+        "cursorPosition": "11,0",
+        "scrollLine": "0",
+        "source_window_id": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1599722129,
+    "lastKnownWriteTime": 1599723589,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1599722129,
+    "last_content_update": 1599723589,
     "read_only": false,
     "read_only_alternatives": []
 }
