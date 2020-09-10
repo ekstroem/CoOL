@@ -1,6 +1,6 @@
-Package: SRCL
+Package: CoOL
 Type: Package
-Title: Synergistic Risk Contributions Learning
+Title: Causes of Outcome Learning
 Version: 0.9.1
 Date: 2020-04-06
 Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
@@ -10,9 +10,11 @@ License: GPL-2
 Imports: 
     Rcpp,
     RcppArmadillo,
+    data.table,
     pROC,
     fastcluster,
     graphics,
+    mltools,
     stats,
     plyr,
     ggplot2,
