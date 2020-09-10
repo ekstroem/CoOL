@@ -4,7 +4,7 @@
 \alias{CoOL_1_initiate_neural_network}
 \title{Initiates a non-negative neural network}
 \usage{
-CoOL_1_initiate_neural_network(inputs, output, hidden, confounder = FALSE)
+CoOL_1_initiate_neural_network(inputs, output, hidden = 10, confounder = FALSE)
 }
 \arguments{
 \item{inputs}{The number of exposures.}

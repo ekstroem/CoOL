@@ -1,0 +1,57 @@
+###########################################################!
+########## Causes of outcome learning #####################
+###########################################################!
+
+#if(!require("devtools")) insntall.packages("devtools")
+#devtools::install_github("ekstroem/CoOL")
+library(SRCL) # library(CoOL)
+setwd("C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/Figures/Redo")
+set.seed(123)
+data <- CoOL_0_working_example(n=10000) # use 40 000 to replicate the paper
+outcome_data <- data[,1]
+exposure_data <- CoOL_0_binary_encore_exposure_data(data[,-1])
+# Initiate the non-negative model
+model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data)
+# Train the non-negative model (The model can be )
+model <- CoOL_2_train_neural_network(X_train=exposure_data, Y_train=outcome_data, model=model, epochs=300)
+# Use below to combine all plots (See the note regarding the dendrogram)
+## layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE))
+# Model performance
+plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="Performance - training data")
+# Model visualization
+CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "Model")
+# AUC
+CoOL_4_AUC(outcome_data,exposure_data,model)
+# Risk contributions
+risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model)
+# Dendrogram
+CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3)
+## save the dendrogram if it should be part of a combined plot
+## png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
+## CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3)
+## dev.off()
+## library(imager);im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+# Assign sub-groups
+sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3)
+# Prevalence and mean risk plot
+CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups)
+#  Mean risk contributions by sub-groups
+CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups)
+
+
+
+
+
+
+
+
+##### SIMULATION WITH NOISE #####
+
+# Add 5 variables with noise
+var_names <-colnames(data)
+if (add_noise > 0) {
+  for (x in 1:add_noise)  {
+    data <- cbind(data,sample(0:1,nrow(data),replace = TRUE))
+  }
+  colnames(data) <- c(var_names,paste0("noise_",1:c(1*add_noise)))
+}
