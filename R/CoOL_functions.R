@@ -70,7 +70,7 @@ CoOL_0_working_example <- function(n) {
 #'
 #' This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (1/)).
 #'
-#' @param expusure_data The exposure data set
+#' @param exposure_data The exposure data set
 #' @export
 #' @details
 #' @examples
@@ -81,7 +81,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #  library(mltools)
   for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- factor(exposure_data[,i])}
   exposure_data <- mltools::one_hot(data.table::as.data.table(exposure_data))
-#  return(exposure_data)
+  return(exposure_data)
 }
 
 
@@ -137,14 +137,18 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #'
 #' This function trains the monotonistic neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The monotonistic model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the monotonicity assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
 #'
-#' @param X The exposure data
-#' @param Y The outcome data
+#' @param X_train The exposure data for the training data
+#' @param Y_train The outcome data for the training data
+#' @param X_test The exposure data for the test data (currently the training data is used)
+#' @param Y_test The outcome data for the test data (currently the training data is used)
 #' @param model The fitted monotonistic neural network
 #' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next)
 #' @param epochs Epochs
 #' @param patience The number of epochs allowed without an improvement in performance.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
 #' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
+#' @param L1 Regularisation
+#' @param spline_df Degrees of freedom for the spline fit for the performance plots
 #' @details
 #' For each individual:\deqn{
 #' P(Y=1|X^+)=R^b+\sum_iR^X_i
@@ -262,6 +266,7 @@ CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.0
 #'
 #' @param model The fitted monotonistic neural network
 #' @param names Labels of each exposure
+#' @param title Title on the plot
 #' @param arrow_size defines the arrow_size for the model illustration in the reported training progress.
 #' @export
 #' @examples
@@ -315,12 +320,15 @@ CoOL_4_predict_risks <- function(X,model) {
   return(o)
 }
 
-#' Predict the risk of the outcome using the fitted monotonistic neural network
+
+#' Plot the ROC AUC
 #'
-#' Predict the risk of the outcome using the fitted monotonistic neural network.
+#' Plot hte ROC AUC
 #'
-#' @param X The exposure data
+#' @param exposure_data The exposure data
+#' @param outcome_data The outcome data
 #' @param model The fitted the monotonistic neural network
+#' @param title Title on the plot
 #' @export
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
@@ -409,6 +417,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #'
 #' @param risk_contributions The risk contributions
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary)
+#' @param title The title of the plot
 #' @export
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
@@ -510,7 +519,6 @@ risk_max = 0
 #'
 #' @param risk_contributions The risk contributions
 #' @param sub_groups The vector with the sub-groups
-#' @param title The title of the plot
 #' @export
 #' @examples
 #' #See the example under CoOL_0_synthetic_data

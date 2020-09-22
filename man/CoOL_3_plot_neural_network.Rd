@@ -12,6 +12,8 @@ CoOL_3_plot_neural_network(model, names, arrow_size = 2, title = "Model")
 \item{names}{Labels of each exposure}
 
 \item{arrow_size}{defines the arrow_size for the model illustration in the reported training progress.}
+
+\item{title}{Title on the plot}
 }
 \description{
 This function plots the monotonistic neural network

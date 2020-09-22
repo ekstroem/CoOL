@@ -2,17 +2,21 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_4_AUC}
 \alias{CoOL_4_AUC}
-\title{Predict the risk of the outcome using the fitted monotonistic neural network}
+\title{Plot the ROC AUC}
 \usage{
 CoOL_4_AUC(outcome_data, exposure_data, model, title = "Accuracy")
 }
 \arguments{
+\item{outcome_data}{The outcome data}
+
+\item{exposure_data}{The exposure data}
+
 \item{model}{The fitted the monotonistic neural network}
 
-\item{X}{The exposure data}
+\item{title}{Title on the plot}
 }
 \description{
-Predict the risk of the outcome using the fitted monotonistic neural network.
+Plot hte ROC AUC
 }
 \examples{
 #See the example under CoOL_0_synthetic_data

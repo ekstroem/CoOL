@@ -50,8 +50,8 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param B2_input Bias for the output layer (the baseline risk)
 //' @param lr Initial learning rate
 //' @param maxepochs The maximum number of epochs
-//' @param baseline_risk_reward increasing parameter value at each iteration
 //' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
+//' @param L1 Regularisation increasing parameter value at each iteration
 //' @return A list of class "SCL" giving the estimated matrices and performance indicators
 //' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 //'

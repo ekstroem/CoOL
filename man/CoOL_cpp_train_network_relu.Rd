@@ -42,7 +42,7 @@ CoOL_cpp_train_network_relu(
 
 \item{maxepochs}{The maximum number of epochs}
 
-\item{baseline_risk_reward}{increasing parameter value at each iteration}
+\item{L1}{Regularisation increasing parameter value at each iteration}
 }
 \value{
 A list of class "SCL" giving the estimated matrices and performance indicators

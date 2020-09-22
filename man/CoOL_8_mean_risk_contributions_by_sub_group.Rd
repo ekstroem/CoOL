@@ -10,8 +10,6 @@ CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups)
 \item{risk_contributions}{The risk contributions}
 
 \item{sub_groups}{The vector with the sub-groups}
-
-\item{title}{The title of the plot}
 }
 \description{
 Table with the mean risk contributions by sub-groups.
