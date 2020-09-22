@@ -18,7 +18,9 @@ Imports:
     stats,
     plyr,
     ggplot2,
-    ggtree
+    ggtree,
+    ClustGeo,
+    wesanderson
 LinkingTo: 
   Rcpp, 
   RcppArmadillo

@@ -12,3 +12,7 @@ CoOL_0_working_example(n)
 \description{
 To reproduce the CoOL working example with sex, drug A, and drug B.
 }
+\examples{
+#See the example under CoOL_0_synthetic_data
+
+}

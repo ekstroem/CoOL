@@ -40,6 +40,11 @@ relu <- function(input) {
 #' To reproduce the CoOL working example with sex, drug A, and drug B.
 #'
 #' @param n number of observations for the synthetic data
+#' @export
+#' @details
+#' @examples
+#' #See the example under CoOL_0_synthetic_data
+#'
 
 CoOL_0_working_example <- function(n) {
   drug_a = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -72,13 +77,12 @@ CoOL_0_working_example <- function(n) {
 #' #See the example under CoOL_0_synthetic_data
 #'
 
-CoOL_0_binary_encore_exposure_data <- function(exposure_data) {
-  library(mltools)
+CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
+#  library(mltools)
   for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- factor(exposure_data[,i])}
-  exposure_data <- one_hot(data.table::as.data.table(exposure_data))
-  return(exposure_data)
+  exposure_data <- mltools::one_hot(data.table::as.data.table(exposure_data))
+#  return(exposure_data)
 }
-
 
 
 
@@ -322,7 +326,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #' #See the example under CoOL_0_synthetic_data
 
 CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Accuracy") {
-library(pROC)
+#library(pROC)
 pred <- CoOL_4_predict_risks(exposure_data,model)
 plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
 }
@@ -412,7 +416,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
 
 CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram") {
-  library(ClustGeo)
+#  library(ClustGeo)
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
   pfreq <- p$freq
@@ -423,9 +427,9 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   temp <- merge(cbind(id,risk_contributions),cbind(p,pclus))
   clus <- temp$pclus[order(temp$id)]
   table(clus)
-  library(ggtree)
-  library(ggplot2)
-  library(wesanderson)
+#  library(ggtree)
+#  library(ggplot2)
+#  library(wesanderson)
   colours <- c("grey",wes_palette("Darjeeling1"))
   print(ggtree(p_h_c,layout="equal_angle") +
           geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
@@ -448,7 +452,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 
 
 CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
-  library(ClustGeo)
+#  library(ClustGeo)
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
   pfreq <- p$freq
@@ -476,7 +480,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 
 
 CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups") {
-  library(wesanderson)
+#  library(wesanderson)
   par(mar=c(5,3,2,2))
   colours <- c("grey",wes_palette("Darjeeling1"))
 risk_max = 0
@@ -512,7 +516,7 @@ risk_max = 0
 #' #See the example under CoOL_0_synthetic_data
 
 CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups) {
-  library(wesanderson)
+#  library(wesanderson)
   colours <- c("grey",wes_palette("Darjeeling1"))
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {

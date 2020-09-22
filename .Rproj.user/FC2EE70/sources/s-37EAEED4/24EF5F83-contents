@@ -3,12 +3,12 @@
 ###########################################################!
 #if(!require("devtools")) insntall.packages("devtools")
 #devtools::install_github("ekstroem/CoOL")
-library(SRCL) # library(CoOL)
+library(CoOL) # library(CoOL)
 setwd("C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/Figures/Redo")
 set.seed(1)
 data <- CoOL_0_working_example(n=40000) # use 40 000 to replicate the paper
 outcome_data <- data[,1]
-exposure_data <- CoOL_0_binary_encore_exposure_data(data[,-1])
+exposure_data <- CoOL_0_binary_encode_exposure_data(data[,-1])
 model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data) # Initiate the non-negative model
 model <- CoOL_2_train_neural_network(X_train=exposure_data, Y_train=outcome_data, model=model, epochs=2000) # Train the non-negative model (The model can be retrained)
 # Use below to combine all plots (See the note regarding the dendrogram)
