@@ -41,7 +41,6 @@ relu <- function(input) {
 #'
 #' @param n number of observations for the synthetic data
 #' @export
-#' @details
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 #'
@@ -72,7 +71,6 @@ CoOL_0_working_example <- function(n) {
 #'
 #' @param exposure_data The exposure data set
 #' @export
-#' @details
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 #'
@@ -190,7 +188,7 @@ for (lr_set in lr) {
   baseline_risk_monitor = model$baseline_risk_monitor
   par(mfrow=c(1,3));par(mar=c(3,5,3,1))
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
-      model <- CoOL_cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
+      model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
               W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, L1=L1)
       performance <- c(performance,model$train_performance)
@@ -234,7 +232,6 @@ for (lr_set in lr) {
 #' @param epochs Epochs
 #' @param patience The number of epochs allowed without an improvement in performance.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
-#' @details
 #' @export
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
@@ -519,11 +516,15 @@ risk_max = 0
 #'
 #' @param risk_contributions The risk contributions
 #' @param sub_groups The vector with the sub-groups
+#' @param exposure_data The exposure data
+#' @param outcome_data The outcome data
+#' @param model The trained non-negative model
+#' @param exclude_below A lower cut-off for which risk contributions shown
 #' @export
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 
-CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups) {
+CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,model,exclude_below=0.001) {
 #  library(wesanderson)
   colours <- c("grey",wes_palette("Darjeeling1"))
   prev0 = 0; total = 0
@@ -545,7 +546,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   par(mar=c(0,0,0,0))
   plot(0,0,type='n',xlim=c(-ncol(d)-6,0),ylim=c(-nrow(d)-1,1),axes=F)
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
-  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group (SD)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
+  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group (SD)",pos=4,cex=st) #\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
@@ -556,17 +557,19 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
                               paste0(format(round(prop.test(sum(outcome_data[sub_groups==i]),length(t(outcome_data)[sub_groups==i]))$conf.int*100,1),nsmall=1),collapse="-"),
                               "%)\n",
                               "Risk based on the sum of individual effects =",
-                              format(round(mean(CoOL_6_sum_of_individual_effects(exposure_data,model)[sub_groups==i])*100,1),nsmall=1),
+                              format(round(mean(CoOL_6_sum_of_individual_effects(exposure_data,model=model)[sub_groups==i])*100,1),nsmall=1),
                               "%"),pos=4,col=colours[i])
   }
   m <- max(d)
   ind_effect_matrix <- CoOL_6_individual_effects_matrix(exposure_data,model)
   for(g in 1:ncol(d)) { for (i in 1:nrow(d)){
     value <- paste0(format(round(as.numeric(d[i,g])*100,1),nsmall=),"%\n(",
-                    format(round(sd(risk_contributions[sub_groups==i,g])*100,1),nsmall=1),"%)\n[",
-                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]"
-    )
-    text(-g,-i,value,col=adjustcolor(colours[i],d[i,g]/m),cex=st*d[i,g]/m)
+                    format(round(sd(risk_contributions[sub_groups==i,g])*100,1),nsmall=1),"%)")   # )\n[",
+#                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]"
+
+#    text(-g,-i,value,col=adjustcolor(colours[i],d[i,g]/m),cex=st*d[i,g]/m)
+#    text(-g,-i,value,col=adjustcolor(colours[i],1),cex=st*d[i,g]/m)
+    text(-g,-i,value,col=adjustcolor(colours[i],ifelse(d[i,g]<   exclude_below,0,1)),cex=st)
   }}
   return(t(d))
   }
@@ -619,3 +622,123 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
   ind_effect_matrix[,ncol(X)+1] <- rep(as.vector(model[[4]][1,1]),nrow(X))
   return(ind_effect_matrix)
 }
+
+
+
+
+#' Complex example
+#'
+#' To reproduce the complex example.
+#'
+#' @param n number of observations for the synthetic data
+#' @export
+#' @examples
+#'
+#'
+CoOL_0_complex_simulation <- function(n) {
+  #n = 20000
+  Genes = sample(1:0,n,prob=c(0.05,0.95),replace=TRUE)
+  Living_area = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+
+  Low_SES = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  Physically_active = sample(1:0,n,prob=c(0.8,0.2),replace=TRUE)
+  for (i in 1:n) {
+    if (Low_SES[i] == 1 & sample(1:0,1,prob=c(.2,.8)) ) Physically_active[i] <- 0
+  }
+
+  Mutation_X = rep(0,n)
+  for (i in 1:n) {
+    if (Genes[i] == 1 & sample(1:0,1,prob=c(.95,.05)) ) Mutation_X[i] <- 1
+  }
+  LDL = sample(1:0,n,prob=c(0.3,0.7),replace=TRUE)
+  for (i in 1:n) {
+    if (Genes[i] == 1 & sample(1:0,1,prob=c(.15,.85)) ) LDL[i] <- 1
+  }
+  Night_shifts = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  for (i in 1:n) {
+    if (Living_area[i] == 1 & sample(1:0,1,prob=c(.1,.9)) ) Night_shifts[i] <- 1
+    if (Low_SES[i] == 1 & sample(1:0,1,prob=c(.1,.9)) ) Night_shifts[i] <- 1
+  }
+  Air_pollution = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  for (i in 1:n) {
+    if (Living_area[i] == 1 & sample(1:0,1,prob=c(.3,.7)) ) Air_pollution[i] <- 1
+  }
+
+  Y <-  sample(1:0,n,prob=c(0.05,0.95),replace = TRUE)
+  for (i in 1:n) {
+    if (Physically_active[i] == 0 & LDL[i] == 1 & Night_shifts[i] == 1 & sample(1:0,1,prob=c(.15,0.85)) ) {
+      Y[i] <- 1
+    }
+    if (Mutation_X[i] == 1 & Air_pollution[i] == 1 & sample(1:0,1,prob=c(.1,0.9)) ) {
+      Y[i] <- 1
+    }
+  }
+
+  #  C = rep(0,n)
+
+  data <- data.frame(Y,Physically_active,Low_SES,Mutation_X,LDL,Night_shifts,Air_pollution) #,C)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+
+#' Common example
+#'
+#' To reproduce the common causes example.
+#'
+#' @param n number of observations for the synthetic data
+#' @export
+#' @examples
+#'
+#'
+CoOL_0_common_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.4,.6))) B[i] <- 1
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) E[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.04,.96))) Y[i] <- 1
+  for (i in 1:n) if(E[i]==1 & sample(1:0,1,prob=c(.06,.94))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+
+#' Mediation example
+#'
+#' To reproduce the mediation example.
+#'
+#' @param n number of observations for the synthetic data
+#' @export
+#' @examples
+#'
+#'
+CoOL_0_mediation_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.2,.8))) E[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.04,.96))) Y[i] <- 1
+  for (i in 1:n) if(E[i]==1 & sample(1:0,1,prob=c(.06,.94))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+

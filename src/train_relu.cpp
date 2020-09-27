@@ -53,11 +53,11 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
 //' @param L1 Regularisation increasing parameter value at each iteration
 //' @return A list of class "SCL" giving the estimated matrices and performance indicators
-//' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
+//' @author Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 //'
 //' @export
 // [[Rcpp::export]]
-Rcpp::List CoOL_cpp_train_network_relu(
+Rcpp::List cpp_train_network_relu(
      const arma::mat & x,
 		 const arma::vec & y,
      const arma::mat & testx,
@@ -285,7 +285,7 @@ Rcpp::List CoOL_cpp_train_network_relu(
 //'
 //' @export
 // [[Rcpp::export]]
-Rcpp::List CoOL_cpp_train_network_relu_with_confounder(
+Rcpp::List cpp_train_network_relu_with_confounder(
      const arma::mat & x,
      const arma::vec & y,
      const arma::mat & c,

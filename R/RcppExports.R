@@ -9,7 +9,7 @@
 #'
 #' @export
 rcpprelu <- function(x) {
-    .Call('_CoOL_rcpprelu', PACKAGE = 'CoOL', x)
+    .Call(`_CoOL_rcpprelu`, x)
 }
 
 #' Function used as part of other functions
@@ -20,7 +20,7 @@ rcpprelu <- function(x) {
 #'
 #' @export
 rcpprelu_neg <- function(x) {
-    .Call('_CoOL_rcpprelu_neg', PACKAGE = 'CoOL', x)
+    .Call(`_CoOL_rcpprelu_neg`, x)
 }
 
 #' Function used as part of other functions
@@ -40,11 +40,11 @@ rcpprelu_neg <- function(x) {
 #' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
 #' @param L1 Regularisation increasing parameter value at each iteration
 #' @return A list of class "SCL" giving the estimated matrices and performance indicators
-#' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
+#' @author Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 #'
 #' @export
-CoOL_cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr = 0.01, maxepochs = 100, L1 = 0.00001) {
-    .Call('_CoOL_CoOL_cpp_train_network_relu', PACKAGE = 'CoOL', x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, L1)
+cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr = 0.01, maxepochs = 100, L1 = 0.00001) {
+    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, L1)
 }
 
 #' Function used as part of other functions
@@ -68,7 +68,7 @@ CoOL_cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, 
 #' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 #'
 #' @export
-CoOL_cpp_train_network_relu_with_confounder <- function(x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr = 0.01, maxepochs = 100) {
-    .Call('_CoOL_CoOL_cpp_train_network_relu_with_confounder', PACKAGE = 'CoOL', x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr, maxepochs)
+cpp_train_network_relu_with_confounder <- function(x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr = 0.01, maxepochs = 100) {
+    .Call(`_CoOL_cpp_train_network_relu_with_confounder`, x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr, maxepochs)
 }
 
