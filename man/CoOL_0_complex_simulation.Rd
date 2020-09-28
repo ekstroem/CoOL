@@ -12,7 +12,3 @@ CoOL_0_complex_simulation(n)
 \description{
 To reproduce the complex example.
 }
-\examples{
-
-
-}

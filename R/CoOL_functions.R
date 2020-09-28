@@ -631,10 +631,7 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 #' To reproduce the complex example.
 #'
 #' @param n number of observations for the synthetic data
-#' @export
-#' @examples
-#'
-#'
+
 CoOL_0_complex_simulation <- function(n) {
   #n = 20000
   Genes = sample(1:0,n,prob=c(0.05,0.95),replace=TRUE)
@@ -689,10 +686,7 @@ CoOL_0_complex_simulation <- function(n) {
 #' To reproduce the common causes example.
 #'
 #' @param n number of observations for the synthetic data
-#' @export
-#' @examples
-#'
-#'
+
 CoOL_0_common_simulation <- function(n) {
   #n = 20000
   A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
@@ -720,10 +714,7 @@ CoOL_0_common_simulation <- function(n) {
 #' To reproduce the mediation example.
 #'
 #' @param n number of observations for the synthetic data
-#' @export
-#' @examples
-#'
-#'
+
 CoOL_0_mediation_simulation <- function(n) {
   #n = 20000
   A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)

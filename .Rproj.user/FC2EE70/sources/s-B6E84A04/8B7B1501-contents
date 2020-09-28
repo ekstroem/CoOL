@@ -3,7 +3,6 @@
 ###########################################################!
 
 # Tutorial:
-#library(SRCL) # library(SRCL)
 library(CoOL) # library(SRCL)
 setwd("C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/Figures/Redo")
 set.seed(1)

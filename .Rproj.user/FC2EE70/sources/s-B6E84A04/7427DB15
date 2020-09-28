@@ -3,7 +3,7 @@
     "path": "C:/Users/lvb917/Dropbox/Post doc/CoOL/R/CoOL_functions.R",
     "project_path": "R/CoOL_functions.R",
     "type": "r_source",
-    "hash": "3459247768",
+    "hash": "2027687385",
     "contents": "",
     "dirty": false,
     "created": 1601231024539.0,
@@ -11,15 +11,15 @@
     "relative_order": 1,
     "properties": {
         "docOutlineVisible": "1",
-        "cursorPosition": "547,44",
-        "scrollLine": "535"
+        "cursorPosition": "716,0",
+        "scrollLine": "685"
     },
     "folds": "",
-    "lastKnownWriteTime": 1601234927,
+    "lastKnownWriteTime": 1601287739,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1601234927683,
+    "last_content_update": 1601287739761,
     "read_only": false,
     "read_only_alternatives": []
 }

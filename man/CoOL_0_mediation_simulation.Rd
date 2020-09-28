@@ -12,7 +12,3 @@ CoOL_0_mediation_simulation(n)
 \description{
 To reproduce the mediation example.
 }
-\examples{
-
-
-}

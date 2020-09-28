@@ -12,7 +12,3 @@ CoOL_0_common_simulation(n)
 \description{
 To reproduce the common causes example.
 }
-\examples{
-
-
-}
