@@ -14,7 +14,8 @@
 
 random <- function(r,c,v) {
   w1 <- matrix(NA,nrow = r, ncol = c)
-  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
+#  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
+  w1 <- sapply(w1,function(x){rgamma(1,1,1000)})
   w1 <- matrix(w1,nrow = r, ncol = c)
   return(w1)
 }
@@ -145,7 +146,8 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #' @param patience The number of epochs allowed without an improvement in performance.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
 #' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
-#' @param L1 Regularisation
+#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk
+#' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots
 #' @details
 #' For each individual:\deqn{
@@ -176,7 +178,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 50000, patience = 100,
-                            plot_and_evaluation_frequency = 50, IPCW = NA, L1=0.00001, spline_df=10) {
+                            plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
   X_test = X_train
   Y_test = Y_train
   if (is.na(IPCW)) IPCW <- rep(1,nrow(X_train))
@@ -190,7 +192,7 @@ for (lr_set in lr) {
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
       model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
-              W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, L1=L1)
+              W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, baseline_risk_reg=baseline_risk_reg,input_parameter_reg=input_parameter_reg)
       performance <- c(performance,model$train_performance)
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)
@@ -546,7 +548,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   par(mar=c(0,0,0,0))
   plot(0,0,type='n',xlim=c(-ncol(d)-6,0),ylim=c(-nrow(d)-1,1),axes=F)
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
-  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group (SD)",pos=4,cex=st) #\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
+  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group (SD)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
@@ -564,8 +566,8 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   ind_effect_matrix <- CoOL_6_individual_effects_matrix(exposure_data,model)
   for(g in 1:ncol(d)) { for (i in 1:nrow(d)){
     value <- paste0(format(round(as.numeric(d[i,g])*100,1),nsmall=),"%\n(",
-                    format(round(sd(risk_contributions[sub_groups==i,g])*100,1),nsmall=1),"%)")   # )\n[",
-#                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]"
+                    format(round(sd(risk_contributions[sub_groups==i,g])*100,1),nsmall=1),"%)\n[",
+                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]")
 
 #    text(-g,-i,value,col=adjustcolor(colours[i],d[i,g]/m),cex=st*d[i,g]/m)
 #    text(-g,-i,value,col=adjustcolor(colours[i],1),cex=st*d[i,g]/m)

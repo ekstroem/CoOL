@@ -15,7 +15,8 @@ CoOL_2_train_neural_network(
   patience = 100,
   plot_and_evaluation_frequency = 50,
   IPCW = NA,
-  L1 = 1e-05,
+  baseline_risk_reg = 0,
+  input_parameter_reg = 0.001,
   spline_df = 10
 )
 }
@@ -40,7 +41,9 @@ CoOL_2_train_neural_network(
 
 \item{IPCW}{Inverse probability of censoring weights (Warning: not yet correctly implemented)}
 
-\item{L1}{Regularisation}
+\item{baseline_risk_reg}{Regularisation increasing parameter value at each iteration for the baseline risk}
+
+\item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
 
 \item{spline_df}{Degrees of freedom for the spline fit for the performance plots}
 }

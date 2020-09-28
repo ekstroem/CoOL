@@ -16,7 +16,8 @@ cpp_train_network_relu(
   IPCW,
   lr = 0.01,
   maxepochs = 100,
-  L1 = 1e-05
+  baseline_risk_reg = 1e-05,
+  input_parameter_reg = 1e-06
 )
 }
 \arguments{
@@ -42,7 +43,9 @@ cpp_train_network_relu(
 
 \item{maxepochs}{The maximum number of epochs}
 
-\item{L1}{Regularisation increasing parameter value at each iteration}
+\item{baseline_risk_reg}{Regularisation increasing parameter value at each iteration for the baseline risk}
+
+\item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
 }
 \value{
 A list of class "SCL" giving the estimated matrices and performance indicators

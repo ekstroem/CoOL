@@ -29,8 +29,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_train_network_relu
-Rcpp::List cpp_train_network_relu(const arma::mat& x, const arma::vec& y, const arma::mat& testx, const arma::vec& testy, const arma::mat& W1_input, const arma::mat& B1_input, const arma::mat& W2_input, const arma::mat& B2_input, const arma::vec& IPCW, double lr, double maxepochs, double L1);
-RcppExport SEXP _CoOL_cpp_train_network_relu(SEXP xSEXP, SEXP ySEXP, SEXP testxSEXP, SEXP testySEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP IPCWSEXP, SEXP lrSEXP, SEXP maxepochsSEXP, SEXP L1SEXP) {
+Rcpp::List cpp_train_network_relu(const arma::mat& x, const arma::vec& y, const arma::mat& testx, const arma::vec& testy, const arma::mat& W1_input, const arma::mat& B1_input, const arma::mat& W2_input, const arma::mat& B2_input, const arma::vec& IPCW, double lr, double maxepochs, double baseline_risk_reg, double input_parameter_reg);
+RcppExport SEXP _CoOL_cpp_train_network_relu(SEXP xSEXP, SEXP ySEXP, SEXP testxSEXP, SEXP testySEXP, SEXP W1_inputSEXP, SEXP B1_inputSEXP, SEXP W2_inputSEXP, SEXP B2_inputSEXP, SEXP IPCWSEXP, SEXP lrSEXP, SEXP maxepochsSEXP, SEXP baseline_risk_regSEXP, SEXP input_parameter_regSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -45,8 +45,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type IPCW(IPCWSEXP);
     Rcpp::traits::input_parameter< double >::type lr(lrSEXP);
     Rcpp::traits::input_parameter< double >::type maxepochs(maxepochsSEXP);
-    Rcpp::traits::input_parameter< double >::type L1(L1SEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_train_network_relu(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, L1));
+    Rcpp::traits::input_parameter< double >::type baseline_risk_reg(baseline_risk_regSEXP);
+    Rcpp::traits::input_parameter< double >::type input_parameter_reg(input_parameter_regSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_train_network_relu(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, baseline_risk_reg, input_parameter_reg));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -77,7 +78,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_CoOL_rcpprelu", (DL_FUNC) &_CoOL_rcpprelu, 1},
     {"_CoOL_rcpprelu_neg", (DL_FUNC) &_CoOL_rcpprelu_neg, 1},
-    {"_CoOL_cpp_train_network_relu", (DL_FUNC) &_CoOL_cpp_train_network_relu, 12},
+    {"_CoOL_cpp_train_network_relu", (DL_FUNC) &_CoOL_cpp_train_network_relu, 13},
     {"_CoOL_cpp_train_network_relu_with_confounder", (DL_FUNC) &_CoOL_cpp_train_network_relu_with_confounder, 13},
     {NULL, NULL, 0}
 };

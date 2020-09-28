@@ -1,4 +1,4 @@
-# SRCL
+# Causes of Outcome Learning
 
 To install you can run the following code in R
 

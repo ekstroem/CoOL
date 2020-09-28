@@ -51,7 +51,8 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param lr Initial learning rate
 //' @param maxepochs The maximum number of epochs
 //' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
-//' @param L1 Regularisation increasing parameter value at each iteration
+//' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk
+//' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 //' @return A list of class "SCL" giving the estimated matrices and performance indicators
 //' @author Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 //'
@@ -69,7 +70,8 @@ Rcpp::List cpp_train_network_relu(
      const arma::vec & IPCW,
 		 double lr=0.01,
 		 double maxepochs = 100,
-     double L1 = 0.00001
+     double baseline_risk_reg = 0.00001,
+     double input_parameter_reg = 0.000001
 		 ) {
 
   int nsamples = y.size();
@@ -157,11 +159,11 @@ Rcpp::List cpp_train_network_relu(
 
       // All calculations done. Now do the updating
       for (size_t g=0; g<W1.n_rows; g++) {
-        W1.row(g) = rcpprelu(W1.row(g) - IPCW(row) * lr * E_outO * (netO_outH % (h>0)) * x(row, g)); // - lr * L1); // L1 regularized - penalized
+        W1.row(g) = rcpprelu(W1.row(g) - IPCW(row) * lr * E_outO * (netO_outH % (h>0)) * x(row, g) - lr * input_parameter_reg); // L1 regularized - penalized
 }
 
       B1 = rcpprelu_neg(B1 - IPCW(row) * lr * E_outO * (netO_outH % (h>0)));
-      B2 = rcpprelu(B2 - IPCW(row) * lr / 10 *  E_outO + lr * L1); // inverse L1 regularized - rewarded
+      B2 = rcpprelu(B2 - IPCW(row) * lr / 10 *  E_outO + lr * baseline_risk_reg); // inverse L1 regularized - rewarded
 
 
     } // Row

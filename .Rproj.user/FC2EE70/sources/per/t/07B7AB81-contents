@@ -1,0 +1,725 @@
+#setwd("~/Dropbox/Post doc/Manuskripter/1 Adjusted NNs/Data")
+setwd("C:/Users/lvb917/Dropbox/Post doc/Manuskripter/1 Adjusted NNs/Data")
+
+
+################################# Start #####################################
+
+# Adjusted ML - simulated example
+library(pROC)
+library(keras)
+
+gen_data <- function(n) {
+data <- data.frame(V1 = sample(0:1,n,replace = T))
+for (i in 1:15) {
+  data[,i] <- sample(0:1,n,replace = T, prob = c(0.7,0.3))
+}
+summary(data)
+
+C = as.numeric(sample(0:1,n,replace=T,prob = c(0.5,0.5)))
+
+for (i in 1:nrow(data)) {
+  if (C[i]==1 & sample(0:1,1,prob = c(0.7,0.3))==1) {
+    data[i,2] <- 1
+  } }
+
+for (i in 1:nrow(data)) {
+  if (C[i]==1 & sample(0:1,1,prob = c(0.8,0.2))==1) {
+    data[i,12] <- 1
+  } }
+
+data$Y <-  sample(0:1,n,replace = T, prob = c(0.95,0.05))
+
+for (i in 1:nrow(data)) {
+  if (C[i]==1 & sample(0:1,1,prob = c(0.8,0.2))==1) {
+    data$Y[i] <- 1
+  } }
+for (i in 1:nrow(data)) {
+  if (data[i,10]==1 & sample(0:1,1,prob = c(0.95,0.05))==1) {
+    data$Y[i] <- 1
+  } }
+
+for(i in 1:ncol(data)) {
+  data[,i] <- as.numeric(data[,i])
+}
+
+data$C <- C
+data <- data[,c(16,1:15,17)]
+
+return(data)
+}
+
+
+importance<- function(y,data, model,nsim=10) {
+  ref <- auc(y,as.vector(predict(model, as.matrix(data))))
+  aucs <- matrix(0,nrow=nsim,ncol=ncol(data))
+  for (i in 1:ncol(data)) {
+    print(i)
+    xs <- data
+    for (g in 1:nsim) {
+      xs[,i] <- xs[sample(1:nrow(xs)),i] # permute
+    aucs[g,i] <- ref-auc(y,as.vector(predict(model, as.matrix(xs))))
+    }
+  }
+  aucs <- data.frame(aucs)
+  colnames(aucs) <- names(data)
+  return(aucs)
+  }
+
+plot_importance <- function(results){
+  #c(min(results)-0.2*diff(range(results)),max(results))
+  plot(0,ylim=c(0,16),xlim=c(-0.07,0.05),xlab="Decrease in AUC",ylab="",main="Variable importance",
+       axes=F)
+  axis(1,seq(-0.02,0.1,0.01))
+  abline(v=0,lty=1,col="grey",lwd=2)
+  for(i in ncol(results):1) {
+    text(-0.05,16-i, bquote(X[.(i)])) #names(results)[i])
+    arrows(x0=mean(results[,i]),x1=quantile(results[,i],0.975),y0=16-i,angle=90,length=0.05)
+    arrows(x0=mean(results[,i]),x1=quantile(results[,i],0.025),y0=16-i,angle=90,length=0.05)
+    points(mean(results[,i]),16-i,pch=16,col=adjustcolor("black",1))
+  }
+}
+
+results_1_1 <- data.frame(matrix(0,nrow=0,ncol=15))
+names_1 <- names(results_1_1)
+results_1_2 <- data.frame(matrix(0,nrow=0,ncol=16))
+names_2 <- names(results_1_2)
+
+for (run in 1:9) {
+print(paste0("Simulation number: ",run))
+
+#### DATA #####
+n_sim = 10
+set_batch_size = 10
+set_epochs = 2000
+set_nodes = 5
+
+data <- gen_data(15000)
+y <- data[,1]
+data <- data[,-1]
+data_no_c <- data[,-ncol(data)]
+c <- data[,ncol(data)]
+
+test_data <- gen_data(10000)
+test_y <- test_data[,1]
+test_data <- test_data[,-1]
+test_data_no_c <- test_data[,-ncol(test_data)]
+test_c <- test_data[,ncol(test_data)]
+
+
+################ A) Variable importance in a neural network without calendar time #################
+inputs <- layer_input(shape = ncol(data_no_c))
+predictions <- inputs %>%
+  layer_dense(units = set_nodes, activation = 'sigmoid') %>%
+  layer_dense(units = 1, activation = 'sigmoid')
+model <- keras_model(inputs = inputs, outputs = predictions)
+summary(model)
+model %>% compile(optimizer = 'sgd', loss = 'mean_squared_error', metrics = c('accuracy'))
+early_stop <- callback_early_stopping(monitor = "val_loss", patience = 10, restore_best_weights = TRUE)
+
+history <- fit(
+  object           = model,
+  x                = as.matrix(data_no_c),
+  y                = y,
+  batch_size       = set_batch_size,
+  epochs           = set_epochs,
+  validation_split = 0.33333,
+  callbacks        =early_stop
+)
+permutations_1 <- importance(test_y,test_data_no_c,model, nsim = n_sim)
+results_1_1 <- rbind(results_1_1,colMeans(permutations_1))
+performance_1 <- history$metrics$loss #Saved for the last simulation
+performance_val_1 <- history$metrics$val_loss #Saved for the last simulation
+
+################ B) Variable importance in a neural network with calendar time #################
+inputs <- layer_input(shape = ncol(data))
+predictions <- inputs %>%
+  layer_dense(units = set_nodes, activation = 'sigmoid') %>%
+  layer_dense(units = 1, activation = 'sigmoid')
+model <- keras_model(inputs = inputs, outputs = predictions)
+summary(model)
+model %>% compile(optimizer = 'sgd', loss = 'mean_squared_error', metrics = c('accuracy'))
+early_stop <- callback_early_stopping(monitor = "val_loss", patience = 10, restore_best_weights = TRUE)
+
+history <- fit(
+  object           = model,
+  x                = as.matrix(data),
+  y                = y,
+  batch_size       = set_batch_size,
+  epochs           = set_epochs,
+  validation_split = 0.33333,
+  callbacks        =early_stop
+)
+permutations_2 <- importance(test_y,test_data,model, nsim = n_sim)
+results_1_2 <- rbind(results_1_2,colMeans(permutations_2))
+performance_2 <- history$metrics$loss #Saved for the last simulation
+performance_val_2 <- history$metrics$val_loss #Saved for the last simulation
+
+save.image("data_sim.RData")
+
+}
+
+setwd("C:/Users/lvb917/Dropbox/Post doc/Manuskripter/1 Adjusted NNs/1st submission/Data")
+load("data_sim.RData")
+
+
+########### 20-09-2020 alternative plot ######################
+png("C:/Users/lvb917/Dropbox/Post doc/Manuskripter/1 Adjusted NNs/2nd submission/results_sim.png",res=300,units = "in",height=6,width = 8)
+par(mfrow=c(1,1))
+gennemsigtighed = .3
+plot(0,ylim=c(-1,ncol(results_1_2)),xlim=c(-0.07,max(results_1_2)*1),xlab="Decrease in ROC AUC",ylab="",main="Variable importance",
+     axes=F)
+axis(1,seq(-0.02,0.2,0.01))
+abline(v=0,lty=1,col="grey",lwd=2)
+results <- results_1_1
+results <- data.frame(cbind(results,"season"=100))
+for(i in ncol(results):1) {
+  #  text(-0.05,ncol(results)-i, colnames(results)[i] ) #names(results)[i])
+  #text(-0.05,ncol(results)-i, c("Sex", "Maternal education", "Age of the primary caretaker", "Hypothetical intervention","Season")[i] ) #names(results)[i])
+  q1 <- quantile(results[,i],c(.25))
+  q2 <- quantile(results[,i],c(.5))
+  q3 <- quantile(results[,i],c(.75))
+  rect(q1,ncol(results)-i-.1,q2,ncol(results)-i+.1,border="orange",lwd=2)
+  rect(q2,ncol(results)-i-.1,q3,ncol(results)-i+.1,border="orange",lwd=2)
+  arrows(x0=q1,y0=ncol(results)-i,x1=q1-(q2-q1)*1.5,length=0,col="orange",lwd=2)
+  arrows(x0=q3,y0=ncol(results)-i,x1=q3+(q3-q2)*1.5,length=0,col="orange",lwd=2)
+  out_low <- results[results[,i]<q1-(q2-q1)*1.5,i]
+  if(length(out_low)>0)points(out_low,rep(ncol(results)-i,length(out_low))+rnorm(length(out_low),0,0.05),pch=16,cex=.5,col="orange")
+  out_up <- results[results[,i]>q3+(q3-q2)*1.5,i]
+  if(length(out_up)>0)points(out_up,rep(ncol(results)-i,length(out_up))+rnorm(length(out_up),0,0.01),pch=16,cex=.5,col="orange")
+}
+results <- results_1_2
+for(i in ncol(results):1) {
+  #  text(-0.05,ncol(results)-i, colnames(results)[i] ) #names(results)[i])
+  #text(-0.05,ncol(results)-i, c("Sex", "Maternal education", "Age of the primary caretaker", "Hypothetical intervention","Season")[i] ) #names(results)[i])
+  text(-0.05,ncol(results)-i, c(names_2[1:15],"Calendar time")[i] ) #names(results)[i])
+  q1 <- quantile(results[,i],c(.25))
+  q2 <- quantile(results[,i],c(.5))
+  q3 <- quantile(results[,i],c(.75))
+  rect(q1,ncol(results)-i-.1-0.25,q2,ncol(results)-i+.1-0.25,border="dodgerblue",lwd=2)
+  rect(q2,ncol(results)-i-.1-0.25,q3,ncol(results)-i+.1-0.25,border="dodgerblue",lwd=2)
+  arrows(x0=q1,y0=ncol(results)-i-0.25,x1=q1-(q2-q1)*1.5,length=0,col="dodgerblue",lwd=2)
+  arrows(x0=q3,y0=ncol(results)-i-0.25,x1=q3+(q3-q2)*1.5,length=0,col="dodgerblue",lwd=2)
+  out_low <- results[results[,i]<q1-(q2-q1)*1.5,i]
+  if(length(out_low)>0)points(out_low,rep(ncol(results)-i-0.25,length(out_low))+rnorm(length(out_low),0,0.05),pch=16,cex=.5,col="dodgerblue")
+  out_up <- results[results[,i]>q3+(q3-q2)*1.5,i]
+  if(length(out_up)>0)points(out_up,rep(ncol(results)-i-0.25,length(out_up))+rnorm(length(out_up),0,0.01),pch=16,cex=.5,col="dodgerblue")
+}
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######################################################################
+#Figure 3. A) Variable importance in a neural network without calendar time	B) Variable importance in a  neural network with calendar time
+setwd("C:/Users/lvb917/Dropbox/Post doc/Manuskripter/1 Adjusted NNs/Figures/")
+jpeg("Figure 3.jpg",res=300,unit="in",height = 5,width = 10)
+par(mfrow=c(1,2))
+colnames(results_1_1) <- names_1
+colnames(results_1_2) <- names_2
+plot_importance(results_1_1)
+plot_importance(results_1_2)
+dev.off()
+######################################################################
+# Supplementary figure 1. Performance curve for a model without and with calendar time for one simulation
+par(mfrow=c(1,2))
+plot(performance_1,type='l',xlab="Epochs",ylab="Mean squared error",main="Performance curve for a model\nwithout calendar time for one simulation",
+     ylim=range(c(performance_1,performance_val_1)))
+points(performance_val_1,type="l",lty=3,lwd=4)
+plot(performance_2,type='l',lty=1,xlab="Epochs",ylab="Mean squared error",main="Performance curve for a model\nwith calendar time for one simulation",
+     ylim=range(c(performance_2,performance_val_2)))
+points(performance_val_2,type="l",lty=3,lwd=4)
+
+################################# End #####################################
+
+
+
+
+
+
+
+load("data_sim.RData")
+
+
+
+#, patience = 10, restore_best_weights = TRUE)
+
+# while (FALSE) {
+#
+# Adjusted ML - simulated example
+library(pROC)
+library(keras)
+#library(lime)
+#library(tidyquant)
+#library(rsample)
+#library(recipes)
+#library(yardstick)
+#library(corrr)
+#library(forcats)
+# ##### OLD CODE #####
+#
+#
+#
+# # pred_wrapper <- function(object, newdata) {
+# #   predict(object, x = as.matrix(newdata)) %>%
+# #     as.vector()
+# # }
+# #
+# #
+# # set.seed(102)  # for reproducibility
+# # library(vip)
+# # p1 <- vip(
+# #   object = model_keras,                     # fitted model
+# #   method = "permute",                 # permutation-based VI scores
+# #   num_features = ncol(x_test_tbl),       # default only plots top 10 features
+# #   pred_wrapper = pred_wrapper,            # user-defined prediction function
+# #   train = as.data.frame(x_test_tbl) ,    # training data
+# #   target = y_test_vec,                   # response values used for training
+# #   metric = "auc",                # evaluation metric
+# #   progress = "text"                 # request a text-based progress bar
+# # )
+# # #> Warning: Setting `method = "permute"` is experimental, use at your own
+# # #> risk!
+# # print(p1)  # display plot
+#
+#
+# # # Plot the training/validation history of our Keras model
+# # plot(history)
+# #
+# # # Format test data and predictions for yardstick metrics
+# # estimates_keras_tbl <- tibble(
+# #   truth      = as.factor(y_test_vec) %>% fct_recode(yes = "1", no = "0"),
+# #   estimate   = as.factor(yhat_keras_class_vec) %>% fct_recode(yes = "1", no = "0"),
+# #   class_prob = yhat_keras_prob_vec
+# # )
+# #
+# # # AUC
+# # estimates_keras_tbl %>% roc_auc(truth, class_prob)
+#
+#
+#
+# # pred_wrapper <- function(object, newdata) {
+# #   predict(object,  newdata) %>%
+# #     as.vector()
+# # }
+# # library(vip)
+# # list_metrics()
+# # p2 <- vip(
+# #   object = model,                     # fitted model
+# #   method = "permute",                 # permutation-based VI scores
+# #   num_features = 4,       # default only plots top 10 features
+# #   pred_wrapper = pred_wrapper,            # user-defined prediction function
+# #   train = list(as.matrix(data),c),    # training data
+# #   target = y,                   # response values used for training
+# #   metric = "rsquared",                # evaluation metric
+# #   progress = "text"                 # request a text-based progress bar
+# # )
+# # #> Warning: Setting `method = "permute"` is experimental, use at your own
+# # #> risk!
+# # print(p2)  # display plot
+#
+#
+# # ##### RANDOM FORREST
+# # # Unadjusted
+# # library(randomForest)
+# # fit_1 <- randomForest(Y ~ . ,data = data[,-ncol(data)])
+# # p <- as.vector(predict(fit_1,newdata=data[,-ncol(data)],type = "response"))
+# # plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # #plot(fit_1)
+# # p <- as.vector(predict(fit_1,newdata=testdata[,-c(1,ncol(testdata))],type = "response"))
+# # plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# #
+# # # Solution 1
+# # fit_2 <- randomForest(Y ~ . ,data = data)
+# # p <- as.vector(predict(fit_2,newdata=data,type = "response"))
+# # plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # newdata <- testdata
+# # newdata$C <- 0
+# # p <- predict(fit_2,newdata = newdata,type = "response")
+# # plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# #
+# # # Solution 2
+# # fit_3 <- neuralnet(Y~C,hidden=c(5),data=data_C)
+# # plot(roc(data$Y,predict(fit_3,newdata=data_C,type = "response")),print.auc=T,main="ROC AUC")
+# # auc_C_only <- auc(data$Y,predict(fit_3,newdata=data_C,type = "response"))
+# # auc(data$Y,predict(fit_2,newdata=data_c,type = "response")) - auc_C_only
+#
+#
+# ###### NEURAL NETWORK
+#
+# # tid0 <- Sys.time()
+# # runs = 100
+# # n = 5000
+# # results <- data.frame(unadjusted=rep(NA,runs),c_set_to_zero = rep(NA,runs),with_c=rep(NA,runs),with_c_only=rep(NA,runs))
+# #
+# # for (run in 1:runs) {
+# #   data <- gen_data(n)
+# #   testdata <- gen_data(n)
+# #
+# # print(run)
+# # # Unadjusted
+# # library(neuralnet)
+# # while (T) {
+# # fit_1 <- neuralnet(Y~.,hidden=c(3),data=data[,-ncol(data)])
+# # if (length(fit_1) > 9) break
+# # }
+# # p <- as.vector(predict(fit_1,newdata=testdata[,-ncol(testdata)],type = "response"))
+# # #plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# # results$unadjusted[run] <- auc(testdata$Y,p)
+# #
+# # # Solution 1
+# # while (T) {
+# # fit_2 <- neuralnet(Y~.,hidden=c(3),data=data)
+# # if (length(fit_2) > 9) break
+# # }
+# # p <- as.vector(predict(fit_2,newdata=data,type = "response"))
+# # #plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # newdata <- testdata
+# # newdata$C <- 0
+# # p <- as.vector(predict(fit_2,newdata = newdata,type = "response"))
+# # #plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# # results$c_set_to_zero[run] <- auc(testdata$Y,p)
+# #
+# # # Solution 2
+# # while (T) {
+# # fit_3 <- neuralnet(Y~C,hidden=c(3),data=data)
+# # if (length(fit_3) > 9) break
+# # }
+# # #plot(roc(testdata$Y,as.vector(predict(fit_3,newdata=testdata,type = "response"))),print.auc=T,main="ROC AUC")
+# # results$with_c_only[run] <- auc(testdata$Y,as.vector(predict(fit_3,newdata=testdata,type = "response")))
+# # results$with_c[run] <- auc(testdata$Y,predict(fit_2,newdata=testdata,type = "response"))
+# #
+# # print(round(quantile(results$unadjusted,c(.025,.5,.975),na.rm=T),2))
+# # print(round(quantile(results$c_set_to_zero,c(.025,.5,.975),na.rm=T),2))
+# # print(round(quantile(results$with_c/results$with_c_only*.5,c(.025,.5,.975),na.rm=T),2))
+# # }
+# # tid1 <- Sys.time()
+# # tid1-tid0
+# #
+# # results
+# # round(quantile(results$unadjusted,c(.025,.5,.975)),2)
+# # round(quantile(results$c_set_to_zero,c(.025,.5,.975)),2)
+# # round(quantile(results$with_c,c(.025,.5,.975)),2)
+# # round(quantile(results$with_c_only,c(.025,.5,.975)),2)
+# #
+# # save.image("sim100.RData")
+#
+#
+#
+#
+# ##### OLD CODE
+#
+#
+#
+# results_1_1 <- data.frame(matrix(0,nrow=0,ncol=15))
+# results_1_2 <- data.frame(matrix(0,nrow=0,ncol=16))
+# results_1_3 <- data.frame(matrix(0,nrow=0,ncol=16))
+# results_2_1 <- data.frame(matrix(0,nrow=0,ncol=15))
+# results_2_2 <- data.frame(matrix(0,nrow=0,ncol=16))
+# results_2_3 <- data.frame(matrix(0,nrow=0,ncol=16))
+#
+#
+#
+#
+# for (run in 1:20) {
+#
+#   #### DATA #####
+#   n_sim = 1
+#   set_batch_size = 1
+#   set_epochs = 20
+#   set_nodes = 5
+#
+#   data <- gen_data(30000)
+#   y <- data[,1]
+#   data <- data[,-1]
+#   data_no_c <- data[,-ncol(data)]
+#   c <- data[,ncol(data)]
+#
+#   test_data <- gen_data(20000)
+#   test_y <- test_data[,1]
+#   test_data <- test_data[,-1]
+#   test_data_no_c <- test_data[,-ncol(test_data)]
+#   test_c <- test_data[,ncol(test_data)]
+#
+#
+#
+#
+#   ################ NORMAL, no C #################
+#   inputs <- layer_input(shape = ncol(data_no_c))
+#   predictions <- inputs %>%
+#     layer_dense(units = set_nodes, activation = 'sigmoid') %>%
+#     layer_dense(units = 1, activation = 'sigmoid')
+#   model <- keras_model(inputs = inputs, outputs = predictions)
+#   summary(model)
+#   model %>% compile(optimizer = 'sgd', loss = 'binary_crossentropy', metrics = c('accuracy'))
+#   history <- fit(
+#     object           = model,
+#     x                = as.matrix(data_no_c),
+#     y                = y,
+#     batch_size       = set_batch_size,
+#     epochs           = set_epochs,
+#     validation_split = 0.30
+#   )
+#   results_1_1 <- rbind(results_1_1,importance(test_y,test_data_no_c,model, nsim = n_sim))
+#
+#
+#   ################ NORMAL, C #################
+#   inputs <- layer_input(shape = ncol(data))
+#   predictions <- inputs %>%
+#     layer_dense(units = set_nodes, activation = 'sigmoid') %>%
+#     layer_dense(units = 1, activation = 'sigmoid')
+#   model <- keras_model(inputs = inputs, outputs = predictions)
+#   summary(model)
+#   model %>% compile(optimizer = 'sgd', loss = 'binary_crossentropy', metrics = c('accuracy'))
+#   history <- fit(
+#     object           = model,
+#     x                = as.matrix(data),
+#     y                = y,
+#     batch_size       = set_batch_size,
+#     epochs           = set_epochs,
+#     validation_split = 0.30
+#   )
+#   results_1_2 <- rbind(results_1_2,importance(test_y,test_data,model, nsim = n_sim))
+#
+#   ################ NORMAL, C set to 0 #################
+#   test_data2 <- test_data
+#   test_data2$C <- 0
+#   results_1_3 <- rbind(results_1_3,importance(test_y,test_data2,model, nsim = n_sim))
+#
+#
+#   #### Short cut, no C ####
+#   inputs <- layer_input(shape = ncol(data_no_c),name="main_input")
+#   predictions <- inputs %>%
+#     layer_dense(units = set_nodes, activation = 'sigmoid', name="hidden")
+#   c_input <- layer_input(shape = 1,name="c_input")
+#   z <- layer_add(c(predictions,c_input),) %>%
+#     layer_dense(units = 1, activation = 'sigmoid')
+#   model <- keras_model(inputs = c(inputs,c_input), outputs = z)
+#   summary(model)
+#   model %>% compile(
+#     optimizer = 'sgd',
+#     loss = 'binary_crossentropy',
+#     metrics = c('accuracy')
+#   )
+#   history <- fit(
+#     object           = model,
+#     x                = list(as.matrix(data_no_c),c),
+#     y                = y,
+#     batch_size       = set_batch_size,
+#     epochs           = set_epochs,
+#     validation_split = 0.30
+#   )
+#   results_2_1  <- rbind(results_2_1,importance_c(test_y,test_data_no_c,test_c,model, nsim = n_sim))
+#
+#   #### Short cut, C ####
+#   inputs <- layer_input(shape = ncol(data),name="main_input")
+#   predictions <- inputs %>%
+#     layer_dense(units = set_nodes, activation = 'sigmoid', name="hidden")
+#   c_input <- layer_input(shape = 1,name="c_input")
+#   z <- layer_add(c(predictions,c_input),) %>%
+#     layer_dense(units = 1, activation = 'sigmoid')
+#   model <- keras_model(inputs = c(inputs,c_input), outputs = z)
+#   summary(model)
+#   model %>% compile(
+#     optimizer = 'sgd',
+#     loss = 'binary_crossentropy',
+#     metrics = c('accuracy')
+#   )
+#   history <- fit(
+#     object           = model,
+#     x                = list(as.matrix(data),c),
+#     y                = y,
+#     batch_size       = set_batch_size,
+#     epochs           = set_epochs,
+#     validation_split = 0.30
+#   )
+#   results_2_2  <- rbind(results_2_2,importance_c(test_y,test_data,test_c,model, nsim = n_sim))
+#
+#   #### Short cut, C set to 0 ####
+#   test_data2 <- test_data
+#   test_data2$C <-  mean(test_data2$C)
+#   results_2_3  <- rbind(results_2_3,importance_c(test_y,test_data,test_c,model, nsim = n_sim))
+#
+# }
+#
+#
+# # par(mfrow=c(1,2))
+# # colnames(results_1_1) <- paste0("X",1:15)
+# # colnames(results_1_2) <- c(paste0("X",1:15),"C")
+# # plot_importance(results_1_1)
+# # plot_importance(results_1_2[,1:15])
+#
+# par(mfrow=c(2,3))
+# plot_importance(results_1_1)
+# plot_importance(results_1_2)
+# plot_importance(results_1_3)
+# plot_importance(results_2_1)
+# plot_importance(results_2_2)
+# plot_importance(results_2_3)
+#
+#
+# setwd("C:/Users/lvb917/Desktop")
+# save.image("data.RData")
+#
+#
+# ##### OLD CODE #####
+#
+#
+#
+# # pred_wrapper <- function(object, newdata) {
+# #   predict(object, x = as.matrix(newdata)) %>%
+# #     as.vector()
+# # }
+# #
+# #
+# # set.seed(102)  # for reproducibility
+# # library(vip)
+# # p1 <- vip(
+# #   object = model_keras,                     # fitted model
+# #   method = "permute",                 # permutation-based VI scores
+# #   num_features = ncol(x_test_tbl),       # default only plots top 10 features
+# #   pred_wrapper = pred_wrapper,            # user-defined prediction function
+# #   train = as.data.frame(x_test_tbl) ,    # training data
+# #   target = y_test_vec,                   # response values used for training
+# #   metric = "auc",                # evaluation metric
+# #   progress = "text"                 # request a text-based progress bar
+# # )
+# # #> Warning: Setting `method = "permute"` is experimental, use at your own
+# # #> risk!
+# # print(p1)  # display plot
+#
+#
+# # # Plot the training/validation history of our Keras model
+# # plot(history)
+# #
+# # # Format test data and predictions for yardstick metrics
+# # estimates_keras_tbl <- tibble(
+# #   truth      = as.factor(y_test_vec) %>% fct_recode(yes = "1", no = "0"),
+# #   estimate   = as.factor(yhat_keras_class_vec) %>% fct_recode(yes = "1", no = "0"),
+# #   class_prob = yhat_keras_prob_vec
+# # )
+# #
+# # # AUC
+# # estimates_keras_tbl %>% roc_auc(truth, class_prob)
+#
+#
+#
+# # pred_wrapper <- function(object, newdata) {
+# #   predict(object,  newdata) %>%
+# #     as.vector()
+# # }
+# # library(vip)
+# # list_metrics()
+# # p2 <- vip(
+# #   object = model,                     # fitted model
+# #   method = "permute",                 # permutation-based VI scores
+# #   num_features = 4,       # default only plots top 10 features
+# #   pred_wrapper = pred_wrapper,            # user-defined prediction function
+# #   train = list(as.matrix(data),c),    # training data
+# #   target = y,                   # response values used for training
+# #   metric = "rsquared",                # evaluation metric
+# #   progress = "text"                 # request a text-based progress bar
+# # )
+# # #> Warning: Setting `method = "permute"` is experimental, use at your own
+# # #> risk!
+# # print(p2)  # display plot
+#
+#
+# # ##### RANDOM FORREST
+# # # Unadjusted
+# # library(randomForest)
+# # fit_1 <- randomForest(Y ~ . ,data = data[,-ncol(data)])
+# # p <- as.vector(predict(fit_1,newdata=data[,-ncol(data)],type = "response"))
+# # plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # #plot(fit_1)
+# # p <- as.vector(predict(fit_1,newdata=testdata[,-c(1,ncol(testdata))],type = "response"))
+# # plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# #
+# # # Solution 1
+# # fit_2 <- randomForest(Y ~ . ,data = data)
+# # p <- as.vector(predict(fit_2,newdata=data,type = "response"))
+# # plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # newdata <- testdata
+# # newdata$C <- 0
+# # p <- predict(fit_2,newdata = newdata,type = "response")
+# # plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# #
+# # # Solution 2
+# # fit_3 <- neuralnet(Y~C,hidden=c(5),data=data_C)
+# # plot(roc(data$Y,predict(fit_3,newdata=data_C,type = "response")),print.auc=T,main="ROC AUC")
+# # auc_C_only <- auc(data$Y,predict(fit_3,newdata=data_C,type = "response"))
+# # auc(data$Y,predict(fit_2,newdata=data_c,type = "response")) - auc_C_only
+#
+#
+# ###### NEURAL NETWORK
+#
+# # tid0 <- Sys.time()
+# # runs = 100
+# # n = 5000
+# # results <- data.frame(unadjusted=rep(NA,runs),c_set_to_zero = rep(NA,runs),with_c=rep(NA,runs),with_c_only=rep(NA,runs))
+# #
+# # for (run in 1:runs) {
+# #   data <- gen_data(n)
+# #   testdata <- gen_data(n)
+# #
+# # print(run)
+# # # Unadjusted
+# # library(neuralnet)
+# # while (T) {
+# # fit_1 <- neuralnet(Y~.,hidden=c(3),data=data[,-ncol(data)])
+# # if (length(fit_1) > 9) break
+# # }
+# # p <- as.vector(predict(fit_1,newdata=testdata[,-ncol(testdata)],type = "response"))
+# # #plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# # results$unadjusted[run] <- auc(testdata$Y,p)
+# #
+# # # Solution 1
+# # while (T) {
+# # fit_2 <- neuralnet(Y~.,hidden=c(3),data=data)
+# # if (length(fit_2) > 9) break
+# # }
+# # p <- as.vector(predict(fit_2,newdata=data,type = "response"))
+# # #plot(roc(data$Y,p),print.auc=T,main="ROC AUC")
+# # newdata <- testdata
+# # newdata$C <- 0
+# # p <- as.vector(predict(fit_2,newdata = newdata,type = "response"))
+# # #plot(roc(testdata$Y,p),print.auc=T,main="ROC AUC")
+# # results$c_set_to_zero[run] <- auc(testdata$Y,p)
+# #
+# # # Solution 2
+# # while (T) {
+# # fit_3 <- neuralnet(Y~C,hidden=c(3),data=data)
+# # if (length(fit_3) > 9) break
+# # }
+# # #plot(roc(testdata$Y,as.vector(predict(fit_3,newdata=testdata,type = "response"))),print.auc=T,main="ROC AUC")
+# # results$with_c_only[run] <- auc(testdata$Y,as.vector(predict(fit_3,newdata=testdata,type = "response")))
+# # results$with_c[run] <- auc(testdata$Y,predict(fit_2,newdata=testdata,type = "response"))
+# #
+# # print(round(quantile(results$unadjusted,c(.025,.5,.975),na.rm=T),2))
+# # print(round(quantile(results$c_set_to_zero,c(.025,.5,.975),na.rm=T),2))
+# # print(round(quantile(results$with_c/results$with_c_only*.5,c(.025,.5,.975),na.rm=T),2))
+# # }
+# # tid1 <- Sys.time()
+# # tid1-tid0
+# #
+# # results
+# # round(quantile(results$unadjusted,c(.025,.5,.975)),2)
+# # round(quantile(results$c_set_to_zero,c(.025,.5,.975)),2)
+# # round(quantile(results$with_c,c(.025,.5,.975)),2)
+# # round(quantile(results$with_c_only,c(.025,.5,.975)),2)
+# #
+# # save.image("sim100.RData")
+#
+#
+# }
+#
