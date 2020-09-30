@@ -80,6 +80,8 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #  library(mltools)
   for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- factor(exposure_data[,i])}
   exposure_data <- mltools::one_hot(data.table::as.data.table(exposure_data))
+  exposure_data <- as.data.frame(exposure_data)
+  for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- as.numeric(exposure_data[,i])}
   return(exposure_data)
 }
 
@@ -198,7 +200,7 @@ for (lr_set in lr) {
       weight_performance <- c(weight_performance,model$weight_performance)
       baseline_risk_monitor <- c(baseline_risk_monitor,model$baseline_risk_monitor)
       plot(performance, type='l',yaxs='i', ylab="Mean squared error",
-           xlab="Epochs",main="Performance on training data set")
+           xlab="Epochs",main="Performance on training data set",ylim=c(min(performance),quantile(performance,c(.9))))
       points(smooth.spline(performance, df = spline_df),col="red",type='l',lwd=2)
 #      plot(performance_test, type='l',yaxs='i', ylab="Mean squared error",
 #           xlab="Epochs",main="Performance on test data set")
@@ -438,7 +440,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #  library(ggtree)
 #  library(ggplot2)
 #  library(wesanderson)
-  colours <- c("grey",wes_palette("Darjeeling1"))
+  colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
   print(ggtree(p_h_c,layout="equal_angle") +
           geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
           ggtitle(title) +
@@ -528,7 +530,7 @@ risk_max = 0
 
 CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,model,exclude_below=0.001) {
 #  library(wesanderson)
-  colours <- c("grey",wes_palette("Darjeeling1"))
+  colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
@@ -734,4 +736,51 @@ CoOL_0_mediation_simulation <- function(n) {
   return(data)
 }
 
+#' Confounding example
+#'
+#' To reproduce the confounding example.
+#'
+#' @param n number of observations for the synthetic data
 
+CoOL_0_confounding_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.4,.6))) B[i] <- 1
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.3,.7))) F[i] <- 1
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.15,.85))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+#' M-bias example
+#'
+#' To reproduce the M-bias example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_m_bias_simulation <- function(n) {
+#  n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
