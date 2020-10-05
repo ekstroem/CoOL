@@ -15,7 +15,7 @@
 random <- function(r,c,v) {
   w1 <- matrix(NA,nrow = r, ncol = c)
 #  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
-  w1 <- sapply(w1,function(x){rgamma(1,1,1000)})
+  w1 <- sapply(w1,function(x){rgamma(1,1,100)})
   w1 <- matrix(w1,nrow = r, ncol = c)
   return(w1)
 }
@@ -179,7 +179,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
-                            epochs = 50000, patience = 100,
+                            epochs = 50000, patience = 100,monitor = TRUE,
                             plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
   X_test = X_train
   Y_test = Y_train
@@ -199,6 +199,7 @@ for (lr_set in lr) {
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)
       baseline_risk_monitor <- c(baseline_risk_monitor,model$baseline_risk_monitor)
+      if (monitor == TRUE){
       plot(performance, type='l',yaxs='i', ylab="Mean squared error",
            xlab="Epochs",main="Performance on training data set",ylim=c(min(performance),quantile(performance,c(.9))))
       points(smooth.spline(performance, df = spline_df),col="red",type='l',lwd=2)
@@ -211,7 +212,7 @@ for (lr_set in lr) {
      abline(h=mean(Y_train),lty=2)
      points(smooth.spline(baseline_risk_monitor, df = spline_df),col="red",type='l',lwd=2)
       if(length(performance)-which.min(performance)>patience) break
-    }
+    }}
   model$train_performance <- c(performance)
   model$test_performance <-  c(performance_test)
   model$weight_performance <-  c(weight_performance)
@@ -784,3 +785,33 @@ CoOL_0_m_bias_simulation <- function(n) {
   for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
   return(data)
 }
+
+
+
+
+#' M-bias example
+#'
+#' To reproduce the M-bias example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_selection_simulation <- function(n) {
+  #  n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U1 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U2 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(A[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,U2)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  data <- data[!c(data$U2==0 & sample(0:1,nrow(data),replace=TRUE)==1),]
+  data <- data[,1:6]
+  return(data)
+}
+

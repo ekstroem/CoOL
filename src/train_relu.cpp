@@ -227,7 +227,7 @@ Rcpp::List cpp_train_network_relu(
       Rprintf("%d epochs: Train performance of %f. Baseline risk estimated to %f.\n",epoch, mean_perform, B2(0,0));
   // Warnings:
   if (B2(0,0) > mean_y) {
-  Rprintf("Warning: The baseline risk (%f) is higher than mean(Y) (%f)! Consider reducing the regularisation of the baseline risk.\n", B2(0,0), mean_y);
+  Rprintf("Warning: The baseline risk (%f) is higher than mean(Y) (%f)! Consider reducing the regularisation of the input parameters.\n", B2(0,0), mean_y);
    }
   if (sparse_data == 1) {
   Rprintf("Warning: The baseline risk (%f) has at one time been estimated to zero. Data may be too sparse.\n", B2(0,0));

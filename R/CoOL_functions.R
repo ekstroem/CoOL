@@ -15,7 +15,7 @@
 random <- function(r,c,v) {
   w1 <- matrix(NA,nrow = r, ncol = c)
 #  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
-  w1 <- sapply(w1,function(x){rgamma(1,1,1000)})
+  w1 <- sapply(w1,function(x){rgamma(1,1,100)})
   w1 <- matrix(w1,nrow = r, ncol = c)
   return(w1)
 }
@@ -179,7 +179,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
-                            epochs = 50000, patience = 100,
+                            epochs = 50000, patience = 100,monitor = TRUE,
                             plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
   X_test = X_train
   Y_test = Y_train
@@ -199,6 +199,7 @@ for (lr_set in lr) {
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)
       baseline_risk_monitor <- c(baseline_risk_monitor,model$baseline_risk_monitor)
+      if (monitor == TRUE){
       plot(performance, type='l',yaxs='i', ylab="Mean squared error",
            xlab="Epochs",main="Performance on training data set",ylim=c(min(performance),quantile(performance,c(.9))))
       points(smooth.spline(performance, df = spline_df),col="red",type='l',lwd=2)
@@ -211,7 +212,7 @@ for (lr_set in lr) {
      abline(h=mean(Y_train),lty=2)
      points(smooth.spline(baseline_risk_monitor, df = spline_df),col="red",type='l',lwd=2)
       if(length(performance)-which.min(performance)>patience) break
-    }
+    }}
   model$train_performance <- c(performance)
   model$test_performance <-  c(performance_test)
   model$weight_performance <-  c(weight_performance)
@@ -273,30 +274,30 @@ CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.0
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 
-CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model") {
+CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model connection weights and intercepts") {
   par(mar=c(0,0,2,0))
   plot(0,0,type='n',xlim=c(0,4),ylim=c(-max(nrow(model[[1]]),nrow(model[[3]]))-1,0),axes=FALSE,ylab="",xlab="",main=title)
   #abline(h=0)
-  points(rep(1,nrow(model[[1]])),-c(1:nrow(model[[1]])),cex=10)
-  points(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),cex=10)
-  points(3,-(ncol(model[[1]])+1)/2,cex=10)
+  #points(rep(1,nrow(model[[1]])),-c(1:nrow(model[[1]])),cex=10)
+  #points(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),cex=10)
+  #points(3,-(ncol(model[[1]])+1)/2,cex=10)
   # Static edges first in grey
   for (g in 1:nrow(model[[3]])) {
-    arrows(x0=2,x1=3,y0=-g,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[3]][g,1])*5,col=ifelse(model[[3]][g,1]>0,"grey","white"),length=0)
+    arrows(x0=2,x1=3,y0=-g,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[3]][g,1])*5,col=ifelse(model[[3]][g,1]>0,"lightgrey","white"),length=0)
     #   text(2,-g,round(model[[3]][g,1],2),pos=3)
   }
   # Trained edges
   for (g in 1:nrow(model[[1]])) {
     for (h in 1:ncol(model[[1]])) {
-      arrows(x0=1,x1=2,y0=-g,y1=-h,lwd=abs(model[[1]][g,h])*arrow_size,col=ifelse(model[[1]][g,h]>0,"green","white"),length=0)
+      arrows(x0=1,x1=2,y0=-g,y1=-h,lwd=abs(model[[1]][g,h])*arrow_size,col=ifelse(model[[1]][g,h]>0,"dodgerblue","white"),length=0)
       #      text(1,-g,round(model[[1]][g,h],2),pos=3)
     }
   }
   for (i in 1:nrow(model[[1]])) {
-    text(rep(1,nrow(model[[1]]))[i],-c(1:nrow(model[[1]]))[i],names[i])
+    text(rep(1,nrow(model[[1]]))[i],-c(1:nrow(model[[1]]))[i],names[i],pos=2)
   }
-  text(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),paste0("b=",round(model[[2]][1,],2)),pos=1)
-  text(3,-(ncol(model[[1]])+1)/2,paste0("B=",round(model[[4]][1,1],2)),pos=1)
+  text(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),paste0("a=",round(model[[2]][1,],2)),pos=3)
+  text(3,-(ncol(model[[1]])+1)/2,bquote(R^"b+"==.(round(model[[4]][1,1],2))),pos=1)
   par(mar=c(5.1,4.1,4.1,2.1))
   #  points(3,-(ncol(model[[1]])+1)/2+1,cex=10)
   #  arrows(x0=3,x1=3,y0=-(ncol(model[[1]])+1)/2+1,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[5]][1,1])*arrow_size,col=ifelse(model[[5]][1,1]>0,"green","white"),length=0)
@@ -334,7 +335,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @examples
 #' #See the example under CoOL_0_synthetic_data
 
-CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Accuracy") {
+CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating characteristic curve") {
 #library(pROC)
 pred <- CoOL_4_predict_risks(exposure_data,model)
 plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
@@ -784,3 +785,33 @@ CoOL_0_m_bias_simulation <- function(n) {
   for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
   return(data)
 }
+
+
+
+
+#' M-bias example
+#'
+#' To reproduce the M-bias example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_selection_simulation <- function(n) {
+  #  n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U1 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U2 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(A[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,U2)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  data <- data[!c(data$U2==0 & sample(0:1,nrow(data),replace=TRUE)==1),]
+  data <- data[,1:6]
+  return(data)
+}
+

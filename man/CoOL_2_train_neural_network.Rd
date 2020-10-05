@@ -13,6 +13,7 @@ CoOL_2_train_neural_network(
   lr = c(1e-04, 1e-05, 1e-06),
   epochs = 50000,
   patience = 100,
+  monitor = TRUE,
   plot_and_evaluation_frequency = 50,
   IPCW = NA,
   baseline_risk_reg = 0,
