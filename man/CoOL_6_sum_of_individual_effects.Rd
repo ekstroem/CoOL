@@ -15,5 +15,5 @@ CoOL_6_sum_of_individual_effects(X, model)
 By summing the through the risk as if each individual had been exposed to only one exposure, with the value the individual actually had.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

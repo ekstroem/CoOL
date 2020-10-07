@@ -74,5 +74,5 @@ R^{X}_i = \sum_j \Big(\frac{X_i^+ w_{i,j}}{\sum_i( X_i^+ w_{i,j})}R^X_j\Big)
 This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

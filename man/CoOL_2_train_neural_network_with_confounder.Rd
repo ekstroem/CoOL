@@ -36,5 +36,5 @@ CoOL_2_train_neural_network_with_confounder(
 This function trains the monotonistic neural network with a confounder connected to the output layer. This functions allows one to divide the training process into several steps.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

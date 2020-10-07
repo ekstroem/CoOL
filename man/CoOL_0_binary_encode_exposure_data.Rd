@@ -13,6 +13,6 @@ CoOL_0_binary_encode_exposure_data(exposure_data)
 This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (1/)).
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 
 }

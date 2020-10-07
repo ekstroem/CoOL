@@ -4,7 +4,12 @@
 \alias{CoOL_4_AUC}
 \title{Plot the ROC AUC}
 \usage{
-CoOL_4_AUC(outcome_data, exposure_data, model, title = "Accuracy")
+CoOL_4_AUC(
+  outcome_data,
+  exposure_data,
+  model,
+  title = "Receiver operating characteristic curve"
+)
 }
 \arguments{
 \item{outcome_data}{The outcome data}
@@ -19,5 +24,5 @@ CoOL_4_AUC(outcome_data, exposure_data, model, title = "Accuracy")
 Plot hte ROC AUC
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

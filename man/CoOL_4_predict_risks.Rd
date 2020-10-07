@@ -15,5 +15,5 @@ CoOL_4_predict_risks(X, model)
 Predict the risk of the outcome using the fitted monotonistic neural network.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

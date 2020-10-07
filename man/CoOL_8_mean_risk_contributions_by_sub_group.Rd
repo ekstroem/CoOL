@@ -30,5 +30,5 @@ CoOL_8_mean_risk_contributions_by_sub_group(
 Table with the mean risk contributions by sub-groups.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

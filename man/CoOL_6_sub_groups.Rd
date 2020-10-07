@@ -15,5 +15,5 @@ CoOL_6_sub_groups(risk_contributions, number_of_subgroups = 3)
 Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

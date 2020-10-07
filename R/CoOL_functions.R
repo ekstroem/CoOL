@@ -43,8 +43,52 @@ relu <- function(input) {
 #' @param n number of observations for the synthetic data
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
-#'
+#'	# Tutorial:
+#'	library(CoOL)
+#'	set.seed(1)
+#'	data <- CoOL_0_working_example(n=40000) # use 40 000 to replicate the paper
+#'	outcome_data <- data[,1]
+#'	exposure_data <- data[,-1]
+#'	exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
+#'	model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data,hidden=5)
+#'	#model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 200, input_parameter_reg = 0) # Train the non-negative model (The model can be retrained)
+#'	model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-5) # Train the non-negative model (The model can be retrained)
+#'	model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 100, input_parameter_reg = 1e-5) # Train the non-negative model (The model can be retrained)
+#'	model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-5) # Train the non-negative model (The model can be retrained)
+#'	# Use below to combine all plots (See the note regarding the dendrogram)
+#'	#layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE));par(mar=c(3,3,3,3))
+#'	par(mfrow=c(1,3))
+#'	plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="A) Performance during training",ylim=quantile(model$train_performance,c(0,.975))) # Model performance
+#'	CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "B) Model connection weights\nand intercepts") # Model visualization
+#'	library(pROC)
+#'	CoOL_4_AUC(outcome_data,exposure_data,model, title = "C) Receiver operating\ncharacteristic curve") # AUC
+#'	# Plot these
+#'	risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
+#'	library(ClustGeo)
+#'	library(wesanderson)
+#'	library(ggtree)
+#'	library(ggplot2)
+#'	png("dendrogram2.png",units = 'in',res=300,height = 4,width = 4)
+#'	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 2, title = "Colored for 2 sub-groups") # Dendrogram
+#'	dev.off()
+#'	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
+#'	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3, title = "Colored for 3 sub-groups") # Dendrogram
+#'	dev.off()
+#'	png("dendrogram4.png",units = 'in',res=300,height = 4,width = 4)
+#'	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 6, title = "Colored for 4 sub-groups") # Dendrogram
+#'	dev.off()
+#'	library(imager);im <- load.image("dendrogram2.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram2.png"),axes=F);par(mar=c(5,5,3,2))
+#'	library(imager);im <- load.image("dendrogram3.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
+#'	library(imager);im <- load.image("dendrogram4.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram4.png"),axes=F);par(mar=c(5,5,3,2))
+#'	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
+#'	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3, title = "D) Dendrogram with 3 sub-groups") # Dendrogram
+#'	dev.off()
+#'	library(imager);im <- load.image("dendrogram3.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
+#'	sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3) # Assign sub-groups
+#'	par(mfrow=c(2,1))
+#'	CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
+#'	CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,outcome_data = outcome_data,exposure_data = exposure_data, model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+
 
 CoOL_0_working_example <- function(n) {
   drug_a = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -73,7 +117,7 @@ CoOL_0_working_example <- function(n) {
 #' @param exposure_data The exposure data set
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 #'
 
 CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
@@ -105,7 +149,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #' }
 #'
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 #'
 
 
@@ -175,7 +219,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #'
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
@@ -239,7 +283,7 @@ for (lr_set in lr) {
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.01,
                                       epochs = 50000, patience = 500,
@@ -272,7 +316,7 @@ CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.0
 #' @param arrow_size defines the arrow_size for the model illustration in the reported training progress.
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model connection weights and intercepts") {
   par(mar=c(0,0,2,0))
@@ -312,7 +356,7 @@ CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Mode
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_4_predict_risks <- function(X,model) {
@@ -333,7 +377,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @param title Title on the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating characteristic curve") {
 #library(pROC)
@@ -352,7 +396,7 @@ plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_5_layerwise_relevance_propagation <- function(X,model) {
@@ -422,7 +466,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #' @param title The title of the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 
@@ -458,7 +502,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary)
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 
@@ -487,7 +531,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' @param title The title of the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups") {
@@ -527,7 +571,7 @@ risk_max = 0
 #' @param exclude_below A lower cut-off for which risk contributions shown
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,model,exclude_below=0.001) {
 #  library(wesanderson)
@@ -589,7 +633,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_6_sum_of_individual_effects <- function(X,model) {
 # All individuals has the baseline risk
@@ -613,7 +657,7 @@ return(sum_of_individial_effects)
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_6_individual_effects_matrix <- function(X,model) {
   ind_effect_matrix <- as.data.frame(matrix(0,nrow = nrow(X), ncol=ncol(X)+1)) # +1 for the baseline risk
