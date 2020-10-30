@@ -38,6 +38,8 @@ CoOL_2_train_neural_network(
 
 \item{patience}{The number of epochs allowed without an improvement in performance.}
 
+\item{monitor}{Whether a monitoring plot will be shown during training.}
+
 \item{plot_and_evaluation_frequency}{The interval for plotting the performance and checking the patience}
 
 \item{IPCW}{Inverse probability of censoring weights (Warning: not yet correctly implemented)}

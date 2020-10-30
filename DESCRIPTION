@@ -20,7 +20,8 @@ Imports:
     ggplot2,
     ggtree,
     ClustGeo,
-    wesanderson
+    wesanderson,
+    imager
 LinkingTo: 
   Rcpp, 
   RcppArmadillo
