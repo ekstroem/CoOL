@@ -25,6 +25,7 @@ arma::mat rcpprelu(const arma::mat & x) {
 
 //' Function used as part of other functions
 //'
+//' XXX needed here
 //'
 //' @description negative relu-function
 //' @param x input in the negative relu-function
@@ -38,8 +39,8 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 
 //' Function used as part of other functions
 //'
+//' A line with details are needed here. XXX
 //'
-//' @description Used as part of other functions.
 //' @param x A matrix of predictors for the training dataset
 //' @param y A vector of output values for the training data with a length similar to the number of rows of x
 //' @param testx A matrix of predictors for the test dataset
@@ -53,7 +54,6 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
 //' @param L1 Regularisation increasing parameter value at each iteration
 //' @return A list of class "SCL" giving the estimated matrices and performance indicators
-//' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 //'
 //' @export
 // [[Rcpp::export]]
@@ -265,6 +265,7 @@ Rcpp::List CoOL_cpp_train_network_relu(
 
 //' Function used as part of other functions
 //'
+//' XXX needed here
 //'
 //' @description Used as part of other functions.
 //' @param x A matrix of predictors for the training dataset

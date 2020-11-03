@@ -48,8 +48,5 @@ CoOL_cpp_train_network_relu(
 A list of class "SCL" giving the estimated matrices and performance indicators
 }
 \description{
-Used as part of other functions.
-}
-\author{
-Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
+A line with details are needed here. XXX
 }
