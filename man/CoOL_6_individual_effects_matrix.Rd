@@ -15,5 +15,5 @@ CoOL_6_individual_effects_matrix(X, model)
 Estimating the risk contribution for each exposure if each individual had been exposed to only one exposure, with the value the individual actually had.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

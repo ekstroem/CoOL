@@ -4,16 +4,31 @@
 \alias{CoOL_8_mean_risk_contributions_by_sub_group}
 \title{Mean risk contributions by sub-groups}
 \usage{
-CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups)
+CoOL_8_mean_risk_contributions_by_sub_group(
+  risk_contributions,
+  sub_groups,
+  exposure_data,
+  outcome_data,
+  model,
+  exclude_below = 0.001
+)
 }
 \arguments{
 \item{risk_contributions}{The risk contributions}
 
 \item{sub_groups}{The vector with the sub-groups}
+
+\item{exposure_data}{The exposure data}
+
+\item{outcome_data}{The outcome data}
+
+\item{model}{The trained non-negative model}
+
+\item{exclude_below}{A lower cut-off for which risk contributions shown}
 }
 \description{
 Table with the mean risk contributions by sub-groups.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

@@ -14,7 +14,8 @@
 
 random <- function(r,c,v) {
   w1 <- matrix(NA,nrow = r, ncol = c)
-  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
+#  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
+  w1 <- sapply(w1,function(x){rgamma(1,1,100)})
   w1 <- matrix(w1,nrow = r, ncol = c)
   return(w1)
 }
@@ -41,10 +42,86 @@ relu <- function(input) {
 #'
 #' @param n number of observations for the synthetic data
 #' @export
-#' @details
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
-#'
+#' 	# Not run
+#' 	while (FALSE) {
+#' 	# Tutorial:
+#' 	library(CoOL)
+#' 	setwd("C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/Figures/Redo")
+#' 	set.seed(1)
+#' 	data <- CoOL_0_working_example(n=40000) # use 40 000 to replicate the paper
+#' 	outcome_data <- data[,1]
+#' 	exposure_data <- data[,-1]
+#' 	exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
+#' 	model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data),
+#' 	output = outcome_data,hidden=5)
+#' 	model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data,
+#' 	Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+#' 	 epochs=1000,patience = 200, input_parameter_reg = 1e-5
+#' 	 ) # Train the non-negative model (The model can be retrained)
+#' 	model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data,
+#' 	 Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+#' 	 epochs=1000,patience = 100, input_parameter_reg = 1e-5
+#' 	 ) # Train the non-negative model (The model can be retrained)
+#' 	model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data,
+#' 	 Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data,
+#' 	 model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-5
+#' 	 ) # Train the non-negative model (The model can be retrained)
+#' 	# Use below to combine all plots (See the note regarding the dendrogram)
+#' 	#layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE)
+#' 	#);par(mar=c(3,3,3,3))
+#' 	par(mfrow=c(1,3))
+#' 	plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",
+#' 	xlab="Epochs",main="A) Performance during training",
+#' 	ylim=quantile(model$train_performance,c(0,.975))) # Model performance
+#' 	CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]])
+#' 	, title = "B) Model connection weights\nand intercepts") # Model visualization
+#' 	library(pROC)
+#' 	CoOL_4_AUC(outcome_data,exposure_data,model,
+#' 	title = "C) Receiver operating\ncharacteristic curve") # AUC
+#' 	# Plot these
+#' 	risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
+#' 	) # Risk contributions
+#' 	library(ClustGeo)
+#' 	library(wesanderson)
+#' 	library(ggtree)
+#' 	library(ggplot2)
+#' 	png("dendrogram2.png",units = 'in',res=300,height = 4,width = 4)
+#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 2,
+#' 	title = "Colored for 2 sub-groups") # Dendrogram
+#' 	dev.off()
+#' 	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
+#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
+#' 	title = "Colored for 3 sub-groups") # Dendrogram
+#' 	dev.off()
+#' 	png("dendrogram4.png",units = 'in',res=300,height = 4,width = 4)
+#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 6,
+#' 	title = "Colored for 4 sub-groups") # Dendrogram
+#' 	dev.off()
+#' 	library(imager);im <- load.image("dendrogram2.png");
+#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram2.png"),axes=F);par(mar=c(5,5,3,2))
+#' 	library(imager);im <- load.image("dendrogram3.png");
+#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
+#' 	library(imager);im <- load.image("dendrogram4.png");
+#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram4.png"),axes=F);par(mar=c(5,5,3,2))
+#' 	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
+#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
+#' 	title = "D) Dendrogram with 3 sub-groups") # Dendrogram
+#' 	dev.off()
+#' 	library(imager);im <- load.image("dendrogram3.png");
+#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
+#' 	sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
+#' 	) # Assign sub-groups
+#' 	par(mfrow=c(2,1))
+#' 	CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E
+#' 	) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
+#' 	CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,
+#' 	outcome_data = outcome_data,exposure_data = exposure_data,
+#' 	model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+#' 	}
+#' 	#End
+
+
 
 CoOL_0_working_example <- function(n) {
   drug_a = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -72,15 +149,16 @@ CoOL_0_working_example <- function(n) {
 #'
 #' @param exposure_data The exposure data set
 #' @export
-#' @details
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 #'
 
 CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #  library(mltools)
   for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- factor(exposure_data[,i])}
   exposure_data <- mltools::one_hot(data.table::as.data.table(exposure_data))
+  exposure_data <- as.data.frame(exposure_data)
+  for (i in 1:ncol(exposure_data)) {exposure_data[,i] <- as.numeric(exposure_data[,i])}
   return(exposure_data)
 }
 
@@ -104,7 +182,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #' }
 #'
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 #'
 
 
@@ -145,9 +223,11 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next)
 #' @param epochs Epochs
 #' @param patience The number of epochs allowed without an improvement in performance.
+#' @param monitor Whether a monitoring plot will be shown during training.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
 #' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
-#' @param L1 Regularisation
+#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk
+#' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots
 #' @details
 #' For each individual:\deqn{
@@ -173,12 +253,12 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #'
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
-                            epochs = 50000, patience = 100,
-                            plot_and_evaluation_frequency = 50, IPCW = NA, L1=0.00001, spline_df=10) {
+                            epochs = 50000, patience = 100,monitor = TRUE,
+                            plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
   X_test = X_train
   Y_test = Y_train
   if (is.na(IPCW)) IPCW <- rep(1,nrow(X_train))
@@ -190,15 +270,16 @@ for (lr_set in lr) {
   baseline_risk_monitor = model$baseline_risk_monitor
   par(mfrow=c(1,3));par(mar=c(3,5,3,1))
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
-      model <- CoOL_cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
+      model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
-              W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, L1=L1)
+              W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, baseline_risk_reg=baseline_risk_reg,input_parameter_reg=input_parameter_reg)
       performance <- c(performance,model$train_performance)
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)
       baseline_risk_monitor <- c(baseline_risk_monitor,model$baseline_risk_monitor)
+      if (monitor == TRUE){
       plot(performance, type='l',yaxs='i', ylab="Mean squared error",
-           xlab="Epochs",main="Performance on training data set")
+           xlab="Epochs",main="Performance on training data set",ylim=c(min(performance),stats::quantile(performance,c(.9))))
       points(smooth.spline(performance, df = spline_df),col="red",type='l',lwd=2)
 #      plot(performance_test, type='l',yaxs='i', ylab="Mean squared error",
 #           xlab="Epochs",main="Performance on test data set")
@@ -209,7 +290,7 @@ for (lr_set in lr) {
      abline(h=mean(Y_train),lty=2)
      points(smooth.spline(baseline_risk_monitor, df = spline_df),col="red",type='l',lwd=2)
       if(length(performance)-which.min(performance)>patience) break
-    }
+    }}
   model$train_performance <- c(performance)
   model$test_performance <-  c(performance_test)
   model$weight_performance <-  c(weight_performance)
@@ -220,43 +301,6 @@ for (lr_set in lr) {
   return(model)
 }
 
-
-
-#' Training the monotonistic neural network with a confounder connected to the output layer
-#'
-#' This function trains the monotonistic neural network with a confounder connected to the output layer. This functions allows one to divide the training process into several steps.
-#'
-#' @param X The exposure data
-#' @param Y The outcome data
-#' @param C The confounder data
-#' @param model The fitted monotonistic neural network
-#' @param lr Learning rate
-#' @param epochs Epochs
-#' @param patience The number of epochs allowed without an improvement in performance.
-#' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
-#' @details
-#' @export
-#' @examples
-#' #See the example under CoOL_0_synthetic_data
-
-CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.01,
-                                      epochs = 50000, patience = 500,
-                                      plot_and_evaluation_frequency = 50) {
-  C <- as.matrix(C)
-  performance = model$train_performance
-  par(mfrow=c(1,1));par(mar=c(3,5,3,1))
-  for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
-    model <- CoOL_cpp_train_network_relu_with_confounder(as.matrix(X),as.matrix(Y),as.matrix(C),as.matrix(X),as.matrix(Y),as.matrix(C),
-           lr = lr, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],W2_input = model[[3]],B2_input = model[[4]],C2_input = model[[5]])
-    performance <- c(performance,model$train_performance)
-    plot(performance, type='l',yaxs='i', ylab="Mean squared error",
-         xlab="Epochs",main="Performance")
-    if(length(performance)-which.min(performance)>patience) break
-  }
-  model$train_performance <- c(performance)
-  model$test_performance <- NA
-  return(model)
-}
 
 
 
@@ -270,32 +314,32 @@ CoOL_2_train_neural_network_with_confounder <- function(X, Y, C, model, lr = 0.0
 #' @param arrow_size defines the arrow_size for the model illustration in the reported training progress.
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
-CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model") {
+CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model connection weights and intercepts") {
   par(mar=c(0,0,2,0))
   plot(0,0,type='n',xlim=c(0,4),ylim=c(-max(nrow(model[[1]]),nrow(model[[3]]))-1,0),axes=FALSE,ylab="",xlab="",main=title)
   #abline(h=0)
-  points(rep(1,nrow(model[[1]])),-c(1:nrow(model[[1]])),cex=10)
-  points(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),cex=10)
-  points(3,-(ncol(model[[1]])+1)/2,cex=10)
+  #points(rep(1,nrow(model[[1]])),-c(1:nrow(model[[1]])),cex=10)
+  #points(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),cex=10)
+  #points(3,-(ncol(model[[1]])+1)/2,cex=10)
   # Static edges first in grey
   for (g in 1:nrow(model[[3]])) {
-    arrows(x0=2,x1=3,y0=-g,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[3]][g,1])*5,col=ifelse(model[[3]][g,1]>0,"grey","white"),length=0)
+    arrows(x0=2,x1=3,y0=-g,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[3]][g,1])*5,col=ifelse(model[[3]][g,1]>=0,"lightgrey","red"),length=0)
     #   text(2,-g,round(model[[3]][g,1],2),pos=3)
   }
   # Trained edges
   for (g in 1:nrow(model[[1]])) {
     for (h in 1:ncol(model[[1]])) {
-      arrows(x0=1,x1=2,y0=-g,y1=-h,lwd=abs(model[[1]][g,h])*arrow_size,col=ifelse(model[[1]][g,h]>0,"green","white"),length=0)
+      arrows(x0=1,x1=2,y0=-g,y1=-h,lwd=abs(model[[1]][g,h])*arrow_size,col=ifelse(model[[1]][g,h]>=0,"dodgerblue","red"),length=0)
       #      text(1,-g,round(model[[1]][g,h],2),pos=3)
     }
   }
   for (i in 1:nrow(model[[1]])) {
-    text(rep(1,nrow(model[[1]]))[i],-c(1:nrow(model[[1]]))[i],names[i])
+    text(rep(1,nrow(model[[1]]))[i],-c(1:nrow(model[[1]]))[i],names[i],pos=2)
   }
-  text(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),paste0("b=",round(model[[2]][1,],2)),pos=1)
-  text(3,-(ncol(model[[1]])+1)/2,paste0("B=",round(model[[4]][1,1],2)),pos=1)
+  text(rep(2,ncol(model[[1]])),-c(1:ncol(model[[1]])),paste0("a=",round(model[[2]][1,],2)),pos=3)
+  text(3,-(ncol(model[[1]])+1)/2,bquote(R^"b+"==.(round(model[[4]][1,1],2))),pos=1)
   par(mar=c(5.1,4.1,4.1,2.1))
   #  points(3,-(ncol(model[[1]])+1)/2+1,cex=10)
   #  arrows(x0=3,x1=3,y0=-(ncol(model[[1]])+1)/2+1,y1= -(ncol(model[[1]])+1)/2,lwd=abs(model[[5]][1,1])*arrow_size,col=ifelse(model[[5]][1,1]>0,"green","white"),length=0)
@@ -310,7 +354,7 @@ CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Mode
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_4_predict_risks <- function(X,model) {
@@ -331,12 +375,12 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @param title Title on the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
-CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Accuracy") {
-#library(pROC)
+CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating characteristic curve") {
+library(pROC)
 pred <- CoOL_4_predict_risks(exposure_data,model)
-plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
+plot(pROC::roc(outcome_data,pred),print.auc=TRUE,main=title)
 }
 
 
@@ -350,7 +394,7 @@ plot(roc(outcome_data,pred),print.auc=TRUE,main=title)
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_5_layerwise_relevance_propagation <- function(X,model) {
@@ -365,7 +409,8 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
   U_B = NULL
 
   H_all <- relu(t(t(as.matrix(X) %*% as.matrix(model[[1]])) + as.vector(model[[2]])))
-  o_all = as.vector(H_all %*% model[[3]][,1] + as.vector(model[[4]][1,1]))
+  o_all = relu(as.vector(H_all %*% model[[3]][,1] + as.vector(model[[4]][1,1])))
+
 
   for (i in 1:nrow(X)) {
     if (i / 1000 == i %/% 1000) {print(i)}
@@ -379,15 +424,14 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
     Pos1_sum <- ifelse(is.na(Pos1_sum)|Pos1_sum==0,1,Pos1_sum)
     Pos1 = (H*Pos1)/Pos1_sum
 
-    model[[3]][,1] < 0 # ensure none are below 0
+    if(sum(model[[3]]<0)> 0) print("Some weigths are below 0") # ensure none are below 0
 
-
-    o <- as.numeric(o * (1-  (relu(model[[4]]) / o))) # Subtracting the first U_B
+    o <- relu(as.numeric(o - relu(relu(model[[4]]) ))) # Subtracting the first U_B
     R_H = Pos1 * o
 
     Pos2 = model[[1]]
     Pos2 = ifelse(Pos2>0,Pos2,0)
-    model[[1]] < 0 # ensure none are below 0
+    if(sum(model[[1]]<0)> 0) print("Some weigths are below 0") # ensure none are below 0
 
     for (g in 1:length(H)) {
       Pos2_sum = sum(X[i,]*Pos2[,g])
@@ -420,7 +464,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #' @param title The title of the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 
@@ -439,7 +483,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #  library(ggtree)
 #  library(ggplot2)
 #  library(wesanderson)
-  colours <- c("grey",wes_palette("Darjeeling1"))
+  colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
   print(ggtree(p_h_c,layout="equal_angle") +
           geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
           ggtitle(title) +
@@ -456,7 +500,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary)
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 
@@ -485,7 +529,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' @param title The title of the plot
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 
 CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups") {
@@ -519,13 +563,17 @@ risk_max = 0
 #'
 #' @param risk_contributions The risk contributions
 #' @param sub_groups The vector with the sub-groups
+#' @param exposure_data The exposure data
+#' @param outcome_data The outcome data
+#' @param model The trained non-negative model
+#' @param exclude_below A lower cut-off for which risk contributions shown
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
-CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups) {
+CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,model,exclude_below=0.001) {
 #  library(wesanderson)
-  colours <- c("grey",wes_palette("Darjeeling1"))
+  colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
@@ -556,7 +604,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
                               paste0(format(round(prop.test(sum(outcome_data[sub_groups==i]),length(t(outcome_data)[sub_groups==i]))$conf.int*100,1),nsmall=1),collapse="-"),
                               "%)\n",
                               "Risk based on the sum of individual effects =",
-                              format(round(mean(CoOL_6_sum_of_individual_effects(exposure_data,model)[sub_groups==i])*100,1),nsmall=1),
+                              format(round(mean(CoOL_6_sum_of_individual_effects(exposure_data,model=model)[sub_groups==i])*100,1),nsmall=1),
                               "%"),pos=4,col=colours[i])
   }
   m <- max(d)
@@ -564,9 +612,11 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   for(g in 1:ncol(d)) { for (i in 1:nrow(d)){
     value <- paste0(format(round(as.numeric(d[i,g])*100,1),nsmall=),"%\n(",
                     format(round(sd(risk_contributions[sub_groups==i,g])*100,1),nsmall=1),"%)\n[",
-                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]"
-    )
-    text(-g,-i,value,col=adjustcolor(colours[i],d[i,g]/m),cex=st*d[i,g]/m)
+                    format(round(mean(ind_effect_matrix[sub_groups==i,g]*100),1),nsmall=1),"%]")
+
+#    text(-g,-i,value,col=adjustcolor(colours[i],d[i,g]/m),cex=st*d[i,g]/m)
+#    text(-g,-i,value,col=adjustcolor(colours[i],1),cex=st*d[i,g]/m)
+    text(-g,-i,value,col=adjustcolor(colours[i],ifelse(d[i,g]<   exclude_below,0,1)),cex=st)
   }}
   return(t(d))
   }
@@ -581,7 +631,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_6_sum_of_individual_effects <- function(X,model) {
 # All individuals has the baseline risk
@@ -605,7 +655,7 @@ return(sum_of_individial_effects)
 #' @param model The fitted the monotonistic neural network
 #' @export
 #' @examples
-#' #See the example under CoOL_0_synthetic_data
+#' #See the example under CoOL_0_working_example
 
 CoOL_6_individual_effects_matrix <- function(X,model) {
   ind_effect_matrix <- as.data.frame(matrix(0,nrow = nrow(X), ncol=ncol(X)+1)) # +1 for the baseline risk
@@ -619,3 +669,247 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
   ind_effect_matrix[,ncol(X)+1] <- rep(as.vector(model[[4]][1,1]),nrow(X))
   return(ind_effect_matrix)
 }
+
+
+#' The default analysis for phase 2 of CoOL
+#'
+#' The analysis and plots presented in the main paper. We recommend using View(CoOL_default) and View() on the many sub-functions to understand the steps and modify to your own research question. 3 sets of training will run with a learning rate of 1e-4 and a patience of 200 epochs, a learning rate of 1e-5 and a patience of 100 epochs, and a learning rate of 1e-6 and a patience of 50 epochs.
+#'
+#' @param data A data.frame(cbind(outcome_data,exposure_data)).
+#' @param sub_groups Define the number of expected sub-groups.
+#' @param exclude_below Risk contributions below this value are not shown in the table.
+#' @param input_parameter_reg The regularization of the input parameters.
+#' @param hidden The number of synergy-functions.
+#' @param monitor Whether monitoring plots will be shown in R.
+#' @param epochs The maximum number of epochs.
+#' @export
+#' @examples
+#' # Not run
+#' while (FALSE) {
+#' #See the example under CoOL_0_working_example for a more detailed tutorial
+#' library(CoOL)
+#' data <- CoOL_0_working_example(n=10000)
+#' CoOL_default(data)
+#' }
+
+CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_reg = 1e-3,hidden=5,monitor=TRUE,epochs=10000) {
+  library(pROC)
+  library(ClustGeo)
+  library(wesanderson)
+  library(ggtree)
+  library(ggplot2)
+  library(imager)
+  outcome_data <- data[,1]
+  exposure_data <- data[,-1]
+  exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
+  model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data,hidden=hidden)
+  model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=epochs,patience = 200, input_parameter_reg = input_parameter_reg,monitor=monitor) # Train the non-negative model (The model can be retrained)
+  model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=epochs,patience = 100, input_parameter_reg = input_parameter_reg,monitor=monitor) # Train the non-negative model (The model can be retrained)
+  model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=epochs,patience = 50, input_parameter_reg = input_parameter_reg,monitor=monitor) # Train the non-negative model (The model can be retrained)
+  # Use below to combine all plots (See the note regarding the dendrogram)
+  layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE));par(mar=c(3,3,3,3));par(oma=c(0,0,3,0))
+  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="Performance - training data") # Model performance
+  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "Model") # Model visualization
+  mtext(paste0("CoOL - phase 2 (N=",nrow(data)," events=",sum(outcome_data),")"),side=3,line=5)
+  library(pROC)
+  CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
+  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
+  library(ClustGeo)
+  library(wesanderson)
+  library(ggtree)
+  library(ggplot2)
+  png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
+  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
+  dev.off()
+  library(imager);im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = sub_groups) # Assign sub-groups
+  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups) # Prevalence and mean risk plot
+  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,exposure_data = exposure_data, outcome_data = outcome_data,model=model,exclude_below = exclude_below) #  Mean risk contributions by sub-groups
+}
+
+
+
+#' Complex example
+#'
+#' To reproduce the complex example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_complex_simulation <- function(n) {
+  #n = 20000
+  Genes = sample(1:0,n,prob=c(0.05,0.95),replace=TRUE)
+  Living_area = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+
+  Low_SES = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  Physically_active = sample(1:0,n,prob=c(0.8,0.2),replace=TRUE)
+  for (i in 1:n) {
+    if (Low_SES[i] == 1 & sample(1:0,1,prob=c(.2,.8)) ) Physically_active[i] <- 0
+  }
+
+  Mutation_X = rep(0,n)
+  for (i in 1:n) {
+    if (Genes[i] == 1 & sample(1:0,1,prob=c(.95,.05)) ) Mutation_X[i] <- 1
+  }
+  LDL = sample(1:0,n,prob=c(0.3,0.7),replace=TRUE)
+  for (i in 1:n) {
+    if (Genes[i] == 1 & sample(1:0,1,prob=c(.15,.85)) ) LDL[i] <- 1
+  }
+  Night_shifts = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  for (i in 1:n) {
+    if (Living_area[i] == 1 & sample(1:0,1,prob=c(.1,.9)) ) Night_shifts[i] <- 1
+    if (Low_SES[i] == 1 & sample(1:0,1,prob=c(.1,.9)) ) Night_shifts[i] <- 1
+  }
+  Air_pollution = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
+  for (i in 1:n) {
+    if (Living_area[i] == 1 & sample(1:0,1,prob=c(.3,.7)) ) Air_pollution[i] <- 1
+  }
+
+  Y <-  sample(1:0,n,prob=c(0.05,0.95),replace = TRUE)
+  for (i in 1:n) {
+    if (Physically_active[i] == 0 & LDL[i] == 1 & Night_shifts[i] == 1 & sample(1:0,1,prob=c(.15,0.85)) ) {
+      Y[i] <- 1
+    }
+    if (Mutation_X[i] == 1 & Air_pollution[i] == 1 & sample(1:0,1,prob=c(.1,0.9)) ) {
+      Y[i] <- 1
+    }
+  }
+
+  #  C = rep(0,n)
+
+  data <- data.frame(Y,Physically_active,Low_SES,Mutation_X,LDL,Night_shifts,Air_pollution) #,C)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+
+#' Common example
+#'
+#' To reproduce the common causes example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_common_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.4,.6))) B[i] <- 1
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) E[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.04,.96))) Y[i] <- 1
+  for (i in 1:n) if(E[i]==1 & sample(1:0,1,prob=c(.06,.94))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+
+#' Mediation example
+#'
+#' To reproduce the mediation example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_mediation_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.2,.8))) E[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.04,.96))) Y[i] <- 1
+  for (i in 1:n) if(E[i]==1 & sample(1:0,1,prob=c(.06,.94))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+#' Confounding example
+#'
+#' To reproduce the confounding example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_confounding_simulation <- function(n) {
+  #n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.4,.6))) B[i] <- 1
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.3,.7))) F[i] <- 1
+  for (i in 1:n) if(C[i]==1 & sample(1:0,1,prob=c(.15,.85))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+#' M-bias example
+#'
+#' To reproduce the M-bias example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_m_bias_simulation <- function(n) {
+#  n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
+  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
+  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,F)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  return(data)
+}
+
+
+
+
+#' M-bias example
+#'
+#' To reproduce the M-bias example.
+#'
+#' @param n number of observations for the synthetic data
+
+CoOL_0_selection_simulation <- function(n) {
+  #  n = 20000
+  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U1 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  U2 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
+  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(A[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
+  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
+  data <- data.frame(Y,A,B,C,D,E,U2)
+  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
+  data <- data[!c(data$U2==0 & sample(0:1,nrow(data),replace=TRUE)==1),]
+  data <- data[,1:6]
+  return(data)
+}
+

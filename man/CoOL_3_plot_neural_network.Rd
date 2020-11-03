@@ -4,7 +4,12 @@
 \alias{CoOL_3_plot_neural_network}
 \title{Plotting the monotonistic neural network}
 \usage{
-CoOL_3_plot_neural_network(model, names, arrow_size = 2, title = "Model")
+CoOL_3_plot_neural_network(
+  model,
+  names,
+  arrow_size = 2,
+  title = "Model connection weights and intercepts"
+)
 }
 \arguments{
 \item{model}{The fitted monotonistic neural network}
@@ -19,5 +24,5 @@ CoOL_3_plot_neural_network(model, names, arrow_size = 2, title = "Model")
 This function plots the monotonistic neural network
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

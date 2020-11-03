@@ -21,5 +21,5 @@ CoOL_7_prevalence_and_mean_risk_plot(
 This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

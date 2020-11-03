@@ -1,8 +1,8 @@
 Package: CoOL
 Type: Package
 Title: Causes of Outcome Learning
-Version: 0.9.1
-Date: 2020-04-06
+Version: 0.9.5
+Date: 2020-10-30
 Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
 Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
 Description: Implementing phase 2 of Causes of Outcome Learning.
@@ -20,7 +20,8 @@ Imports:
     ggplot2,
     ggtree,
     ClustGeo,
-    wesanderson
+    wesanderson,
+    imager
 LinkingTo: 
   Rcpp, 
   RcppArmadillo

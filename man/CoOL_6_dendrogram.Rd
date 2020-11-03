@@ -21,5 +21,5 @@ CoOL_6_dendrogram(
 Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }

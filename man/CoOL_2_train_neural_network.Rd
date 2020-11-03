@@ -13,9 +13,11 @@ CoOL_2_train_neural_network(
   lr = c(1e-04, 1e-05, 1e-06),
   epochs = 50000,
   patience = 100,
+  monitor = TRUE,
   plot_and_evaluation_frequency = 50,
   IPCW = NA,
-  L1 = 1e-05,
+  baseline_risk_reg = 0,
+  input_parameter_reg = 0.001,
   spline_df = 10
 )
 }
@@ -36,11 +38,15 @@ CoOL_2_train_neural_network(
 
 \item{patience}{The number of epochs allowed without an improvement in performance.}
 
+\item{monitor}{Whether a monitoring plot will be shown during training.}
+
 \item{plot_and_evaluation_frequency}{The interval for plotting the performance and checking the patience}
 
 \item{IPCW}{Inverse probability of censoring weights (Warning: not yet correctly implemented)}
 
-\item{L1}{Regularisation}
+\item{baseline_risk_reg}{Regularisation increasing parameter value at each iteration for the baseline risk}
+
+\item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
 
 \item{spline_df}{Degrees of freedom for the spline fit for the performance plots}
 }
@@ -70,5 +76,5 @@ R^{X}_i = \sum_j \Big(\frac{X_i^+ w_{i,j}}{\sum_i( X_i^+ w_{i,j})}R^X_j\Big)
 This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
 }
 \examples{
-#See the example under CoOL_0_synthetic_data
+#See the example under CoOL_0_working_example
 }
