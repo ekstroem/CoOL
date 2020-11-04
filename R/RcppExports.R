@@ -14,6 +14,7 @@ rcpprelu <- function(x) {
 
 #' Function used as part of other functions
 #'
+#' XXX needed here
 #'
 #' @description negative relu-function
 #' @param x input in the negative relu-function
@@ -25,8 +26,8 @@ rcpprelu_neg <- function(x) {
 
 #' Function used as part of other functions
 #'
+#' A line with details are needed here. XXX
 #'
-#' @description Used as part of other functions.
 #' @param x A matrix of predictors for the training dataset
 #' @param y A vector of output values for the training data with a length similar to the number of rows of x
 #' @param testx A matrix of predictors for the test dataset
@@ -50,6 +51,7 @@ cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_in
 
 #' Function used as part of other functions
 #'
+#' XXX needed here
 #'
 #' @description Used as part of other functions.
 #' @param x A matrix of predictors for the training dataset

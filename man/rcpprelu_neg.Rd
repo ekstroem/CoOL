@@ -12,3 +12,6 @@ rcpprelu_neg(x)
 \description{
 negative relu-function
 }
+\details{
+XXX needed here
+}

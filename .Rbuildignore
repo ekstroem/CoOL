@@ -1,3 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+<<<<<<< HEAD
 ^.*\.o$
+=======
+^\.git$
+.gitignore
+>>>>>>> 269e0dc3dd489b95eb0f40593ab4a1b8fc8a29b9

@@ -53,6 +53,9 @@ A list of class "SCL" giving the estimated matrices and performance indicators
 \description{
 Used as part of other functions.
 }
+\details{
+XXX needed here
+}
 \author{
 Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 }
