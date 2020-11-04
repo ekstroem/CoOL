@@ -1,7 +1,7 @@
 Package: CoOL
 Type: Package
 Title: Causes of Outcome Learning
-Version: 0.9.5
+Version: 0.9.7
 Date: 2020-10-30
 Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
 Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
