@@ -1,7 +1,7 @@
 [
     {
         "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
-        "file_last_write": 1601471054.0,
+        "file_last_write": 1604476284.0,
         "definitions": [
             {
                 "usr": "c:@F@rcpprelu#&1$@N@arma@S@Mat>#d#",
@@ -18,7 +18,7 @@
                 "parent_name": "",
                 "name": "rcpprelu_neg(const arma::mat &)",
                 "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
-                "line": 34,
+                "line": 35,
                 "column": 11
             },
             {
@@ -27,7 +27,7 @@
                 "parent_name": "",
                 "name": "cpp_train_network_relu(const arma::mat &, const arma::vec &, const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::vec &, double, double, double, double)",
                 "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
-                "line": 61,
+                "line": 62,
                 "column": 12
             },
             {
@@ -36,7 +36,7 @@
                 "parent_name": "",
                 "name": "cpp_train_network_relu_with_confounder(const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::vec &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, const arma::mat &, double, double)",
                 "file": "C:/Users/lvb917/Dropbox/Post doc/CoOL/src/train_relu.cpp",
-                "line": 290,
+                "line": 292,
                 "column": 12
             }
         ]

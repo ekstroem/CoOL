@@ -53,3 +53,6 @@ A list of class "SCL" giving the estimated matrices and performance indicators
 \description{
 A line with details are needed here. XXX
 }
+\author{
+Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
+}
