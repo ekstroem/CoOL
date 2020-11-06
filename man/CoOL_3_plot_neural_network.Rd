@@ -7,7 +7,7 @@
 CoOL_3_plot_neural_network(
   model,
   names,
-  arrow_size = 2,
+  arrow_size = NA,
   title = "Model connection weights and intercepts"
 )
 }

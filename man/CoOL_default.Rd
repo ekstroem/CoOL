@@ -9,7 +9,7 @@ CoOL_default(
   sub_groups = 3,
   exclude_below = 0.01,
   input_parameter_reg = 0.001,
-  hidden = 5,
+  hidden = 10,
   monitor = TRUE,
   epochs = 10000
 )

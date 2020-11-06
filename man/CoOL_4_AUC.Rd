@@ -8,7 +8,7 @@ CoOL_4_AUC(
   outcome_data,
   exposure_data,
   model,
-  title = "Receiver operating characteristic curve"
+  title = "Receiver operating\\ncharacteristic curve"
 )
 }
 \arguments{

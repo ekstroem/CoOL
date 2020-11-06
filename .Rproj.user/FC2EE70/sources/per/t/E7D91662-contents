@@ -45,84 +45,26 @@ relu <- function(input) {
 #' @param n number of observations for the synthetic data
 #' @export
 #' @examples
-#' 	# Not run
 #' 	while (FALSE) {
-#' 	# Tutorial:
-#' 	library(CoOL)
-#' 	setwd("C:/Users/lvb917/Google Drev/gdrive - SCL/Manuscripts/Epi paper/Figures/Redo")
-#' 	set.seed(1)
-#' 	data <- CoOL_0_working_example(n=40000) # use 40 000 to replicate the paper
-#' 	outcome_data <- data[,1]
-#' 	exposure_data <- data[,-1]
-#' 	exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
-#' 	model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data),
-#' 	output = outcome_data,hidden=5)
-#' 	model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data,
-#' 	Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
-#' 	 epochs=1000,patience = 200, input_parameter_reg = 1e-5
-#' 	 ) # Train the non-negative model (The model can be retrained)
-#' 	model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data,
-#' 	 Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
-#' 	 epochs=1000,patience = 100, input_parameter_reg = 1e-5
-#' 	 ) # Train the non-negative model (The model can be retrained)
-#' 	model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data,
-#' 	 Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data,
-#' 	 model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-5
-#' 	 ) # Train the non-negative model (The model can be retrained)
-#' 	# Use below to combine all plots (See the note regarding the dendrogram)
-#' 	#layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE)
-#' 	#);par(mar=c(3,3,3,3))
-#' 	par(mfrow=c(1,3))
-#' 	plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",
-#' 	xlab="Epochs",main="A) Performance during training",
-#' 	ylim=quantile(model$train_performance,c(0,.975))) # Model performance
-#' 	CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]])
-#' 	, title = "B) Model connection weights\nand intercepts") # Model visualization
-#' 	library(pROC)
-#' 	CoOL_4_AUC(outcome_data,exposure_data,model,
-#' 	title = "C) Receiver operating\ncharacteristic curve") # AUC
-#' 	# Plot these
-#' 	risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
-#' 	) # Risk contributions
-#' 	library(ClustGeo)
-#' 	library(wesanderson)
-#' 	library(ggtree)
-#' 	library(ggplot2)
-#' 	png("dendrogram2.png",units = 'in',res=300,height = 4,width = 4)
-#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 2,
-#' 	title = "Colored for 2 sub-groups") # Dendrogram
-#' 	dev.off()
-#' 	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
-#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
-#' 	title = "Colored for 3 sub-groups") # Dendrogram
-#' 	dev.off()
-#' 	png("dendrogram4.png",units = 'in',res=300,height = 4,width = 4)
-#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 6,
-#' 	title = "Colored for 4 sub-groups") # Dendrogram
-#' 	dev.off()
-#' 	library(imager);im <- load.image("dendrogram2.png");
-#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram2.png"),axes=F);par(mar=c(5,5,3,2))
-#' 	library(imager);im <- load.image("dendrogram3.png");
-#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
-#' 	library(imager);im <- load.image("dendrogram4.png");
-#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram4.png"),axes=F);par(mar=c(5,5,3,2))
-#' 	png("dendrogram3.png",units = 'in',res=300,height = 4,width = 4)
-#' 	CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
-#' 	title = "D) Dendrogram with 3 sub-groups") # Dendrogram
-#' 	dev.off()
-#' 	library(imager);im <- load.image("dendrogram3.png");
-#' 	par(mar=c(0,0,0,0));plot(load.image("dendrogram3.png"),axes=F);par(mar=c(5,5,3,2))
-#' 	sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
-#' 	) # Assign sub-groups
-#' 	par(mfrow=c(2,1))
-#' 	CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E
-#' 	) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
-#' 	CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,
-#' 	outcome_data = outcome_data,exposure_data = exposure_data,
-#' 	model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+#'  library(CoOL)
+#'  set.seed(1)
+#'  data <- CoOL_0_working_example(n=10000)
+#'  outcome_data <- data[,1]
+#'  exposure_data <- data[,-1]
+#'  exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
+#'  model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data,hidden=5)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 100, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
+#'  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="A) Performance during training\n\n",ylim=quantile(model$train_performance,c(0,.975))) # Model performance
+#'  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "B) Model connection weights\nand intercepts") # Model visualization
+#'  CoOL_4_AUC(outcome_data,exposure_data,model, title = "C) Receiver operating\ncharacteristic curve") # AUC
+#'  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
+#'  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3, title = "D) Dendrogram with 3 sub-groups") # Dendrogram
+#'  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3) # Assign sub-groups
+#'  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
+#'  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,outcome_data = outcome_data,exposure_data = exposure_data, model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
 #' 	}
-#' 	#End
-
 
 
 CoOL_0_working_example <- function(n) {
@@ -258,7 +200,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
-                            epochs = 50000, patience = 100,monitor = TRUE,
+                            epochs = 2000, patience = 100,monitor = TRUE,
                             plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
   X_test = X_train
   Y_test = Y_train
@@ -317,8 +259,9 @@ for (lr_set in lr) {
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_3_plot_neural_network <- function(model,names,arrow_size = 2, title = "Model connection weights and intercepts") {
-  par(mar=c(0,0,2,0))
+CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA, title = "Model connection weights and intercepts") {
+  par(mar=c(0,0,3,0))
+  if (is.na(arrow_size)) arrow_size = 5/max(model[[1]])
   plot(0,0,type='n',xlim=c(0,4),ylim=c(-max(nrow(model[[1]]),nrow(model[[3]]))-1,0),axes=FALSE,ylab="",xlab="",main=title)
   #abline(h=0)
   #points(rep(1,nrow(model[[1]])),-c(1:nrow(model[[1]])),cex=10)
@@ -378,7 +321,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating characteristic curve") {
+CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating\ncharacteristic curve") {
 pred <- CoOL_4_predict_risks(exposure_data,model)
 plot(pROC::roc(outcome_data,pred),print.auc=TRUE,main=title)
 }
@@ -586,7 +529,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   par(mar=c(0,0,0,0))
   plot(0,0,type='n',xlim=c(-ncol(d)-6,0),ylim=c(-nrow(d)-1,1),axes=F)
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
-  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group (SD)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
+  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group\n(Standard diviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
@@ -685,7 +628,7 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 #' CoOL_default(data)
 #' }
 
-CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_reg = 1e-3,hidden=5,monitor=TRUE,epochs=10000) {
+CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_reg = 1e-3,hidden=10,monitor=TRUE,epochs=10000) {
   outcome_data <- data[,1]
   exposure_data <- data[,-1]
   exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
@@ -695,9 +638,9 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
   model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=epochs,patience = 50, input_parameter_reg = input_parameter_reg,monitor=monitor) # Train the non-negative model (The model can be retrained)
   # Use below to combine all plots (See the note regarding the dendrogram)
   layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE));par(mar=c(3,3,3,3));par(oma=c(0,0,3,0))
-  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="Performance - training data") # Model performance
+  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="Performance - training data\n") # Model performance
   CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "Model") # Model visualization
-  mtext(paste0("CoOL - phase 2 (N=",nrow(data)," events=",sum(outcome_data),")"),side=3,line=5)
+  mtext(paste0("CoOL (n=",format(nrow(data),big.mark = ",")," events=",format(sum(outcome_data),big.mark = ","),")"),side=3,line=5)
   CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
   risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
   png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)

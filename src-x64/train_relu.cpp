@@ -25,6 +25,7 @@ arma::mat rcpprelu(const arma::mat & x) {
 
 //' Function used as part of other functions
 //'
+//' XXX needed here
 //'
 //' @description negative relu-function
 //' @param x input in the negative relu-function
@@ -38,8 +39,8 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 
 //' Function used as part of other functions
 //'
+//' A line with details are needed here. XXX
 //'
-//' @description Used as part of other functions.
 //' @param x A matrix of predictors for the training dataset
 //' @param y A vector of output values for the training data with a length similar to the number of rows of x
 //' @param testx A matrix of predictors for the test dataset
@@ -267,6 +268,7 @@ Rcpp::List cpp_train_network_relu(
 
 //' Function used as part of other functions
 //'
+//' XXX needed here
 //'
 //' @description Used as part of other functions.
 //' @param x A matrix of predictors for the training dataset
