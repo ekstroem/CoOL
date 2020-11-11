@@ -135,7 +135,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
   b1 <- -abs(random(1,hidden,0.01))
 #  w2 <- abs(random(hidden,1,0.01))
   w2 <- matrix(1,nrow=hidden)
-  b2 <- abs(random(1,1,0.01))
+  b2 <- mean(output)
   if (confounder==TRUE)  c2 <- abs(random(1,1,0.01))
   performance <- NA
   best_epoch <- NA
@@ -228,7 +228,7 @@ for (lr_set in lr) {
 #           xlab="Epochs",main="Performance on test data set")
      plot(log(weight_performance), type='l', ylab="log of mean squared weight difference",
           xlab="Epochs",main="Log mean squared weight difference")
-     points(smooth.spline(log(weight_performance), df = spline_df),col="red",type='l',lwd=2)
+     points(smooth.spline(log(weight_performance)[is.infinite(log(weight_performance))==FALSE], df = spline_df),col="red",type='l',lwd=2)
      plot(baseline_risk_monitor,type='l', main="Estimated baseline risk by epoch")
      abline(h=mean(Y_train),lty=2)
      points(smooth.spline(baseline_risk_monitor, df = spline_df),col="red",type='l',lwd=2)
