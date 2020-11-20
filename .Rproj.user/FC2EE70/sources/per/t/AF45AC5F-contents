@@ -105,18 +105,19 @@ lrp <- function(X,model,alpha=1,beta=0) {
 
 
 ######### Simulation ##############
-n = 40000
-age = c(rep(0,n/2),rep(1,n/2))
+n = 36000
+px = c(rep(0,n/2),rep(1,n/2))
 sex = c(rep(0,n/4),rep(1,n/4),rep(0,n/4),rep(1,n/4))
-table(sex,age)
+table(sex,px)
 y = c(rep(1,n/4/10),rep(0,n/4-n/4/10),
       rep(1,n/4/10),rep(0,n/4-n/4/10),
-      rep(1,n/4/10*4),rep(0,n/4-n/4/10*4),
-      rep(1,n/4/10*2),rep(0,n/4-n/4/10*2))
-data<-data.frame(y,age,sex)
+      rep(1,n/4/10*2),rep(0,n/4-n/4/10*2),
+      rep(1,n/4/10*4),rep(0,n/4-n/4/10*4))
+data<-data.frame(y,px,sex)
 data_d <- subset(data,y==1)
-table(data$sex,data$age)
-table(data_d$sex,data_d$age)/table(data$sex,data$age)
+table(data$sex,data$px)
+table(data_d$sex,data_d$px)/table(data$sex,data$px)
+mean(data[data$px==1&data$sex==0,"y"])
 outcome_data <- data$y
 exposure_data <- data[,-1]
 library(CoOL)
@@ -135,7 +136,7 @@ library(pROC)
 auc(data$outcome_data,predict(bst,newdata = as.matrix(data[,-1])))
 xgb.plot.tree(model = bst)
 res_xgboost_shap <- shap_model(data,bst)
-
+res_xgboost_shap
 
 
 ######### randomForest ############
@@ -160,18 +161,26 @@ res_nnnn_shap <- shap_cool(data)
 # risk contributions
 risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model_CoOL) # Risk contributions
 res_nnnn_cool <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
-res_nnnn_cool[1,3:4] <- colMeans(risk_contributions[exposure_data$age_0==1&exposure_data$sex_0==1,])[c(1,3)]
-res_nnnn_cool[2,3:4] <- colMeans(risk_contributions[exposure_data$age_0==1&exposure_data$sex_1==1,])[c(1,4)]
-res_nnnn_cool[3,3:4] <- colMeans(risk_contributions[exposure_data$age_1==1&exposure_data$sex_0==1,])[c(2,3)]
-res_nnnn_cool[4,3:4] <- colMeans(risk_contributions[exposure_data$age_1==1&exposure_data$sex_1==1,])[c(2,4)]
+res_nnnn_cool[1,3:4] <- colMeans(risk_contributions[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nnnn_cool[2,3:4] <- colMeans(risk_contributions[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nnnn_cool[3,3:4] <- colMeans(risk_contributions[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nnnn_cool[4,3:4] <- colMeans(risk_contributions[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
+
+relevances <- lrp(exposure_data,model_CoOL,alpha = 1, beta = 0)
+hist(rowSums(relevances)-predict(model_nn,as.matrix(data[,-1])))
+res_nnnn_10 <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
+res_nnnn_10[1,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nnnn_10[2,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nnnn_10[3,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nnnn_10[4,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
 
 relevances <- lrp(exposure_data,model_CoOL,alpha = 2, beta = 1)
 hist(rowSums(relevances)-predict(model_nn,as.matrix(data[,-1])))
 res_nnnn_21 <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
-res_nnnn_21[1,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_0==1,])[c(1,3)]
-res_nnnn_21[2,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_1==1,])[c(1,4)]
-res_nnnn_21[3,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_0==1,])[c(2,3)]
-res_nnnn_21[4,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_1==1,])[c(2,4)]
+res_nnnn_21[1,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nnnn_21[2,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nnnn_21[3,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nnnn_21[4,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
 
 
 
@@ -210,26 +219,26 @@ model_temp[[2]] <- t(as.matrix(model_temp[[2]]))
 risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model_temp) # Risk contributions
 
 res_nn_cool <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
-res_nn_cool[1,3:4] <- colMeans(risk_contributions[exposure_data$age_0==1&exposure_data$sex_0==1,])[c(1,3)]
-res_nn_cool[2,3:4] <- colMeans(risk_contributions[exposure_data$age_0==1&exposure_data$sex_1==1,])[c(1,4)]
-res_nn_cool[3,3:4] <- colMeans(risk_contributions[exposure_data$age_1==1&exposure_data$sex_0==1,])[c(2,3)]
-res_nn_cool[4,3:4] <- colMeans(risk_contributions[exposure_data$age_1==1&exposure_data$sex_1==1,])[c(2,4)]
+res_nn_cool[1,3:4] <- colMeans(risk_contributions[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nn_cool[2,3:4] <- colMeans(risk_contributions[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nn_cool[3,3:4] <- colMeans(risk_contributions[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nn_cool[4,3:4] <- colMeans(risk_contributions[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
 
 relevances <- lrp(exposure_data,model_temp)
 hist(rowSums(relevances)-predict(model_nn,as.matrix(data[,-1])))
 res_nn_10 <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
-res_nn_10[1,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_0==1,])[c(1,3)]
-res_nn_10[2,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_1==1,])[c(1,4)]
-res_nn_10[3,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_0==1,])[c(2,3)]
-res_nn_10[4,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_1==1,])[c(2,4)]
+res_nn_10[1,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nn_10[2,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nn_10[3,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nn_10[4,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
 
 relevances <- lrp(exposure_data,model_temp,alpha = 2, beta = 1)
 hist(rowSums(relevances)-predict(model_nn,as.matrix(data[,-1])))
 res_nn_21 <- data.frame(pollutant=c(0,0,1,1),sex=c(0,1,0,1),pollutant_attri=NA,sex_attri=NA)
-res_nn_21[1,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_0==1,])[c(1,3)]
-res_nn_21[2,3:4] <- colMeans(relevances[exposure_data$age_0==1&exposure_data$sex_1==1,])[c(1,4)]
-res_nn_21[3,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_0==1,])[c(2,3)]
-res_nn_21[4,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex_1==1,])[c(2,4)]
+res_nn_21[1,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_0==1,])[c(1,3)]
+res_nn_21[2,3:4] <- colMeans(relevances[exposure_data$px_0==1&exposure_data$sex_1==1,])[c(1,4)]
+res_nn_21[3,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_0==1,])[c(2,3)]
+res_nn_21[4,3:4] <- colMeans(relevances[exposure_data$px_1==1&exposure_data$sex_1==1,])[c(2,4)]
 
 
 
@@ -237,11 +246,11 @@ res_nn_21[4,3:4] <- colMeans(relevances[exposure_data$age_1==1&exposure_data$sex
 ########### PLOT simple data ###########
 plot_res <- function(res,show=T) {
   if (show == T) {
-  plot(res$pollutant_attri,res$sex_attri,col=c("dodgerblue","orange","dodgerblue","orange"),cex=2,pch=c(1,1,16,16),
+  plot(res$pollutant_attri,res$sex_attri,col=c("orange","dodgerblue","orange","dodgerblue"),cex=2,pch=c(1,1,16,16),
        ylab="Attribution to sex",xlab="Attribution to age",xlim=c(-.3,.3),ylim=c(-.3,.3),yaxs='i',xaxs='i',axes=F,frame.plot = T,type='n')
   abline(h=0,col="grey")
   abline(v=0,col="grey")
-  points(res$pollutant_attri,res$sex_attri,col=c("dodgerblue","orange","dodgerblue","orange"),cex=2,pch=c(1,1,16,16))
+  points(res$pollutant_attri,res$sex_attri,col=c("orange","dodgerblue","orange","dodgerblue"),cex=2,pch=c(1,1,16,16))
   }
   if (show == F) {
     plot(0,0,col=c("blue","red","blue","red"),pch=c(1,1,16,16),
@@ -271,7 +280,7 @@ plot_res(res_nnnn_shap)
 mtext(paste0("Non-negative NN\n(AUC=",format(round(auc(data$outcome_data,CoOL_4_predict_risks(exposure_data,model_CoOL)),2),nsmall=2),")"),line = 1)
 plot_res(show = F)
 axis(2)
-mtext("LRP1,0-CoOL",line = 3,side = 2)
+mtext("LRP1,0-bias attribution",line = 3,side = 2)
 plot_res(show = F)
 plot_res(res_nn_cool)
 #text(-0.2,0.2,"Will not be robust",pos=4)
@@ -315,4 +324,22 @@ prop.table(table(data$age,data$sex_isFemale))
 par(mfrow=c(1,1));par(mar=c(5,5,3,3))
 barplot(t(risk_tab),beside = T,main="Mortality risk by age and sex",xlab="Age",ylab="Mortality risk", col=c("dodgerblue","orange"),
         legend = c("Men","Women"), args.legend = list(x = "topleft"))
+
+
+
+
+######## LIME early code #######
+
+# Explaining a model based on tabular data
+library(MASS)
+iris_test <- iris[1, 1:4]
+iris_train <- iris[-1, 1:4]
+iris_lab <- iris[[5]][-1]
+# Create linear discriminant model on iris data
+model <- lda(iris_train, iris_lab)
+plot(model,col=as.numeric(iris_lab))
+# Create explanation object
+library(lime)
+explanation <- lime(iris_train, model)
+fit <- explain(iris_test, explanation, n_labels = 1, n_features = 2)
 

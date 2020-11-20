@@ -625,6 +625,7 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 #' #See the example under CoOL_0_working_example for a more detailed tutorial
 #' library(CoOL)
 #' data <- CoOL_0_working_example(n=10000)
+#' setwd(...) # Since a dendrogram are saved in this folder during the process.
 #' CoOL_default(data)
 #' }
 
