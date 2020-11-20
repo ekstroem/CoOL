@@ -1,13 +1,13 @@
 # Causes of Outcome Learning
 
-To install you can run the following code in R
+To install the 'CoOL' package, you can run below code in R
 
 ```{r}
-# Make sure the devtools package is installed using: if(!require(“devtools”)) install.packages(“devtools”)
+if(!require(“devtools”)) install.packages(“devtools”)
 devtools::install_github("ekstroem/CoOL")
 ```
 
-In order to plot dendrograms, install ggtree:
+In order to plot dendrograms, you will also need to install the 'ggtree' package using below code in R
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
