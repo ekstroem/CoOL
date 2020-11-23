@@ -412,6 +412,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
 
 CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram") {
+  require(ggtree)
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
   pfreq <- p$freq
@@ -644,10 +645,17 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
   mtext(paste0("CoOL (n=",format(nrow(data),big.mark = ",")," events=",format(sum(outcome_data),big.mark = ","),")"),side=3,line=5)
   CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
   risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
-  png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
-  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
-  dev.off()
-  im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+  if (requireNamespace("ggtree", quietly = TRUE)){
+    png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
+    CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
+    dev.off()
+    im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+  } else {
+    print("ggtree is not installed - skipping plotting the dendogram, you can install it via:")
+    print("if (!requireNamespace('BiocManager', quietly = TRUE))")
+    print("    install.packages('BiocManager')")
+    print("BiocManager::install('ggtree')")
+  }
   sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = sub_groups) # Assign sub-groups
   CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups) # Prevalence and mean risk plot
   CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,exposure_data = exposure_data, outcome_data = outcome_data,model=model,exclude_below = exclude_below) #  Mean risk contributions by sub-groups

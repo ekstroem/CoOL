@@ -18,10 +18,11 @@ Imports:
     stats,
     plyr,
     ggplot2,
-    ggtree,
     ClustGeo,
     wesanderson,
     imager
+Suggests:
+    ggtree
 LinkingTo: 
   Rcpp, 
   RcppArmadillo
