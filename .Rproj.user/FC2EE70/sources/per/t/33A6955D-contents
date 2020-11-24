@@ -1,0 +1,2 @@
+download.file("https://github.com/ekstroem/CoOL/blob/master/CoOL_0.9.8.tar.gz","C:/Users/lvb917/Desktop/CoOL_0.9.8.tar.gz")
+devtools::install_local("CoOL_0.9.8.tar.gz")
