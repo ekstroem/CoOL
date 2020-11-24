@@ -1,0 +1,163 @@
+###########
+# BHP GIS #
+###########
+
+
+# make some generic code to map covariates for each house to a plot of the urban study area
+  # we will combine this with a worked example to show how it works
+
+###############
+# load packages
+
+library(rgdal)
+library(ggplot2)
+library(foreign)
+library(MASS)
+library(hexbin)
+library(reshape2)
+library(gridExtra)
+library(RColorBrewer)
+
+
+
+###############
+
+# load the set of addresses
+
+addr <- read.table("addrCoor/addrCoor2015.txt")
+head(addr) # this holds the addr and the coordinates of each house of the study area (historic houses as well, thus, the source (sou in the data frame))
+
+# load some covariate of interest
+  # as an example I will use the car/no car variable of the 2015 census
+
+census2015 <- read.dta("SESforAnalysis.dta")
+
+# please note that the census2015 data has been pre-processed. E.g. the drinkWater groups are now:
+# 2: bottled/bagged water or tap in household
+# 3: tap in another household
+# 5: fontenario (covered well) or well in house
+# 6: pond/river/rain or well in another house
+
+# merge addr data with census2015 data
+
+names(census2015) <- c("drinkWater", "hhNo", "camo", "tabz")
+plotData <- merge(addr, census2015, by = c("tabz", "camo"), all.x = TRUE, all.y = TRUE)
+
+
+###############
+
+# now define a function for plotting the data
+  # start out by loading the empty map of the study area
+
+
+# load the map
+shape <- readOGR("Map" , layer = "zoneWith34and77TABZsplit94")
+shapeRoad <- readOGR("Map" , layer = "road")
+shapeMerge <- readOGR("Map" , layer = "zoneMerge") 
+
+
+# define an empty map
+p <- ggplot() +  
+  
+  geom_path(data = shape, 
+            aes(x = long, y = lat, group = group),
+            color = 'gray', fill = 'white', size = .2) +  
+  
+  #geom_path(data = shapeMerge, 
+  #                        aes(x = long, y = lat, group = group),
+  #                       color = 'gray', fill = 'white', size = .2) + 
+  #remove/add the three above #'s to add/remove houses to the plot
+  
+  geom_path(data = shapeRoad, 
+            aes(x = long, y = lat, group = group),
+            color = 'gray', fill = 'white', size = .2) +
+  
+  coord_equal() +
+  
+  theme_bw() +
+  
+  theme(
+    plot.background = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank()
+  ) +
+  
+  xlab(NULL) + ylab(NULL) + 
+  scale_x_continuous(breaks = NULL) + 
+  scale_y_continuous(breaks = NULL)
+
+p
+
+# now plot something on top of the map
+
+pWater <- p + geom_point(data = plotData, aes(x = X, y = Y, col = as.factor(drinkWater)))
+pWater
+
+
+# please note the overplotting we've done made here. We the coordinates only on a house level, 
+  # but each household has its own value of drinkWater. Adding some jitter to the points might help in some cases,
+  # however, we might need to do something else to make a sensible map.
+
+p + geom_point(data = plotData, aes(x = X, y = Y, col = as.factor(drinkWater)), position = position_jitter(width = 20, height = 20))
+
+# the amount of jitter might be too small or too large and the plot is still not easily read. 
+  # This should only serve as an example of how the mapping can be done in R.
+  # Some familiarity with ggplot2 will render endless possibilities for creating informative maps.
+
+
+################################
+
+# adding zones to the plot
+
+shape.df <- fortify(shape)
+shape.dfM <- merge(shape.df, shape@data, by = "id")
+
+p + geom_polygon(data = subset(shape.dfM, !is.na(TABZ)), aes(x = long, y = lat, 
+                                                             group = as.factor(group), fill = as.factor(TABZ)), col = "black") +
+  guides(fill = FALSE)
+
+# color according to bairro
+p + geom_polygon(data = subset(shape.dfM, !is.na(TABZ)), aes(x = long, y = lat, 
+                                                             group = as.factor(TABZ), fill = as.factor(bairro)), col = "black") +
+  guides(fill = FALSE)
+
+
+################################
+
+# we can map some variable to the zones
+
+# just create some variable
+
+shape@data$TABZ # the NAs in this variable correspond to objects that are not zones (e.g. groups). Also note that zone 94 consists of two polygons as this zone is divided by a road.
+shape@data$var <- NA
+shape@data$var[shape@data$TABZ == 11] <- 2
+shape@data$var[shape@data$TABZ == 17] <- 4
+shape@data$var[shape@data$TABZ == 18] <- 5
+shape@data$var[shape@data$TABZ == 12] <- 2.4
+shape@data$var[shape@data$TABZ == 13] <- 1
+
+shape.df <- fortify(shape)
+shape.dfM <- merge(shape.df, shape@data, by = "id")
+
+p + geom_polygon(data = subset(shape.dfM, !is.na(TABZ)), aes(x = long, y = lat, 
+                                                             group = as.factor(TABZ), fill = var), col = "black") +
+  labs(fill = "Title") + # change the legend title here
+  scale_fill_continuous(low = "blue", high = "red") # change the colors here
+
+################################
+
+# and finally, the chapa chapa plot
+  # unfortunately, it reveals that not all the groups (subzones) have been entered as objects in their own right
+
+nPerm <- dim(shape@data)[1]
+shape@data$perm <- sample(nPerm, nPerm)
+
+shape.df <- fortify(shape)
+shape.dfM <- merge(shape.df, shape@data, by = "id")
+
+p + geom_polygon(data = subset(shape.dfM, is.na(TABZ)), aes(x = long, y = lat, 
+                                                             group = as.factor(id), fill = as.factor(perm)), col = "black") +
+  guides(fill = FALSE)
+
+
