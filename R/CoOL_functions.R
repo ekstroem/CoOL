@@ -471,7 +471,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' #See the example under CoOL_0_working_example
 
 
-CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups") {
+CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups",ymax = NA) {
   par(mar=c(5,3,2,2))
   colours <- c("grey",wes_palette("Darjeeling1"))
 risk_max = 0
@@ -479,7 +479,7 @@ risk_max = 0
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
     risk_max = max(risk_max,risk)
   }
-  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,risk_max*1.1),xaxs='i',yaxs='i',
+  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,ifelse(is.na(ymax)==TRUE,risk_max*1.1,ymax)),xaxs='i',yaxs='i',
        axes=FALSE,ylab="Risk",xlab="Prevalence",frame.plot=FALSE,main=title)
   axis(1,seq(0,1,.2));axis(2,seq(0,1,.05))
   rect(0,0,1,1)

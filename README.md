@@ -3,7 +3,7 @@
 To install the 'CoOL' package, you can run below code in R
 
 ```{r}
-if(!require(“devtools”)) install.packages(“devtools”)
+if(!require("devtools")) install.packages("devtools")
 devtools::install_github("ekstroem/CoOL")
 ```
 

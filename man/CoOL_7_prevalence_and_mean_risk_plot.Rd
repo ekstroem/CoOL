@@ -7,7 +7,8 @@
 CoOL_7_prevalence_and_mean_risk_plot(
   risk_contributions,
   sub_groups,
-  title = "Prevalence and mean risk\\nof sub-groups"
+  title = "Prevalence and mean risk\\nof sub-groups",
+  ymax = NA
 )
 }
 \arguments{
