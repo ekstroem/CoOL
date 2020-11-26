@@ -17,6 +17,8 @@ CoOL_7_prevalence_and_mean_risk_plot(
 \item{sub_groups}{The vector with the sub-groups}
 
 \item{title}{The title of the plot}
+
+\item{ymax}{Maximum plotted value of the Y axis}
 }
 \description{
 This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.

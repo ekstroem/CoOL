@@ -5,7 +5,7 @@ Version: 0.9.8
 Date: 2020-10-30
 Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
 Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
-Description: Implementing phase 2 of Causes of Outcome Learning.
+Description: Implementing phase 2 of Causes of Outcome Learning. The optional ggtree package can be obtained through bioconductor (https://www.bioconductor.org/). 
 License: GPL-2
 Imports: 
     Rcpp,

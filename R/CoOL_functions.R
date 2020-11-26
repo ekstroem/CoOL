@@ -412,7 +412,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
 
 CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram") {
-  require(ggtree)
+  requireNamespace("ggtree")
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
   pfreq <- p$freq
@@ -424,10 +424,10 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   clus <- temp$pclus[order(temp$id)]
   table(clus)
   colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
-  print(ggtree(p_h_c,layout="equal_angle") +
-          geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
+  print(ggtree::ggtree(p_h_c,layout="equal_angle") +
+          ggtree::geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
           ggtitle(title) +
-          theme(plot.title = element_text(size = 15, face = "bold")))
+          ggtree::theme(plot.title = element_text(size = 15, face = "bold")))
 }
 
 
