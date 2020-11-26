@@ -20,17 +20,37 @@ To reproduce the CoOL working example with sex, drug A, and drug B.
  outcome_data <- data[,1]
  exposure_data <- data[,-1]
  exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
- model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data,hidden=5)
- model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
- model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 100, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
- model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
- plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="A) Performance during training\n\n",ylim=quantile(model$train_performance,c(0,.975))) # Model performance
- CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "B) Model connection weights\nand intercepts") # Model visualization
- CoOL_4_AUC(outcome_data,exposure_data,model, title = "C) Receiver operating\ncharacteristic curve") # AUC
- risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
- CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3, title = "D) Dendrogram with 3 sub-groups") # Dendrogram
- sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3) # Assign sub-groups
- CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
- CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,outcome_data = outcome_data,exposure_data = exposure_data, model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+ model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data),
+ output = outcome_data,hidden=5)
+ model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data,
+ Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data,
+ model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-3
+ ) # Train the non-negative model (The model can be retrained)
+ model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data,
+ Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+ epochs=1000,patience = 100, input_parameter_reg = 1e-3)
+ # Train the non-negative model (The model can be retrained)
+ model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data,
+ Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+ epochs=1000,patience = 50, input_parameter_reg = 1e-3
+ ) # Train the non-negative model (The model can be retrained)
+ plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",
+ xlab="Epochs",main="A) Performance during training\n\n",
+ ylim=quantile(model$train_performance,c(0,.975))) # Model performance
+ CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]),
+ title = "B) Model connection weights\nand intercepts") # Model visualization
+ CoOL_4_AUC(outcome_data,exposure_data,model,
+ title = "C) Receiver operating\ncharacteristic curve") # AUC
+ risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
+ ) # Risk contributions
+ CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
+ title = "D) Dendrogram with 3 sub-groups") # Dendrogram
+ sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
+ ) # Assign sub-groups
+ CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,
+ title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
+ CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
+ sub_groups,outcome_data = outcome_data,exposure_data = exposure_data,
+ model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
 	}
 }

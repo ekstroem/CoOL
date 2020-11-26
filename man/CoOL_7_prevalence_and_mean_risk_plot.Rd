@@ -8,7 +8,7 @@ CoOL_7_prevalence_and_mean_risk_plot(
   risk_contributions,
   sub_groups,
   title = "Prevalence and mean risk\\nof sub-groups",
-  ymax = NA
+  y_max = NA
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ CoOL_7_prevalence_and_mean_risk_plot(
 
 \item{title}{The title of the plot}
 
-\item{ymax}{Maximum plotted value of the Y axis}
+\item{y_max}{Fix the axis of the risk of the outcome}
 }
 \description{
 This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.
