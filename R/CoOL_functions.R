@@ -52,18 +52,38 @@ relu <- function(input) {
 #'  outcome_data <- data[,1]
 #'  exposure_data <- data[,-1]
 #'  exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
-#'  model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data), output = outcome_data,hidden=5)
-#'  model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
-#'  model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 100, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
-#'  model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data, Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model, epochs=1000,patience = 50, input_parameter_reg = 1e-3) # Train the non-negative model (The model can be retrained)
-#'  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="A) Performance during training\n\n",ylim=quantile(model$train_performance,c(0,.975))) # Model performance
-#'  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "B) Model connection weights\nand intercepts") # Model visualization
-#'  CoOL_4_AUC(outcome_data,exposure_data,model, title = "C) Receiver operating\ncharacteristic curve") # AUC
-#'  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
-#'  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3, title = "D) Dendrogram with 3 sub-groups") # Dendrogram
-#'  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3) # Assign sub-groups
-#'  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
-#'  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,outcome_data = outcome_data,exposure_data = exposure_data, model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+#'  model <- CoOL_1_initiate_neural_network(inputs=ncol(exposure_data),
+#'  output = outcome_data,hidden=5)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-4,X_train=exposure_data,
+#'  Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data,
+#'  model=model, epochs=1000,patience = 200, input_parameter_reg = 1e-3
+#'  ) # Train the non-negative model (The model can be retrained)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-5,X_train=exposure_data,
+#'  Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+#'  epochs=1000,patience = 100, input_parameter_reg = 1e-3)
+#'  # Train the non-negative model (The model can be retrained)
+#'  model <- CoOL_2_train_neural_network(lr = 1e-6,X_train=exposure_data,
+#'  Y_train=outcome_data,X_test=exposure_data, Y_test=outcome_data, model=model,
+#'  epochs=1000,patience = 50, input_parameter_reg = 1e-3
+#'  ) # Train the non-negative model (The model can be retrained)
+#'  plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",
+#'  xlab="Epochs",main="A) Performance during training\n\n",
+#'  ylim=quantile(model$train_performance,c(0,.975))) # Model performance
+#'  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]),
+#'  title = "B) Model connection weights\nand intercepts") # Model visualization
+#'  CoOL_4_AUC(outcome_data,exposure_data,model,
+#'  title = "C) Receiver operating\ncharacteristic curve") # AUC
+#'  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
+#'  ) # Risk contributions
+#'  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
+#'  title = "D) Dendrogram with 3 sub-groups") # Dendrogram
+#'  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
+#'  ) # Assign sub-groups
+#'  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,
+#'  title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
+#'  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
+#'  sub_groups,outcome_data = outcome_data,exposure_data = exposure_data,
+#'  model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
 #' 	}
 
 
@@ -412,6 +432,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
 
 CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram") {
+  requireNamespace("ggtree")
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
   pfreq <- p$freq
@@ -423,10 +444,10 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   clus <- temp$pclus[order(temp$id)]
   table(clus)
   colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
-  print(ggtree(p_h_c,layout="equal_angle") +
-          geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
+  print(ggtree::ggtree(p_h_c,layout="equal_angle") +
+          ggtree::geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
           ggtitle(title) +
-          theme(plot.title = element_text(size = 15, face = "bold")))
+          ggtree::theme(plot.title = element_text(size = 15, face = "bold")))
 }
 
 
@@ -465,12 +486,13 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' @param risk_contributions The risk contributions
 #' @param sub_groups The vector with the sub-groups
 #' @param title The title of the plot
+#' @param y_max Fix the axis of the risk of the outcome
 #' @export
 #' @examples
 #' #See the example under CoOL_0_working_example
 
 
-CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups") {
+CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups",y_max = NA) {
   par(mar=c(5,3,2,2))
   colours <- c("grey",wes_palette("Darjeeling1"))
 risk_max = 0
@@ -478,7 +500,7 @@ risk_max = 0
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
     risk_max = max(risk_max,risk)
   }
-  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,risk_max*1.1),xaxs='i',yaxs='i',
+  plot(0,0,type='n',xlim=c(0,1),ylim=c(0,ifelse(is.na(y_max)==TRUE,risk_max*1.1,y_max)),xaxs='i',yaxs='i',
        axes=FALSE,ylab="Risk",xlab="Prevalence",frame.plot=FALSE,main=title)
   axis(1,seq(0,1,.2));axis(2,seq(0,1,.05))
   rect(0,0,1,1)
@@ -644,10 +666,18 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
   mtext(paste0("CoOL (n=",format(nrow(data),big.mark = ",")," events=",format(sum(outcome_data),big.mark = ","),")"),side=3,line=5)
   CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
   risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
-  png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
-  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
-  dev.off()
-  im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+  if (requireNamespace("ggtree", quietly = TRUE)){
+    png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
+    CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
+    dev.off()
+    im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+  } else {
+    print("ggtree is not installed - skipping plotting the dendogram, you can install it via:")
+    print("if (!requireNamespace('BiocManager', quietly = TRUE))")
+    print("    install.packages('BiocManager')")
+    print("BiocManager::install('ggtree')")
+    plot(0,0,type="n",axes=F,xlab="",ylab="",main="No dendrogram since\nggtree is not installed")
+  }
   sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = sub_groups) # Assign sub-groups
   CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups) # Prevalence and mean risk plot
   CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,exposure_data = exposure_data, outcome_data = outcome_data,model=model,exclude_below = exclude_below) #  Mean risk contributions by sub-groups
