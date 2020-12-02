@@ -19,10 +19,10 @@ Imports:
     plyr,
     ggplot2,
     ClustGeo,
-    wesanderson,
-    imager
+    wesanderson
 Suggests:
-    ggtree
+    ggtree,
+    imager
 LinkingTo: 
   Rcpp, 
   RcppArmadillo

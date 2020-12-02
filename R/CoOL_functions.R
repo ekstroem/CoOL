@@ -667,10 +667,11 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
   CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
   risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
   if (requireNamespace("ggtree", quietly = TRUE)){
+    requireNamespace("imager")
     png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
     CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
     dev.off()
-    im <- load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+    im <- imager::load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(imager::load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
   } else {
     print("ggtree is not installed - skipping plotting the dendogram, you can install it via:")
     print("if (!requireNamespace('BiocManager', quietly = TRUE))")
