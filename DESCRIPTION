@@ -9,10 +9,8 @@ Description: Implementing phase 2 of Causes of Outcome Learning. The optional gg
 License: GPL-2
 Imports: 
     Rcpp,
-    RcppArmadillo,
     data.table,
     pROC,
-    fastcluster,
     graphics,
     mltools,
     stats,
