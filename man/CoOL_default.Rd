@@ -43,5 +43,5 @@ CoOL_default(data)
 }
 }
 \references{
-Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentanglingcommon combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 }
