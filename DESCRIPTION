@@ -1,11 +1,11 @@
 Package: CoOL
 Type: Package
 Title: Causes of Outcome Learning
-Version: 0.9.8
-Date: 2020-10-30
+Version: 0.9.9
+Date: 2020-12-15
 Author: Andreas Rieckmann, Piotr Dworzynski, Claus Thorn Ekstrøm
 Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
-Description: Implementing phase 2 of Causes of Outcome Learning. The optional ggtree package can be obtained through bioconductor (https://www.bioconductor.org/). 
+Description: Implementing the computational phase of the Causes of Outcome Learning approach as described in Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>. The optional ggtree package can be obtained through bioconductor <https://www.bioconductor.org>. 
 License: GPL-2
 Imports: 
     Rcpp,
