@@ -7,9 +7,9 @@
 CoOL_4_predict_risks(X, model)
 }
 \arguments{
-\item{X}{The exposure data}
+\item{X}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network}
+\item{model}{The fitted the monotonistic neural network.}
 }
 \description{
 Predict the risk of the outcome using the fitted monotonistic neural network.

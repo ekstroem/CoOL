@@ -7,7 +7,7 @@
 CoOL_0_mediation_simulation(n)
 }
 \arguments{
-\item{n}{number of observations for the synthetic data}
+\item{n}{number of observations for the synthetic data.}
 }
 \description{
 To reproduce the mediation example.

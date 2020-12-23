@@ -11,11 +11,11 @@ CoOL_6_dendrogram(
 )
 }
 \arguments{
-\item{risk_contributions}{The risk contributions}
+\item{risk_contributions}{The risk contributions.}
 
-\item{number_of_subgroups}{The number of sub-groups chosen (Visual inspection is necessary)}
+\item{number_of_subgroups}{The number of sub-groups chosen (Visual inspection is necessary).}
 
-\item{title}{The title of the plot}
+\item{title}{The title of the plot.}
 }
 \description{
 Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.

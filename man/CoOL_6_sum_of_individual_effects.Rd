@@ -7,9 +7,9 @@
 CoOL_6_sum_of_individual_effects(X, model)
 }
 \arguments{
-\item{X}{The exposure data}
+\item{X}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network}
+\item{model}{The fitted the monotonistic neural network.}
 }
 \description{
 By summing the through the risk as if each individual had been exposed to only one exposure, with the value the individual actually had.

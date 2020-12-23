@@ -42,7 +42,7 @@ relu <- function(input) {
 #'
 #' To reproduce the CoOL working example with sex, drug A, and drug B.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -112,7 +112,7 @@ CoOL_0_working_example <- function(n) {
 #'
 #' This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (1/)).
 #'
-#' @param exposure_data The exposure data set
+#' @param exposure_data The exposure data set.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -137,7 +137,6 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #' @param inputs The number of exposures.
 #' @param output The outbut variable is used to calcualte the mean of it used to initiate the baseline risk.
 #' @param hidden Number of hidden nodes.
-#' @param confounder Allows to control away a confounder (connected to the output layer)
 #' @export
 #' @details
 #'
@@ -152,22 +151,18 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #'
 
 
-CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FALSE) {
+CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
   # Weight initiation
   w1 <- abs(random(inputs,hidden,0.01))
   b1 <- -abs(random(1,hidden,0.01))
-#  w2 <- abs(random(hidden,1,0.01))
   w2 <- matrix(1,nrow=hidden)
   b2 <- mean(output)
-  if (confounder==TRUE)  c2 <- abs(random(1,1,0.01))
   performance <- NA
   best_epoch <- NA
   weight_performance <- NA
   epochs <- NA
   b2 <- as.matrix(mean(output))
-  if (confounder == FALSE)   return(list(w1,b1,w2,b2,performance,epochs,best_epoch))
-  if (confounder == TRUE)   return(list(w1,b1,w2,b2,c2,performance,epochs,best_epoch))
-
+  return(list(w1,b1,w2,b2,performance,epochs,best_epoch))
 }
 
 
@@ -181,20 +176,21 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 #'
 #' This function trains the monotonistic neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The monotonistic model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the monotonicity assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
 #'
-#' @param X_train The exposure data for the training data
-#' @param Y_train The outcome data for the training data
-#' @param X_test The exposure data for the test data (currently the training data is used)
-#' @param Y_test The outcome data for the test data (currently the training data is used)
-#' @param model The fitted monotonistic neural network
-#' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next)
-#' @param epochs Epochs
+#' @param X_train The exposure data for the training data.
+#' @param Y_train The outcome data for the training data.
+#' @param X_test The exposure data for the test data (currently the training data is used).
+#' @param Y_test The outcome data for the test data (currently the training data is used).
+#' @param model The fitted monotonistic neural network.
+#' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next).
+#' @param epochs Epochs.
 #' @param patience The number of epochs allowed without an improvement in performance.
 #' @param monitor Whether a monitoring plot will be shown during training.
-#' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience
-#' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
-#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk
-#' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
-#' @param spline_df Degrees of freedom for the spline fit for the performance plots
+#' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience.
+#' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented).
+#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk.
+#' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters.
+#' @param spline_df Degrees of freedom for the spline fit for the performance plots.
+#' @param restore_par_options Restore par options.
 #' @details
 #' For each individual:\deqn{
 #' P(Y=1|X^+)=R^b+\sum_iR^X_i
@@ -225,7 +221,12 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10,confounder=FA
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 2000, patience = 100,monitor = TRUE,
-                            plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0, input_parameter_reg = 1e-3, spline_df=10) {
+                            plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0,
+                            input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE) {
+if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+}
   X_test = X_train
   Y_test = Y_train
   if (is.na(IPCW)) IPCW <- rep(1,nrow(X_train))
@@ -275,16 +276,22 @@ for (lr_set in lr) {
 #'
 #' This function plots the monotonistic neural network
 #'
-#' @param model The fitted monotonistic neural network
-#' @param names Labels of each exposure
-#' @param title Title on the plot
-#' @param arrow_size defines the arrow_size for the model illustration in the reported training progress.
+#' @param model The fitted monotonistic neural network.
+#' @param names Labels of each exposure.
+#' @param title Title on the plot.
+#' @param arrow_size Define the arrow_size for the model illustration in the reported training progress.
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA, title = "Model connection weights and intercepts") {
+CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA,
+                       title = "Model connection weights and intercepts", restore_par_options = TRUE) {
+   if (restore_par_options==TRUE) {
+     oldpar <- par(no.readonly = TRUE)
+     on.exit(par(oldpar))
+   }
   par(mar=c(0,0,3,0))
   if (is.na(arrow_size)) arrow_size = 5/max(model[[1]])
   plot(0,0,type='n',xlim=c(0,4),ylim=c(-max(nrow(model[[1]]),nrow(model[[3]]))-1,0),axes=FALSE,ylab="",xlab="",main=title)
@@ -319,8 +326,8 @@ CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA, title = "Mod
 #'
 #' Predict the risk of the outcome using the fitted monotonistic neural network.
 #'
-#' @param X The exposure data
-#' @param model The fitted the monotonistic neural network
+#' @param X The exposure data.
+#' @param model The fitted the monotonistic neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -339,18 +346,24 @@ CoOL_4_predict_risks <- function(X,model) {
 #'
 #' Plot hte ROC AUC
 #'
-#' @param exposure_data The exposure data
-#' @param outcome_data The outcome data
-#' @param model The fitted the monotonistic neural network
-#' @param title Title on the plot
+#' @param exposure_data The exposure data.
+#' @param outcome_data The outcome data.
+#' @param model The fitted the monotonistic neural network.
+#' @param title Title on the plot.
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating\ncharacteristic curve") {
-pred <- CoOL_4_predict_risks(exposure_data,model)
-plot(pROC::roc(outcome_data,pred),print.auc=TRUE,main=title)
+CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operating\ncharacteristic curve", restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
+  par(mar=c(0,0,3,0))
+  pred <- CoOL_4_predict_risks(exposure_data,model)
+  plot(pROC::roc(outcome_data,pred),print.auc=TRUE,main=title)
 }
 
 
@@ -360,8 +373,8 @@ plot(pROC::roc(outcome_data,pred),print.auc=TRUE,main=title)
 #'
 #' Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted monotonistic neural network and data.
 #'
-#' @param X The exposure data
-#' @param model The fitted the monotonistic neural network
+#' @param X The exposure data.
+#' @param model The fitted the monotonistic neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -430,9 +443,9 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #'
 #' Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 #'
-#' @param risk_contributions The risk contributions
-#' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary)
-#' @param title The title of the plot
+#' @param risk_contributions The risk contributions.
+#' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary).
+#' @param title The title of the plot.
 #' @export
 #' @examples
 #' #See the example under CoOL_0_working_example
@@ -464,8 +477,8 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #'
 #' Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 #'
-#' @param risk_contributions The risk contributions
-#' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary)
+#' @param risk_contributions The risk contributions.
+#' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary).
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -492,17 +505,23 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #'
 #' This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.
 #'
-#' @param risk_contributions The risk contributions
-#' @param sub_groups The vector with the sub-groups
-#' @param title The title of the plot
-#' @param y_max Fix the axis of the risk of the outcome
+#' @param risk_contributions The risk contributions.
+#' @param sub_groups The vector with the sub-groups.
+#' @param title The title of the plot.
+#' @param y_max Fix the axis of the risk of the outcome.
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
 
-CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,title="Prevalence and mean risk\nof sub-groups",y_max = NA) {
+CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,
+  title="Prevalence and mean risk\nof sub-groups",y_max = NA, restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
   par(mar=c(5,3,2,2))
   colours <- c("grey",wes_palette("Darjeeling1"))
 risk_max = 0
@@ -530,18 +549,24 @@ risk_max = 0
 #'
 #' Table with the mean risk contributions by sub-groups.
 #'
-#' @param risk_contributions The risk contributions
-#' @param sub_groups The vector with the sub-groups
-#' @param exposure_data The exposure data
-#' @param outcome_data The outcome data
-#' @param model The trained non-negative model
-#' @param exclude_below A lower cut-off for which risk contributions shown
+#' @param risk_contributions The risk contributions.
+#' @param sub_groups The vector with the sub-groups.
+#' @param exposure_data The exposure data.
+#' @param outcome_data The outcome data.
+#' @param model The trained non-negative model.
+#' @param exclude_below A lower cut-off for which risk contributions shown.
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,model,exclude_below=0.001) {
+CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,
+                        model,exclude_below=0.001, restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
   colours <- rep(c("grey",wes_palette("Darjeeling1")),10)
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
@@ -596,8 +621,8 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #'
 #' By summing the through the risk as if each individual had been exposed to only one exposure, with the value the individual actually had.
 #'
-#' @param X The exposure data
-#' @param model The fitted the monotonistic neural network
+#' @param X The exposure data.
+#' @param model The fitted the monotonistic neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -621,8 +646,8 @@ return(sum_of_individial_effects)
 #'
 #' Estimating the risk contribution for each exposure if each individual had been exposed to only one exposure, with the value the individual actually had.
 #'
-#' @param X The exposure data
-#' @param model The fitted the monotonistic neural network
+#' @param X The exposure data.
+#' @param model The fitted the monotonistic neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -661,11 +686,12 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 #' #See the example under CoOL_0_working_example for a more detailed tutorial
 #' library(CoOL)
 #' data <- CoOL_0_working_example(n=10000)
-#' setwd(...) # Since a dendrogram are saved in this folder during the process.
 #' CoOL_default(data)
 #' }
 
 CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_reg = 1e-3,hidden=10,monitor=TRUE,epochs=10000) {
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
   outcome_data <- data[,1]
   exposure_data <- data[,-1]
   exposure_data <- CoOL_0_binary_encode_exposure_data(exposure_data)
@@ -676,16 +702,17 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
   # Use below to combine all plots (See the note regarding the dendrogram)
   layout(matrix(c(1,1,2,2,3,3,4,4,4,5,5,5,6,6,6,6,6,6), 3, 6, byrow = TRUE));par(mar=c(3,3,3,3));par(oma=c(0,0,3,0))
   plot(model$train_performance,type='l',yaxs='i',ylab="Mean squared error",xlab="Epochs",main="Performance - training data\n") # Model performance
-  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "Model") # Model visualization
+  CoOL_3_plot_neural_network(model,names(exposure_data),5/max(model[[1]]), title = "Model",restore_par_options=FALSE) # Model visualization
   mtext(paste0("CoOL (n=",format(nrow(data),big.mark = ",")," events=",format(sum(outcome_data),big.mark = ","),")"),side=3,line=5)
-  CoOL_4_AUC(outcome_data,exposure_data,model) # AUC
+  CoOL_4_AUC(outcome_data,exposure_data,model,restore_par_options=FALSE) # AUC
   risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model) # Risk contributions
   if (requireNamespace("ggtree", quietly = TRUE)){
     requireNamespace("imager")
-    png("dendrogram.png",units = 'in',res=300,height = 4,width = 4)
+    dendrogram_dir <- tempfile(pattern = "", fileext = ".png")
+    png(dendrogram_dir,units = 'in',res=300,height = 4,width = 4)
     CoOL_6_dendrogram(risk_contributions,number_of_subgroups = sub_groups) # Dendrogram
     dev.off()
-    im <- imager::load.image("dendrogram.png");par(mar=c(0,0,0,0));plot(imager::load.image("dendrogram.png"),axes=F);par(mar=c(5,5,3,2))
+    im <- imager::load.image(dendrogram_dir);par(mar=c(0,0,0,0));plot(imager::load.image(dendrogram_dir),axes=F);par(mar=c(5,5,3,2))
   } else {
     print("ggtree is not installed - skipping plotting the dendogram, you can install it via:")
     print("if (!requireNamespace('BiocManager', quietly = TRUE))")
@@ -694,8 +721,8 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
     plot(0,0,type="n",axes=F,xlab="",ylab="",main="No dendrogram since\nggtree is not installed")
   }
   sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = sub_groups) # Assign sub-groups
-  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups) # Prevalence and mean risk plot
-  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,exposure_data = exposure_data, outcome_data = outcome_data,model=model,exclude_below = exclude_below) #  Mean risk contributions by sub-groups
+  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,restore_par_options=FALSE) # Prevalence and mean risk plot
+  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions, sub_groups,exposure_data = exposure_data, outcome_data = outcome_data,model=model,exclude_below = exclude_below,restore_par_options=FALSE) #  Mean risk contributions by sub-groups
 }
 
 
@@ -704,7 +731,7 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
 #'
 #' To reproduce the complex example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_complex_simulation <- function(n) {
@@ -760,7 +787,7 @@ CoOL_0_complex_simulation <- function(n) {
 #'
 #' To reproduce the common causes example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_common_simulation <- function(n) {
@@ -789,7 +816,7 @@ CoOL_0_common_simulation <- function(n) {
 #'
 #' To reproduce the mediation example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_mediation_simulation <- function(n) {
@@ -813,7 +840,7 @@ CoOL_0_mediation_simulation <- function(n) {
 #'
 #' To reproduce the confounding example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_confounding_simulation <- function(n) {
@@ -839,7 +866,7 @@ CoOL_0_confounding_simulation <- function(n) {
 #'
 #' To reproduce the M-bias example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_m_bias_simulation <- function(n) {
@@ -867,7 +894,7 @@ CoOL_0_m_bias_simulation <- function(n) {
 #'
 #' To reproduce the M-bias example.
 #'
-#' @param n number of observations for the synthetic data
+#' @param n number of observations for the synthetic data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 
 CoOL_0_selection_simulation <- function(n) {

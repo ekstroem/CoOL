@@ -7,9 +7,9 @@
 CoOL_5_layerwise_relevance_propagation(X, model)
 }
 \arguments{
-\item{X}{The exposure data}
+\item{X}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network}
+\item{model}{The fitted the monotonistic neural network.}
 }
 \description{
 Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted monotonistic neural network and data.

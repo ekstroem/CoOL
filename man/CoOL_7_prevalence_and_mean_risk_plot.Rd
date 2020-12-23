@@ -8,17 +8,20 @@ CoOL_7_prevalence_and_mean_risk_plot(
   risk_contributions,
   sub_groups,
   title = "Prevalence and mean risk\\nof sub-groups",
-  y_max = NA
+  y_max = NA,
+  restore_par_options = TRUE
 )
 }
 \arguments{
-\item{risk_contributions}{The risk contributions}
+\item{risk_contributions}{The risk contributions.}
 
-\item{sub_groups}{The vector with the sub-groups}
+\item{sub_groups}{The vector with the sub-groups.}
 
-\item{title}{The title of the plot}
+\item{title}{The title of the plot.}
 
-\item{y_max}{Fix the axis of the risk of the outcome}
+\item{y_max}{Fix the axis of the risk of the outcome.}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.

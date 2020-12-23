@@ -10,21 +10,24 @@ CoOL_8_mean_risk_contributions_by_sub_group(
   exposure_data,
   outcome_data,
   model,
-  exclude_below = 0.001
+  exclude_below = 0.001,
+  restore_par_options = TRUE
 )
 }
 \arguments{
-\item{risk_contributions}{The risk contributions}
+\item{risk_contributions}{The risk contributions.}
 
-\item{sub_groups}{The vector with the sub-groups}
+\item{sub_groups}{The vector with the sub-groups.}
 
-\item{exposure_data}{The exposure data}
+\item{exposure_data}{The exposure data.}
 
-\item{outcome_data}{The outcome data}
+\item{outcome_data}{The outcome data.}
 
-\item{model}{The trained non-negative model}
+\item{model}{The trained non-negative model.}
 
-\item{exclude_below}{A lower cut-off for which risk contributions shown}
+\item{exclude_below}{A lower cut-off for which risk contributions shown.}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 Table with the mean risk contributions by sub-groups.

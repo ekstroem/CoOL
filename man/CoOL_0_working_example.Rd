@@ -7,7 +7,7 @@
 CoOL_0_working_example(n)
 }
 \arguments{
-\item{n}{number of observations for the synthetic data}
+\item{n}{number of observations for the synthetic data.}
 }
 \description{
 To reproduce the CoOL working example with sex, drug A, and drug B.

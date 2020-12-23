@@ -8,17 +8,20 @@ CoOL_3_plot_neural_network(
   model,
   names,
   arrow_size = NA,
-  title = "Model connection weights and intercepts"
+  title = "Model connection weights and intercepts",
+  restore_par_options = TRUE
 )
 }
 \arguments{
-\item{model}{The fitted monotonistic neural network}
+\item{model}{The fitted monotonistic neural network.}
 
-\item{names}{Labels of each exposure}
+\item{names}{Labels of each exposure.}
 
-\item{arrow_size}{defines the arrow_size for the model illustration in the reported training progress.}
+\item{arrow_size}{Define the arrow_size for the model illustration in the reported training progress.}
 
-\item{title}{Title on the plot}
+\item{title}{Title on the plot.}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 This function plots the monotonistic neural network

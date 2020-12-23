@@ -8,17 +8,20 @@ CoOL_4_AUC(
   outcome_data,
   exposure_data,
   model,
-  title = "Receiver operating\\ncharacteristic curve"
+  title = "Receiver operating\\ncharacteristic curve",
+  restore_par_options = TRUE
 )
 }
 \arguments{
-\item{outcome_data}{The outcome data}
+\item{outcome_data}{The outcome data.}
 
-\item{exposure_data}{The exposure data}
+\item{exposure_data}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network}
+\item{model}{The fitted the monotonistic neural network.}
 
-\item{title}{Title on the plot}
+\item{title}{Title on the plot.}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 Plot hte ROC AUC

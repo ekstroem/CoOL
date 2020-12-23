@@ -4,7 +4,7 @@
 \alias{CoOL_1_initiate_neural_network}
 \title{Initiates a non-negative neural network}
 \usage{
-CoOL_1_initiate_neural_network(inputs, output, hidden = 10, confounder = FALSE)
+CoOL_1_initiate_neural_network(inputs, output, hidden = 10)
 }
 \arguments{
 \item{inputs}{The number of exposures.}
@@ -12,8 +12,6 @@ CoOL_1_initiate_neural_network(inputs, output, hidden = 10, confounder = FALSE)
 \item{output}{The outbut variable is used to calcualte the mean of it used to initiate the baseline risk.}
 
 \item{hidden}{Number of hidden nodes.}
-
-\item{confounder}{Allows to control away a confounder (connected to the output layer)}
 }
 \description{
 This function initiates a monotonistc neural network. The one-hidden layer monotonistic neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be monotonistic and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.

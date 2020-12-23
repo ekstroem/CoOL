@@ -7,7 +7,7 @@
 CoOL_0_selection_simulation(n)
 }
 \arguments{
-\item{n}{number of observations for the synthetic data}
+\item{n}{number of observations for the synthetic data.}
 }
 \description{
 To reproduce the M-bias example.
