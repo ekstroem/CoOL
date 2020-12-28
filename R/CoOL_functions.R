@@ -584,10 +584,12 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   d <- t(d)
   rownames(d) <- paste("Group",1:max(sub_groups))
   colnames(d) <- names(risk_contributions)
+  d <- cbind(d[,rev(1:c(ncol(d)-1))],d[,ncol(d)])
+  colnames(d)[ncol(d)] <- "Baseline_risk"
   par(mar=c(0,0,0,0))
   plot(0,0,type='n',xlim=c(-ncol(d)-6,0),ylim=c(-nrow(d)-1,1),axes=F)
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
-  text(-ncol(d)-6,0,"F) Mean risk contributions by sub-group\n(Standard diviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
+  text(-ncol(d)-6,0,"Mean risk contributions by sub-group\n(Standard diviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
