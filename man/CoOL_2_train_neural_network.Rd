@@ -2,7 +2,7 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_2_train_neural_network}
 \alias{CoOL_2_train_neural_network}
-\title{Training the monotonistic neural network}
+\title{Training the non-negative neural network}
 \usage{
 CoOL_2_train_neural_network(
   X_train,
@@ -15,8 +15,6 @@ CoOL_2_train_neural_network(
   patience = 100,
   monitor = TRUE,
   plot_and_evaluation_frequency = 50,
-  IPCW = NA,
-  baseline_risk_reg = 0,
   input_parameter_reg = 0.001,
   spline_df = 10,
   restore_par_options = TRUE
@@ -31,7 +29,7 @@ CoOL_2_train_neural_network(
 
 \item{Y_test}{The outcome data for the test data (currently the training data is used).}
 
-\item{model}{The fitted monotonistic neural network.}
+\item{model}{The fitted non-negative neural network.}
 
 \item{lr}{Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next).}
 
@@ -43,10 +41,6 @@ CoOL_2_train_neural_network(
 
 \item{plot_and_evaluation_frequency}{The interval for plotting the performance and checking the patience.}
 
-\item{IPCW}{Inverse probability of censoring weights (Warning: not yet correctly implemented).}
-
-\item{baseline_risk_reg}{Regularisation increasing parameter value at each iteration for the baseline risk.}
-
 \item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters.}
 
 \item{spline_df}{Degrees of freedom for the spline fit for the performance plots.}
@@ -54,7 +48,7 @@ CoOL_2_train_neural_network(
 \item{restore_par_options}{Restore par options.}
 }
 \description{
-This function trains the monotonistic neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The monotonistic model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the monotonicity assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
+This function trains the non-negative neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The non-negative model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the non-negative assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
 }
 \details{
 For each individual:\deqn{

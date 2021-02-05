@@ -2,17 +2,17 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_4_predict_risks}
 \alias{CoOL_4_predict_risks}
-\title{Predict the risk of the outcome using the fitted monotonistic neural network}
+\title{Predict the risk of the outcome using the fitted non-negative neural network}
 \usage{
 CoOL_4_predict_risks(X, model)
 }
 \arguments{
 \item{X}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network.}
+\item{model}{The fitted the non-negative neural network.}
 }
 \description{
-Predict the risk of the outcome using the fitted monotonistic neural network.
+Predict the risk of the outcome using the fitted non-negative neural network.
 }
 \examples{
 #See the example under CoOL_0_working_example

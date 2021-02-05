@@ -2,17 +2,17 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_5_layerwise_relevance_propagation}
 \alias{CoOL_5_layerwise_relevance_propagation}
-\title{Layer-wise relevance propagation of the fitted monotonistic neural network}
+\title{Layer-wise relevance propagation of the fitted non-negative neural network}
 \usage{
 CoOL_5_layerwise_relevance_propagation(X, model)
 }
 \arguments{
 \item{X}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network.}
+\item{model}{The fitted the non-negative neural network.}
 }
 \description{
-Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted monotonistic neural network and data.
+Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted non-negative neural network and data.
 }
 \examples{
 #See the example under CoOL_0_working_example

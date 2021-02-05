@@ -17,7 +17,7 @@ CoOL_4_AUC(
 
 \item{exposure_data}{The exposure data.}
 
-\item{model}{The fitted the monotonistic neural network.}
+\item{model}{The fitted the non-negative neural network.}
 
 \item{title}{Title on the plot.}
 

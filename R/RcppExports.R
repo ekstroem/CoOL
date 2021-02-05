@@ -2,8 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Function used as part of other functions
-#'
-#'
 #' @description relu-function
 #' @param x input in the relu function
 #'
@@ -13,9 +11,6 @@ rcpprelu <- function(x) {
 }
 
 #' Function used as part of other functions
-#'
-#' XXX needed here
-#'
 #' @description negative relu-function
 #' @param x input in the negative relu-function
 #'
@@ -25,53 +20,23 @@ rcpprelu_neg <- function(x) {
 }
 
 #' Function used as part of other functions
-#'
-#' A line with details are needed here. XXX
-#'
-#' @param x A matrix of predictors for the training dataset
+#' @description Non-negative neural network
+#' @param x A matrix of predictors for the training dataset of shape (nsamples, nfeatures)
 #' @param y A vector of output values for the training data with a length similar to the number of rows of x
-#' @param testx A matrix of predictors for the test dataset
+#' @param testx A matrix of predictors for the test dataset of shape (nsamples, nfeatures)
 #' @param testy A vector of output values for the test data with a length similar to the number of rows of x
-#' @param W1_input Input-hidden layer weights
-#' @param B1_input Biases for the hidden layer
-#' @param W2_input Hidden-output layer weights
-#' @param B2_input Bias for the output layer (the baseline risk)
+#' @param W1_input Input-hidden layer weights of shape (nfeatuers, hidden) 
+#' @param B1_input Biases for the hidden layer of shape (1, hidden) 
+#' @param W2_input Hidden-output layer weights of shape (hidden, 1) 
+#' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
 #' @param lr Initial learning rate
 #' @param maxepochs The maximum number of epochs
-#' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented)
-#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @return A list of class "SCL" giving the estimated matrices and performance indicators
 #' @author Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
 #'
 #' @export
-cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr = 0.01, maxepochs = 100, baseline_risk_reg = 0.00001, input_parameter_reg = 0.000001) {
-    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, IPCW, lr, maxepochs, baseline_risk_reg, input_parameter_reg)
-}
-
-#' Function used as part of other functions
-#'
-#' XXX needed here
-#'
-#' @description Used as part of other functions.
-#' @param x A matrix of predictors for the training dataset
-#' @param y A vector of output values for the training data with a length similar to the number of rows of x
-#' @param c A matrix of predictors for the training data to be regarded as potential confounder(s)
-#' @param testx A matrix of predictors for the test dataset
-#' @param testy A vector of output values for the test data with a length similar to the number of rows of x
-#' @param testc A matrix of predictors for the test data to be regarded as potential confounder(s)
-#' @param W1_input Input-hidden layer weights
-#' @param B1_input Biases for the hidden layer
-#' @param W2_input Hidden-output layer weights
-#' @param B2_input Bias for the output layer (the baseline risk)
-#' @param C2_input Weight for the confounder
-#' @param lr Initial learning rate
-#' @param maxepochs The maximum number of epochs
-#' @return A list of class "SCL" giving the estimated matrices and performance indicators
-#' @author    Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
-#'
-#' @export
-cpp_train_network_relu_with_confounder <- function(x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr = 0.01, maxepochs = 100) {
-    .Call(`_CoOL_cpp_train_network_relu_with_confounder`, x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, lr, maxepochs)
+cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001) {
+    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr, maxepochs, input_parameter_reg)
 }
 

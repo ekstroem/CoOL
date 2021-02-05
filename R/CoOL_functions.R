@@ -132,7 +132,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 
 #' Initiates a non-negative neural network
 #'
-#' This function initiates a monotonistc neural network. The one-hidden layer monotonistic neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be monotonistic and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.
+#' This function initiates a non-negative neural network. The one-hidden layer non-negative neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be non-negative and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.
 #'
 #' @param inputs The number of exposures.
 #' @param output The outbut variable is used to calcualte the mean of it used to initiate the baseline risk.
@@ -140,7 +140,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #' @export
 #' @details
 #'
-#' The monotonistic neural network can be denoted as:
+#' The non-negative neural network can be denoted as:
 #' \deqn{
 #' P(Y=1|X^+)=\sum_{j}\Big(w_{j,k}^+ReLU_j\big(\sum_{i}(w_{i,j}^+X_i^+) + b_j^-\big)\Big) + R^{b}
 #' }
@@ -172,22 +172,20 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 
 
 
-#' Training the monotonistic neural network
+#' Training the non-negative neural network
 #'
-#' This function trains the monotonistic neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The monotonistic model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the monotonicity assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
+#' This function trains the non-negative neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The non-negative model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the non-negative assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
 #'
 #' @param X_train The exposure data for the training data.
 #' @param Y_train The outcome data for the training data.
 #' @param X_test The exposure data for the test data (currently the training data is used).
 #' @param Y_test The outcome data for the test data (currently the training data is used).
-#' @param model The fitted monotonistic neural network.
+#' @param model The fitted non-negative neural network.
 #' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next).
 #' @param epochs Epochs.
 #' @param patience The number of epochs allowed without an improvement in performance.
 #' @param monitor Whether a monitoring plot will be shown during training.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience.
-#' @param IPCW Inverse probability of censoring weights (Warning: not yet correctly implemented).
-#' @param baseline_risk_reg Regularisation increasing parameter value at each iteration for the baseline risk.
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters.
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots.
 #' @param restore_par_options Restore par options.
@@ -221,15 +219,13 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 2000, patience = 100,monitor = TRUE,
-                            plot_and_evaluation_frequency = 50, IPCW = NA,  baseline_risk_reg = 0,
-                            input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE) {
+                            plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE) {
 if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 }
   X_test = X_train
   Y_test = Y_train
-  if (is.na(IPCW)) IPCW <- rep(1,nrow(X_train))
 for (lr_set in lr) {
   print(paste0("############################## Learning rate: ",lr_set," ##############################"))
   performance = model$train_performance
@@ -240,7 +236,7 @@ for (lr_set in lr) {
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
       model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
-              W2_input = model[[3]],B2_input = model[[4]], IPCW = IPCW, baseline_risk_reg=baseline_risk_reg,input_parameter_reg=input_parameter_reg)
+              W2_input = model[[3]],B2_input = model[[4]],input_parameter_reg=input_parameter_reg)
       performance <- c(performance,model$train_performance)
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)
@@ -272,11 +268,11 @@ for (lr_set in lr) {
 
 
 
-#' Plotting the monotonistic neural network
+#' Plotting the non-negative neural network
 #'
-#' This function plots the monotonistic neural network
+#' This function plots the non-negative neural network
 #'
-#' @param model The fitted monotonistic neural network.
+#' @param model The fitted non-negative neural network.
 #' @param names Labels of each exposure.
 #' @param title Title on the plot.
 #' @param arrow_size Define the arrow_size for the model illustration in the reported training progress.
@@ -322,12 +318,12 @@ CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA,
 }
 
 
-#' Predict the risk of the outcome using the fitted monotonistic neural network
+#' Predict the risk of the outcome using the fitted non-negative neural network
 #'
-#' Predict the risk of the outcome using the fitted monotonistic neural network.
+#' Predict the risk of the outcome using the fitted non-negative neural network.
 #'
 #' @param X The exposure data.
-#' @param model The fitted the monotonistic neural network.
+#' @param model The fitted the non-negative neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -348,7 +344,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #'
 #' @param exposure_data The exposure data.
 #' @param outcome_data The outcome data.
-#' @param model The fitted the monotonistic neural network.
+#' @param model The fitted the non-negative neural network.
 #' @param title Title on the plot.
 #' @param restore_par_options Restore par options.
 #' @export
@@ -369,12 +365,12 @@ CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operatin
 
 
 
-#' Layer-wise relevance propagation of the fitted monotonistic neural network
+#' Layer-wise relevance propagation of the fitted non-negative neural network
 #'
-#' Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted monotonistic neural network and data.
+#' Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted non-negative neural network and data.
 #'
 #' @param X The exposure data.
-#' @param model The fitted the monotonistic neural network.
+#' @param model The fitted the non-negative neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -394,7 +390,6 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
   H_all <- relu(t(t(as.matrix(X) %*% as.matrix(model[[1]])) + as.vector(model[[2]])))
   o_all = relu(as.vector(H_all %*% model[[3]][,1] + as.vector(model[[4]][1,1])))
-
 
   for (i in 1:nrow(X)) {
     if (i / 1000 == i %/% 1000) {print(i)}
@@ -484,8 +479,6 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-
-
 CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
   p <- cbind(risk_contributions)
   p <- plyr::count(p)
@@ -514,7 +507,6 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
 #' #See the example under CoOL_0_working_example
-
 
 CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,
   title="Prevalence and mean risk\nof sub-groups",y_max = NA, restore_par_options = TRUE) {
@@ -624,7 +616,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #' By summing the through the risk as if each individual had been exposed to only one exposure, with the value the individual actually had.
 #'
 #' @param X The exposure data.
-#' @param model The fitted the monotonistic neural network.
+#' @param model The fitted the non-negative neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -649,7 +641,7 @@ return(sum_of_individial_effects)
 #' Estimating the risk contribution for each exposure if each individual had been exposed to only one exposure, with the value the individual actually had.
 #'
 #' @param X The exposure data.
-#' @param model The fitted the monotonistic neural network.
+#' @param model The fitted the non-negative neural network.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples

@@ -21,29 +21,25 @@ cpp_train_network_relu(
 )
 }
 \arguments{
-\item{x}{A matrix of predictors for the training dataset}
+\item{x}{A matrix of predictors for the training dataset of shape (nsamples, nfeatures)}
 
 \item{y}{A vector of output values for the training data with a length similar to the number of rows of x}
 
-\item{testx}{A matrix of predictors for the test dataset}
+\item{testx}{A matrix of predictors for the test dataset of shape (nsamples, nfeatures)}
 
 \item{testy}{A vector of output values for the test data with a length similar to the number of rows of x}
 
-\item{W1_input}{Input-hidden layer weights}
+\item{W1_input}{Input-hidden layer weights of shape (nfeatuers, hidden)}
 
-\item{B1_input}{Biases for the hidden layer}
+\item{B1_input}{Biases for the hidden layer of shape (1, hidden)}
 
-\item{W2_input}{Hidden-output layer weights}
+\item{W2_input}{Hidden-output layer weights of shape (hidden, 1)}
 
-\item{B2_input}{Bias for the output layer (the baseline risk)}
-
-\item{IPCW}{Inverse probability of censoring weights (Warning: not yet correctly implemented)}
+\item{B2_input}{Bias for the output layer (the baseline risk) af shape (1, 1)}
 
 \item{lr}{Initial learning rate}
 
 \item{maxepochs}{The maximum number of epochs}
-
-\item{baseline_risk_reg}{Regularisation increasing parameter value at each iteration for the baseline risk}
 
 \item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
 }
@@ -51,7 +47,7 @@ cpp_train_network_relu(
 A list of class "SCL" giving the estimated matrices and performance indicators
 }
 \description{
-A line with details are needed here. XXX
+Non-negative neural network
 }
 \author{
 Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm

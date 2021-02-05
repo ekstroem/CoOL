@@ -2,7 +2,7 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_3_plot_neural_network}
 \alias{CoOL_3_plot_neural_network}
-\title{Plotting the monotonistic neural network}
+\title{Plotting the non-negative neural network}
 \usage{
 CoOL_3_plot_neural_network(
   model,
@@ -13,7 +13,7 @@ CoOL_3_plot_neural_network(
 )
 }
 \arguments{
-\item{model}{The fitted monotonistic neural network.}
+\item{model}{The fitted non-negative neural network.}
 
 \item{names}{Labels of each exposure.}
 
@@ -24,7 +24,7 @@ CoOL_3_plot_neural_network(
 \item{restore_par_options}{Restore par options.}
 }
 \description{
-This function plots the monotonistic neural network
+This function plots the non-negative neural network
 }
 \examples{
 #See the example under CoOL_0_working_example

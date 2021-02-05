@@ -14,10 +14,10 @@ CoOL_1_initiate_neural_network(inputs, output, hidden = 10)
 \item{hidden}{Number of hidden nodes.}
 }
 \description{
-This function initiates a monotonistc neural network. The one-hidden layer monotonistic neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be monotonistic and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.
+This function initiates a non-negative neural network. The one-hidden layer non-negative neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be non-negative and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.
 }
 \details{
-The monotonistic neural network can be denoted as:
+The non-negative neural network can be denoted as:
 \deqn{
 P(Y=1|X^+)=\sum_{j}\Big(w_{j,k}^+ReLU_j\big(\sum_{i}(w_{i,j}^+X_i^+) + b_j^-\big)\Big) + R^{b}
 }
