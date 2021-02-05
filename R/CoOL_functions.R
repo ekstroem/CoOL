@@ -14,9 +14,8 @@ Sys.setenv('_R_CHECK_SYSTEM_CLOCK_' = 0)
 #' @param v mean
 #' @export
 
-random <- function(r,c,v) {
+random <- function(r,c) {
   w1 <- matrix(NA,nrow = r, ncol = c)
-#  w1 <- sapply(w1,function(x){rnorm(1,v,.01)})
   w1 <- sapply(w1,function(x){rgamma(1,1,100)})
   w1 <- matrix(w1,nrow = r, ncol = c)
   return(w1)
@@ -110,7 +109,7 @@ CoOL_0_working_example <- function(n) {
 
 #' Binary encode exposure data
 #'
-#' This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (1/)).
+#' This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (0/1)).
 #'
 #' @param exposure_data The exposure data set.
 #' @export
@@ -153,8 +152,8 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 
 CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
   # Weight initiation
-  w1 <- abs(random(inputs,hidden,0.01))
-  b1 <- -abs(random(1,hidden,0.01))
+  w1 <- abs(random(inputs,hidden))
+  b1 <- -abs(random(1,hidden))
   w2 <- matrix(1,nrow=hidden)
   b2 <- mean(output)
   performance <- NA
@@ -189,28 +188,6 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters.
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots.
 #' @param restore_par_options Restore par options.
-#' @details
-#' For each individual:\deqn{
-#' P(Y=1|X^+)=R^b+\sum_iR^X_i
-#' }
-#' The below procedure is conducted for all individuals in a one by one fashion. The baseline risk, $R^b$, is simply parameterised in the model. The decomposition of the risk contributions for exposures, $R^X_i$, takes 3 steps:
-#'
-#' Step 1 - Subtract the baseline risk, $R^b$:
-#' \deqn{
-#' R^X_k =  P(Y=1|X^+)-R^b
-#' }
-#' Step 2 - Decompose to the hidden layer:
-#' \deqn{
-#' R^{X}_j =  \frac{H_j w_{j,k}}{\sum_j(H_j w_{j,k})} R^X_k
-#' }
-#' Where $H_j$ is the value taken by each of the $ReLU()_j$ functions for the specific individual.
-#'
-#' Step 3 - Hidden layer to exposures:
-#' \deqn{
-#' R^{X}_i = \sum_j \Big(\frac{X_i^+ w_{i,j}}{\sum_i( X_i^+ w_{i,j})}R^X_j\Big)
-#' }
-#' This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
-#'
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -224,8 +201,8 @@ if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 }
-  X_test = X_train
-  Y_test = Y_train
+if (X_test != X_train) print("Traning data and test data are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
+if (Y_test != Y_train) print("Traning outcomes and test outcomes are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
 for (lr_set in lr) {
   print(paste0("############################## Learning rate: ",lr_set," ##############################"))
   performance = model$train_performance
@@ -340,7 +317,7 @@ CoOL_4_predict_risks <- function(X,model) {
 
 #' Plot the ROC AUC
 #'
-#' Plot hte ROC AUC
+#' Plot the ROC AUC
 #'
 #' @param exposure_data The exposure data.
 #' @param outcome_data The outcome data.
@@ -371,6 +348,28 @@ CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operatin
 #'
 #' @param X The exposure data.
 #' @param model The fitted the non-negative neural network.
+#' @details
+#' For each individual:\deqn{
+#' P(Y=1|X^+)=R^b+\sum_iR^X_i
+#' }
+#' The below procedure is conducted for all individuals in a one by one fashion. The baseline risk, $R^b$, is simply parameterised in the model. The decomposition of the risk contributions for exposures, $R^X_i$, takes 3 steps:
+#'
+#' Step 1 - Subtract the baseline risk, $R^b$:
+#' \deqn{
+#' R^X_k =  P(Y=1|X^+)-R^b
+#' }
+#' Step 2 - Decompose to the hidden layer:
+#' \deqn{
+#' R^{X}_j =  \frac{H_j w_{j,k}}{\sum_j(H_j w_{j,k})} R^X_k
+#' }
+#' Where $H_j$ is the value taken by each of the $ReLU()_j$ functions for the specific individual.
+#'
+#' Step 3 - Hidden layer to exposures:
+#' \deqn{
+#' R^{X}_i = \sum_j \Big(\frac{X_i^+ w_{i,j}}{\sum_i( X_i^+ w_{i,j})}R^X_j\Big)
+#' }
+#' This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
+#'
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -378,9 +377,6 @@ CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operatin
 
 
 CoOL_5_layerwise_relevance_propagation <- function(X,model) {
-  #model <- model_2_c
-  #X = X_flip
-
   labels <- colnames(X)
   X = as.matrix(X)
 
@@ -399,7 +395,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
     # Layer-wise relevance propagation (LRP)
     Pos1 = model[[3]][,1]
     Pos1 = ifelse(Pos1>0,Pos1,0)
-    Pos1_sum = sum(H*Pos1) #+ifelse(model[[5]][1,1] * C[i]>0,model[[5]][1,1] * C[i],0)
+    Pos1_sum = sum(H*Pos1)
     Pos1_sum <- ifelse(is.na(Pos1_sum)|Pos1_sum==0,1,Pos1_sum)
     Pos1 = (H*Pos1)/Pos1_sum
 
@@ -415,11 +411,10 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
     for (g in 1:length(H)) {
       Pos2_sum = sum(X[i,]*Pos2[,g])
       Pos2_sum <- ifelse(is.na(Pos2_sum)|Pos2_sum==0,1,Pos2_sum)
-      R_X[i,] = R_X[i,] + (X[i,]*Pos2[,g])/Pos2_sum * R_H[g] #+ sum((((X[i,g][X[i,g]>0])*Neg2[g,])/Neg2_sum) * (-b) * R_H)
+      R_X[i,] = R_X[i,] + (X[i,]*Pos2[,g])/Pos2_sum * R_H[g]
     }
 
     U_B[i] <- model[[4]]
-    #R_X[i,] <- ((o_all[i]*(1-(U_B[i]/o_all[i])))/sum(R_X[i,]))*R_X[i,]
     if (sum(R_X[i,])==0 | is.na(sum(R_X[i,]))) R_X[i,] = 0
   }
 
@@ -496,7 +491,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 
 #' Prevalence and mean risk plot
 #'
-#' This plot shows the prevalence and mean risk for each sub-group. Its destribution hits at sub-groups with great public health potential.
+#' This plot shows the prevalence and mean risk for each sub-group. Its distribution hits at sub-groups with great public health potential.
 #'
 #' @param risk_contributions The risk contributions.
 #' @param sub_groups The vector with the sub-groups.
@@ -581,7 +576,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   par(mar=c(0,0,0,0))
   plot(0,0,type='n',xlim=c(-ncol(d)-6,0),ylim=c(-nrow(d)-1,1),axes=F)
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
-  text(-ncol(d)-6,0,"Mean risk contributions by sub-group\n(Standard diviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
+  text(-ncol(d)-6,0,"Mean risk contributions by sub-group\n(Standard deviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
@@ -661,7 +656,7 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 }
 
 
-#' The default analysis for phase 2 of CoOL
+#' The default analysis for computational phase of CoOL
 #'
 #' The analysis and plots presented in the main paper. We recommend using View(CoOL_default) and View() on the many sub-functions to understand the steps and modify to your own research question. 3 sets of training will run with a learning rate of 1e-4 and a patience of 200 epochs, a learning rate of 1e-5 and a patience of 100 epochs, and a learning rate of 1e-6 and a patience of 50 epochs.
 #'
@@ -855,59 +850,4 @@ CoOL_0_confounding_simulation <- function(n) {
 }
 
 
-
-#' M-bias example
-#'
-#' To reproduce the M-bias example.
-#'
-#' @param n number of observations for the synthetic data.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
-
-CoOL_0_m_bias_simulation <- function(n) {
-#  n = 20000
-  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  F <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  U <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
-  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
-  for (i in 1:n) if(B[i]==1 & sample(1:0,1,prob=c(.3,.7))) A[i] <- 1
-  for (i in 1:n) if(U[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
-  data <- data.frame(Y,A,B,C,D,E,F)
-  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
-  return(data)
-}
-
-
-
-
-#' M-bias example
-#'
-#' To reproduce the M-bias example.
-#'
-#' @param n number of observations for the synthetic data.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
-
-CoOL_0_selection_simulation <- function(n) {
-  #  n = 20000
-  A <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  B <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  C <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  D <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  E <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  U1 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  U2 <- sample(1:0,n,prob = c(0.3,0.7),replace=TRUE)
-  Y <- sample(1:0,n,prob = c(0.01,0.99),replace=TRUE)
-  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
-  for (i in 1:n) if(A[i]==1 & sample(1:0,1,prob=c(.3,.7))) U2[i] <- 1
-  for (i in 1:n) if(U1[i]==1 & sample(1:0,1,prob=c(.3,.7))) Y[i] <- 1
-  data <- data.frame(Y,A,B,C,D,E,U2)
-  for (i in 1:ncol(data))   data[,i] <- as.numeric(data[,i])
-  data <- data[!c(data$U2==0 & sample(0:1,nrow(data),replace=TRUE)==1),]
-  data <- data[,1:6]
-  return(data)
-}
 
