@@ -50,28 +50,6 @@ CoOL_2_train_neural_network(
 \description{
 This function trains the non-negative neural network. Fitting the model is done in a step-wise procedure one individual at a time, where the model estimates individual's risk of the disease outcome, estimates the prediction's residual error and adjusts the model parameters to reduce this error. By iterating through all individuals for multiple epochs (one complete iterations through all individuals is called an epoch), we end with parameters for the model, where the errors are smallest possible for the full population. The model fit follows the linear expectation that synergism is a combined effect larger than the sum of independent effects. The initial values, derivatives, and learning rates are described in further detail in the Supplementary material. The non-negative model ensures that the predicted value cannot be negative. The model does not prevent estimating probabilities above 1, but this would be unlikely, as risks of disease and mortality even for high risk groups in general are far below 1. The use of a test dataset does not seem to assist deciding on the optimal number of epochs possibly due to the constrains due to the non-negative assumption. We suggest splitting data into a train and test data set, such that findings from the train data set can be confirmed in the test data set before developing hypotheses.
 }
-\details{
-For each individual:\deqn{
-P(Y=1|X^+)=R^b+\sum_iR^X_i
-}
-The below procedure is conducted for all individuals in a one by one fashion. The baseline risk, $R^b$, is simply parameterised in the model. The decomposition of the risk contributions for exposures, $R^X_i$, takes 3 steps:
-
-Step 1 - Subtract the baseline risk, $R^b$:
-\deqn{
-R^X_k =  P(Y=1|X^+)-R^b
-}
-Step 2 - Decompose to the hidden layer:
-\deqn{
-R^{X}_j =  \frac{H_j w_{j,k}}{\sum_j(H_j w_{j,k})} R^X_k
-}
-Where $H_j$ is the value taken by each of the $ReLU()_j$ functions for the specific individual.
-
-Step 3 - Hidden layer to exposures:
-\deqn{
-R^{X}_i = \sum_j \Big(\frac{X_i^+ w_{i,j}}{\sum_i( X_i^+ w_{i,j})}R^X_j\Big)
-}
-This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
-}
 \examples{
 #See the example under CoOL_0_working_example
 }

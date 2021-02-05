@@ -2,7 +2,7 @@
 % Please edit documentation in R/CoOL_functions.R
 \name{CoOL_default}
 \alias{CoOL_default}
-\title{The default analysis for phase 2 of CoOL}
+\title{The default analysis for computational phase of CoOL}
 \usage{
 CoOL_default(
   data,

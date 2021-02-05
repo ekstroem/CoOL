@@ -24,7 +24,7 @@ CoOL_4_AUC(
 \item{restore_par_options}{Restore par options.}
 }
 \description{
-Plot hte ROC AUC
+Plot the ROC AUC
 }
 \examples{
 #See the example under CoOL_0_working_example

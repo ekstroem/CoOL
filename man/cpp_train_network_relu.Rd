@@ -13,10 +13,8 @@ cpp_train_network_relu(
   B1_input,
   W2_input,
   B2_input,
-  IPCW,
   lr = 0.01,
   maxepochs = 100,
-  baseline_risk_reg = 1e-05,
   input_parameter_reg = 1e-06
 )
 }
@@ -50,5 +48,5 @@ A list of class "SCL" giving the estimated matrices and performance indicators
 Non-negative neural network
 }
 \author{
-Andreas Rieckmann, Piotr Dworzynski, Claus Ekstrøm
+Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 }

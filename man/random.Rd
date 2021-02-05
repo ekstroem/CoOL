@@ -4,14 +4,12 @@
 \alias{random}
 \title{Function used as part of other functions}
 \usage{
-random(r, c, v)
+random(r, c)
 }
 \arguments{
 \item{r}{rows in matrix}
 
 \item{c}{columns in matrix}
-
-\item{v}{mean}
 }
 \description{
 Function used as part of other functions

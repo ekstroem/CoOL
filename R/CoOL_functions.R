@@ -11,7 +11,6 @@ Sys.setenv('_R_CHECK_SYSTEM_CLOCK_' = 0)
 #'
 #' @param r rows in matrix
 #' @param c columns in matrix
-#' @param v mean
 #' @export
 
 random <- function(r,c) {
