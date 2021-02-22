@@ -198,8 +198,8 @@ if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 }
-if (mean(X_test == X_train)!=1) print("Traning data and test data are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
-if (mean(Y_test == Y_train)!=1) print("Traning outcomes and test outcomes are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
+if (mean(as.vector(X_test == X_train))!=1) print("Traning data and test data are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
+if (mean(as.vector(Y_test == Y_train))!=1) print("Traning outcomes and test outcomes are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
 for (lr_set in lr) {
   print(paste0("############################## Learning rate: ",lr_set," ##############################"))
   performance = model$train_performance
@@ -452,7 +452,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   temp <- merge(cbind(id,risk_contributions),cbind(p,pclus))
   clus <- temp$pclus[order(temp$id)]
   table(clus)
-  if (is.na(colours)) colours <- c("grey",wes_palette("Darjeeling1"))
+  if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
   print(ggtree::ggtree(p_h_c,layout="equal_angle") +
           ggtree::geom_tippoint(size=sqrt(pfreq)/2, alpha=.2, color=colours[pclus])+
           ggtitle(title) +
@@ -484,18 +484,19 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
   y <- data.frame(cbind(p,pclus))
   temp <- merge(x,y)
   clus <- temp$pclus[order(temp$id)]
-  # clus_pred = NA
-  # for (i in 1:number_of_subgroups) {
-  #   clus_pred[i] <- sum(colMeans(as.matrix(risk_contributions[clus==i,])))
-  # }
-  # clus_order <- order(clus_pred)
-  # clus_new = clus
-  # for (i in 1:number_of_subgroups) {
-  #   #  clus_new = ifelse(clus==i, clus_order[i],clus_new)
-  #   clus_new[clus==i] = clus_order[i]
-  # }
-  # table(clus,clus_new)
-  # clus = clus_new
+
+  clus_pred = NA
+  for (i in 1:number_of_subgroups) {
+    clus_pred[i] <- sum(colMeans(as.matrix(risk_contributions[clus==i,])))
+  }
+  clus_order <- order(clus_pred)
+  clus_new = clus
+  for (i in 1:number_of_subgroups) {
+    clus_new = ifelse(clus==i, clus_order[i],clus_new)
+    #clus_new[clus==i] = clus_order[i]
+  }
+  table(clus,clus_new)
+  clus = clus_new
   return(clus)
 }
 
@@ -522,7 +523,7 @@ CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,
     on.exit(par(oldpar))
   }
   par(mar=c(5,3,2,2))
-  if (is.na(colours)) colours <- c("grey",wes_palette("Darjeeling1"))
+  if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
 risk_max = 0
     for (i in 1:max(sub_groups)) {
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
@@ -567,7 +568,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
   }
-  if (is.na(colours)) colours <- c("grey",wes_palette("Darjeeling1"))
+  if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
     prev <- sum(sub_groups==i)/length(sub_groups)
