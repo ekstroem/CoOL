@@ -23,6 +23,9 @@ CoOL_4_AUC(
 
 \item{restore_par_options}{Restore par options.}
 }
+\value{
+A plot of the ROC and the ROC AUC value.
+}
 \description{
 Plot the ROC AUC
 }

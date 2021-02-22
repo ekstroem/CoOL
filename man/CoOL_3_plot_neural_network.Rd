@@ -23,6 +23,9 @@ CoOL_3_plot_neural_network(
 
 \item{restore_par_options}{Restore par options.}
 }
+\value{
+A plot visualizing the connection weights.
+}
 \description{
 This function plots the non-negative neural network
 }

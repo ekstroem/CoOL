@@ -11,6 +11,9 @@ CoOL_6_individual_effects_matrix(X, model)
 
 \item{model}{The fitted the non-negative neural network.}
 }
+\value{
+A matrix [Number of individuals, exposures] with the estimated individual effects by each exposure had all other values been set to zero.
+}
 \description{
 Estimating the risk contribution for each exposure if each individual had been exposed to only one exposure, with the value the individual actually had.
 }

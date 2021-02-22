@@ -23,6 +23,9 @@ CoOL_7_prevalence_and_mean_risk_plot(
 
 \item{restore_par_options}{Restore par options.}
 }
+\value{
+A plot with prevalence and mean risks by sub-groups.
+}
 \description{
 This plot shows the prevalence and mean risk for each sub-group. Its distribution hits at sub-groups with great public health potential.
 }

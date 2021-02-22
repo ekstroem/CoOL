@@ -9,6 +9,9 @@ CoOL_0_binary_encode_exposure_data(exposure_data)
 \arguments{
 \item{exposure_data}{The exposure data set.}
 }
+\value{
+Data frame with the expanded exposure data, where all variables are binary encoded.
+}
 \description{
 This function binary encodes the exposure data set so that each category is coded 0 and 1 (e.g. the variable sex will be two variables men (1/0) and women (0/1)).
 }

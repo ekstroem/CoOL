@@ -29,6 +29,9 @@ CoOL_default(
 
 \item{epochs}{The maximum number of epochs.}
 }
+\value{
+A series of plots across the full Causes of Outcome Learning approach.
+}
 \description{
 The analysis and plots presented in the main paper. We recommend using View(CoOL_default) and View() on the many sub-functions to understand the steps and modify to your own research question. 3 sets of training will run with a learning rate of 1e-4 and a patience of 200 epochs, a learning rate of 1e-5 and a patience of 100 epochs, and a learning rate of 1e-6 and a patience of 50 epochs.
 }

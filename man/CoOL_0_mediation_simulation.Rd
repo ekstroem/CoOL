@@ -9,6 +9,9 @@ CoOL_0_mediation_simulation(n)
 \arguments{
 \item{n}{number of observations for the synthetic data.}
 }
+\value{
+A data frame with the columns Y, A,B ,C, D, E, F and n rows.
+}
 \description{
 To reproduce the mediation example.
 }

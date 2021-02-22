@@ -17,6 +17,9 @@ CoOL_6_dendrogram(
 
 \item{title}{The title of the plot.}
 }
+\value{
+A dendrogram illustrating similarities between individuals based on their risk contributions.
+}
 \description{
 Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 }

@@ -9,6 +9,9 @@ CoOL_0_complex_simulation(n)
 \arguments{
 \item{n}{number of observations for the synthetic data.}
 }
+\value{
+A data frame with the columns Y, Physically_active, Low_SES, Mutation_X, LDL, Night_shifts, Air_pollution and n rows.
+}
 \description{
 To reproduce the complex example.
 }

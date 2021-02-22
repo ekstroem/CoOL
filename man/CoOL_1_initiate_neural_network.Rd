@@ -13,6 +13,9 @@ CoOL_1_initiate_neural_network(inputs, output, hidden = 10)
 
 \item{hidden}{Number of hidden nodes.}
 }
+\value{
+A list with connection weights, bias weights and meta data.
+}
 \description{
 This function initiates a non-negative neural network. The one-hidden layer non-negative neural network is designed to resemble a DAG with hidden synergistic components. With the model, we intend to learn the various synergistic interactions between the exposures and outcome. The model needs to be non-negative and estimate the risk on an additive scale. Neural networks include hidden activation functions (if the sum of the input exceeds a threshold, information is passed on), which can model minimum threshold values of interactions between exposures. We need to specify the upper limit of the number of possible hidden activation functions and through model fitting, the model may be able to learn both stand-alone and synergistically interacting factors.
 }

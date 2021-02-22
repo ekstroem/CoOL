@@ -11,6 +11,9 @@ CoOL_5_layerwise_relevance_propagation(X, model)
 
 \item{model}{The fitted the non-negative neural network.}
 }
+\value{
+A data frame with the risk contribution matrix [number of individuals, risk contributors + the baseline risk].
+}
 \description{
 Calculates risk contributions for each exposure and a baseline using layer-wise relevance propagation of the fitted non-negative neural network and data.
 }

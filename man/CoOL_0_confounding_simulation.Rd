@@ -9,6 +9,9 @@ CoOL_0_confounding_simulation(n)
 \arguments{
 \item{n}{number of observations for the synthetic data.}
 }
+\value{
+A data frame with the columns Y, A, B, C, D, E, F and n rows.
+}
 \description{
 To reproduce the confounding example.
 }

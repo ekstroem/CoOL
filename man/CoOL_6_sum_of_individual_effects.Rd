@@ -11,6 +11,9 @@ CoOL_6_sum_of_individual_effects(X, model)
 
 \item{model}{The fitted the non-negative neural network.}
 }
+\value{
+A value the sum of indivisual effects, had there been no interactions between exposures.
+}
 \description{
 By summing the through the risk as if each individual had been exposed to only one exposure, with the value the individual actually had.
 }

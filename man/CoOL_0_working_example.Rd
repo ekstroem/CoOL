@@ -9,6 +9,9 @@ CoOL_0_working_example(n)
 \arguments{
 \item{n}{number of observations for the synthetic data.}
 }
+\value{
+A data frame with the columns Y, sex, drug_a, drug_b and rows equal to n.
+}
 \description{
 To reproduce the CoOL working example with sex, drug A, and drug B.
 }

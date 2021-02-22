@@ -11,6 +11,9 @@ CoOL_6_sub_groups(risk_contributions, number_of_subgroups = 3)
 
 \item{number_of_subgroups}{The number of sub-groups chosen (Visual inspection is necessary).}
 }
+\value{
+A vector [number of individuals] with an assigned sub-group.
+}
 \description{
 Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
 }

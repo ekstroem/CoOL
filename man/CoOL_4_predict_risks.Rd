@@ -11,6 +11,9 @@ CoOL_4_predict_risks(X, model)
 
 \item{model}{The fitted the non-negative neural network.}
 }
+\value{
+A vector with the predicted risk of the outcome for each individual.
+}
 \description{
 Predict the risk of the outcome using the fitted non-negative neural network.
 }
