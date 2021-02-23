@@ -17,7 +17,8 @@ CoOL_2_train_neural_network(
   plot_and_evaluation_frequency = 50,
   input_parameter_reg = 0.001,
   spline_df = 10,
-  restore_par_options = TRUE
+  restore_par_options = TRUE,
+  drop_out = 0
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ CoOL_2_train_neural_network(
 \item{spline_df}{Degrees of freedom for the spline fit for the performance plots.}
 
 \item{restore_par_options}{Restore par options.}
+
+\item{drop_out}{To drop connections if their weights reaches zero.}
 }
 \value{
 An updated list of connection weights, bias weights and meta data.

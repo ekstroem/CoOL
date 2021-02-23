@@ -15,7 +15,8 @@ cpp_train_network_relu(
   B2_input,
   lr = 0.01,
   maxepochs = 100,
-  input_parameter_reg = 1e-06
+  input_parameter_reg = 1e-06,
+  drop_out = 0L
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ cpp_train_network_relu(
 \item{maxepochs}{The maximum number of epochs}
 
 \item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
+
+\item{drop_out}{To drop connections if their weights reaches zero.}
 }
 \value{
 A list of class "SCL" giving the estimated matrices and performance indicators

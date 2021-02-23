@@ -9,7 +9,8 @@ CoOL_7_prevalence_and_mean_risk_plot(
   sub_groups,
   title = "Prevalence and mean risk\\nof sub-groups",
   y_max = NA,
-  restore_par_options = TRUE
+  restore_par_options = TRUE,
+  colours = NA
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ CoOL_7_prevalence_and_mean_risk_plot(
 \item{y_max}{Fix the axis of the risk of the outcome.}
 
 \item{restore_par_options}{Restore par options.}
+
+\item{colours}{Colours indicating each sub-group.}
 }
 \value{
 A plot with prevalence and mean risks by sub-groups.

@@ -7,7 +7,8 @@
 CoOL_6_dendrogram(
   risk_contributions,
   number_of_subgroups = 3,
-  title = "Dendrogram"
+  title = "Dendrogram",
+  colours = NA
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ CoOL_6_dendrogram(
 \item{number_of_subgroups}{The number of sub-groups chosen (Visual inspection is necessary).}
 
 \item{title}{The title of the plot.}
+
+\item{colours}{Colours indicating each sub-group.}
 }
 \value{
 A dendrogram illustrating similarities between individuals based on their risk contributions.

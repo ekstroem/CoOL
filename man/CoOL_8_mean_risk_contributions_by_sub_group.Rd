@@ -11,7 +11,8 @@ CoOL_8_mean_risk_contributions_by_sub_group(
   outcome_data,
   model,
   exclude_below = 0.001,
-  restore_par_options = TRUE
+  restore_par_options = TRUE,
+  colours = NA
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ CoOL_8_mean_risk_contributions_by_sub_group(
 \item{exclude_below}{A lower cut-off for which risk contributions shown.}
 
 \item{restore_par_options}{Restore par options.}
+
+\item{colours}{Colours indicating each sub-group.}
 }
 \description{
 Table with the mean risk contributions by sub-groups.

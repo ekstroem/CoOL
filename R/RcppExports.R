@@ -32,6 +32,7 @@ rcpprelu_neg <- function(x) {
 #' @param lr Initial learning rate
 #' @param maxepochs The maximum number of epochs
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
+#' @param drop_out To drop connections if their weights reaches zero.
 #' @return A list of class "SCL" giving the estimated matrices and performance indicators
 #' @author Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 #'

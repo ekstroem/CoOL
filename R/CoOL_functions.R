@@ -185,6 +185,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters.
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots.
 #' @param restore_par_options Restore par options.
+#' @param drop_out To drop connections if their weights reaches zero.
 #' @return An updated list of connection weights, bias weights and meta data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
