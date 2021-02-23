@@ -484,20 +484,18 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
   y <- data.frame(cbind(p,pclus))
   temp <- merge(x,y)
   clus <- temp$pclus[order(temp$id)]
-
+ # reordering
   clus_pred = NA
   for (i in 1:number_of_subgroups) {
     clus_pred[i] <- sum(colMeans(as.matrix(risk_contributions[clus==i,])))
   }
   clus_order <- order(clus_pred)
   clus_new = clus
-  for (i in 1:number_of_subgroups) {
-    clus_new = ifelse(clus==i, clus_order[i],clus_new)
-    #clus_new[clus==i] = clus_order[i]
+  index = 1:max(clus)
+  for (i in 1:length(clus)) {
+    clus_new[i] = index[which(clus_order==clus[i])]
   }
-  table(clus,clus_new)
-  clus = clus_new
-  return(clus)
+  return(clus_new)
 }
 
 
