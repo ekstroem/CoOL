@@ -186,6 +186,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' @param spline_df Degrees of freedom for the spline fit for the performance plots.
 #' @param restore_par_options Restore par options.
 #' @param drop_out To drop connections if their weights reaches zero.
+#' @param fix_baseline_risk To fix the baseline risk at a value.
 #' @return An updated list of connection weights, bias weights and meta data.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -194,7 +195,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 2000, patience = 100,monitor = TRUE,
-                            plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE, drop_out = 0) {
+                            plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE, drop_out = 0, fix_baseline_risk = -1) {
 if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
@@ -211,7 +212,7 @@ for (lr_set in lr) {
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
       model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
-              W2_input = model[[3]],B2_input = model[[4]],input_parameter_reg=input_parameter_reg,drop_out=drop_out)
+              W2_input = model[[3]],B2_input = model[[4]],input_parameter_reg=input_parameter_reg,drop_out=drop_out,fix_baseline_risk=fix_baseline_risk)
       performance <- c(performance,model$train_performance)
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)

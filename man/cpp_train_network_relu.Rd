@@ -16,7 +16,8 @@ cpp_train_network_relu(
   lr = 0.01,
   maxepochs = 100,
   input_parameter_reg = 1e-06,
-  drop_out = 0L
+  drop_out = 0L,
+  fix_baseline_risk = -1
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ cpp_train_network_relu(
 \item{input_parameter_reg}{Regularisation decreasing parameter value at each iteration for the input parameters}
 
 \item{drop_out}{To drop connections if their weights reaches zero.}
+
+\item{fix_baseline_risk}{To fix the baseline risk at a value.}
 }
 \value{
 A list of class "SCL" giving the estimated matrices and performance indicators

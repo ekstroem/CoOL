@@ -18,7 +18,8 @@ CoOL_2_train_neural_network(
   input_parameter_reg = 0.001,
   spline_df = 10,
   restore_par_options = TRUE,
-  drop_out = 0
+  drop_out = 0,
+  fix_baseline_risk = -1
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ CoOL_2_train_neural_network(
 \item{restore_par_options}{Restore par options.}
 
 \item{drop_out}{To drop connections if their weights reaches zero.}
+
+\item{fix_baseline_risk}{To fix the baseline risk at a value.}
 }
 \value{
 An updated list of connection weights, bias weights and meta data.

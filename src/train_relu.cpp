@@ -46,6 +46,7 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param maxepochs The maximum number of epochs
 //' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 //' @param drop_out To drop connections if their weights reaches zero.
+//' @param fix_baseline_risk To fix the baseline risk at a value.
 //' @return A list of class "SCL" giving the estimated matrices and performance indicators
 //' @author Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 //'
@@ -63,7 +64,8 @@ Rcpp::List cpp_train_network_relu(
   double lr=0.01,
   double maxepochs = 100,
   double input_parameter_reg = 0.000001,
-  int drop_out = 0
+  int drop_out = 0,
+  double fix_baseline_risk = -1
   ) {
 
   int nsamples = y.size();
@@ -83,6 +85,9 @@ Rcpp::List cpp_train_network_relu(
   W2 = W2_input;
   arma::mat B2(1, 1, arma::fill::zeros);
   B2 = B2_input;
+  if(fix_baseline_risk>=0) {
+    B2 = fix_baseline_risk;
+  }
 
   // W1 for the test data parameter qualification
   arma::mat W1_previous_step(nfeatures, hidden, arma::fill::zeros);  // Filled with standard normals
@@ -147,7 +152,9 @@ Rcpp::List cpp_train_network_relu(
 }}
 
       B1 = rcpprelu_neg(B1 - lr * E_outO * (netO_outH % (h>0)));
+      if(fix_baseline_risk<0) {
       B2 = rcpprelu(B2 - lr / 10 *  E_outO);
+      }
 
     } // Row
  

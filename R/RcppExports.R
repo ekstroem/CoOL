@@ -33,11 +33,12 @@ rcpprelu_neg <- function(x) {
 #' @param maxepochs The maximum number of epochs
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @param drop_out To drop connections if their weights reaches zero.
+#' @param fix_baseline_risk To fix the baseline risk at a value.
 #' @return A list of class "SCL" giving the estimated matrices and performance indicators
 #' @author Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 #'
 #' @export
-cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L) {
-    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr, maxepochs, input_parameter_reg, drop_out)
+cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L, fix_baseline_risk = -1) {
+    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr, maxepochs, input_parameter_reg, drop_out, fix_baseline_risk)
 }
 
