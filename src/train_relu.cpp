@@ -44,6 +44,7 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
 //' @param lr Initial learning rate
 //' @param maxepochs The maximum number of epochs
+//' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 //' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 //' @param drop_out To drop connections if their weights reaches zero.
 //' @param fix_baseline_risk To fix the baseline risk at a value.
@@ -61,6 +62,7 @@ Rcpp::List cpp_train_network_relu(
   const arma::mat & B1_input,
   const arma::mat & W2_input,
   const arma::mat & B2_input,
+  const arma::vec & ipw,
   double lr=0.01,
   double maxepochs = 100,
   double input_parameter_reg = 0.000001,
@@ -144,16 +146,16 @@ Rcpp::List cpp_train_network_relu(
       // All calculations done. Now do the updating
   if (drop_out==0) {
       for (size_t g=0; g<W1.n_rows; g++) {
-        W1.row(g) = rcpprelu(W1.row(g) - lr * E_outO * (netO_outH % (h>0)) * x(row, g) - lr * input_parameter_reg); // L1 regularized - penalized
+        W1.row(g) = rcpprelu(W1.row(g) - ipw(row) * lr * E_outO * (netO_outH % (h>0)) * x(row, g) - lr * input_parameter_reg); // L1 regularized - penalized
 }}
   if (drop_out==1) {
       for (size_t g=0; g<W1.n_rows; g++) {
-        W1.row(g) = rcpprelu(W1.row(g) -  lr * E_outO * ((W1.row(g)>0)  % netO_outH % (h>0)) * x(row, g) - lr * input_parameter_reg); // L1 regularized - penalized
+        W1.row(g) = rcpprelu(W1.row(g) -  ipw(row) * lr * E_outO * ((W1.row(g)>0)  % netO_outH % (h>0)) * x(row, g) - ipw(row) * lr * input_parameter_reg); // L1 regularized - penalized
 }}
 
-      B1 = rcpprelu_neg(B1 - lr * E_outO * (netO_outH % (h>0)));
+      B1 = rcpprelu_neg(B1 - ipw(row) * lr * E_outO * (netO_outH % (h>0)));
       if(fix_baseline_risk<0) {
-      B2 = rcpprelu(B2 - lr / 10 *  E_outO);
+      B2 = rcpprelu(B2 - ipw(row) * lr / 10 *  E_outO);
       }
 
     } // Row

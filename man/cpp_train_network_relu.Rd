@@ -13,6 +13,7 @@ cpp_train_network_relu(
   B1_input,
   W2_input,
   B2_input,
+  ipw,
   lr = 0.01,
   maxepochs = 100,
   input_parameter_reg = 1e-06,
@@ -36,6 +37,8 @@ cpp_train_network_relu(
 \item{W2_input}{Hidden-output layer weights of shape (hidden, 1)}
 
 \item{B2_input}{Bias for the output layer (the baseline risk) af shape (1, 1)}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability weighting to correct for selection bias}
 
 \item{lr}{Initial learning rate}
 

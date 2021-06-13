@@ -31,6 +31,7 @@ rcpprelu_neg <- function(x) {
 #' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
 #' @param lr Initial learning rate
 #' @param maxepochs The maximum number of epochs
+#' @param ipw a vector of weights per observation to allow for inverse probability weighting to correct for selection bias
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @param drop_out To drop connections if their weights reaches zero.
 #' @param fix_baseline_risk To fix the baseline risk at a value.
@@ -38,7 +39,7 @@ rcpprelu_neg <- function(x) {
 #' @author Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 #'
 #' @export
-cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L, fix_baseline_risk = -1) {
-    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, lr, maxepochs, input_parameter_reg, drop_out, fix_baseline_risk)
+cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, ipw, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L, fix_baseline_risk = -1) {
+    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, ipw, lr, maxepochs, input_parameter_reg, drop_out, fix_baseline_risk)
 }
 

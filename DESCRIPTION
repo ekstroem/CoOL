@@ -1,8 +1,8 @@
 Package: CoOL
 Type: Package
 Title: Causes of Outcome Learning
-Version: 1.0.1
-Date: 2021-02-23
+Version: 1.0.2
+Date: 2021-06-11
 Authors@R: c(
    person("Andreas", "Rieckmann", role = c("aut","cre"), email = "aric@sund.ku.dk"),
    person("Piotr", "Dworzynski", role = "aut", email = "piotr@sund.ku.dk"),

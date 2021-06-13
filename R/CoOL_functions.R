@@ -2,6 +2,8 @@
 ######################## Version 30.10.2020
 
 Sys.setenv('_R_CHECK_SYSTEM_CLOCK_' = 0)
+Sys.setenv('_R_CHECK_FORCE_SUGGESTS_' = FALSE)
+
 
 ########## Minor functions ############
 
@@ -180,6 +182,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' @param lr Learning rate (several LR can be provided, such that the model training will train for each LR and continue to the next).
 #' @param epochs Epochs.
 #' @param patience The number of epochs allowed without an improvement in performance.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @param monitor Whether a monitoring plot will be shown during training.
 #' @param plot_and_evaluation_frequency The interval for plotting the performance and checking the patience.
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters.
@@ -195,13 +198,18 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 
 CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 2000, patience = 100,monitor = TRUE,
-                            plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE, drop_out = 0, fix_baseline_risk = -1) {
+                            plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE, drop_out = 0, fix_baseline_risk = -1,
+                            ipw = 1) {
 if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
 }
 if (mean(as.vector(X_test == X_train))!=1) print("Traning data and test data are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
 if (mean(as.vector(Y_test == Y_train))!=1) print("Traning outcomes and test outcomes are not equivalent. It is recommended for CoOL that the model is fully trained on the training data but manual control is conducted on a test data set.")
+if (length(ipw) != nrow(X_train)) {
+  ipw = rep(1,nrow(X_train))
+  print("Equal weights are applied (assuming no selection bias)")
+}
 for (lr_set in lr) {
   print(paste0("############################## Learning rate: ",lr_set," ##############################"))
   performance = model$train_performance
@@ -212,7 +220,8 @@ for (lr_set in lr) {
     for(rounds in 1:ceiling(c(epochs/plot_and_evaluation_frequency))) {
       model <- cpp_train_network_relu(x=as.matrix(X_train),y=as.matrix(Y_train),testx=as.matrix(X_test),testy=as.matrix(Y_test),
               lr = lr_set, maxepochs  = plot_and_evaluation_frequency, W1_input = model[[1]],B1_input = model[[2]],
-              W2_input = model[[3]],B2_input = model[[4]],input_parameter_reg=input_parameter_reg,drop_out=drop_out,fix_baseline_risk=fix_baseline_risk)
+              W2_input = model[[3]],B2_input = model[[4]],input_parameter_reg=input_parameter_reg,drop_out=drop_out,fix_baseline_risk=fix_baseline_risk,
+              ipw=ipw)
       performance <- c(performance,model$train_performance)
       performance_test <- c(performance_test,model$test_performance)
       weight_performance <- c(weight_performance,model$weight_performance)

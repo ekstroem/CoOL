@@ -19,7 +19,8 @@ CoOL_2_train_neural_network(
   spline_df = 10,
   restore_par_options = TRUE,
   drop_out = 0,
-  fix_baseline_risk = -1
+  fix_baseline_risk = -1,
+  ipw = 1
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ CoOL_2_train_neural_network(
 \item{drop_out}{To drop connections if their weights reaches zero.}
 
 \item{fix_baseline_risk}{To fix the baseline risk at a value.}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability weighting to correct for selection bias}
 }
 \value{
 An updated list of connection weights, bias weights and meta data.
