@@ -588,15 +588,19 @@ risk_max = 0
 #' #See the example under CoOL_0_working_example
 
 CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_groups,exposure_data,outcome_data,
-                        model,exclude_below=0.001, restore_par_options = TRUE, colours=NA) {
+                        model,exclude_below=0.001, restore_par_options = TRUE, colours=NA, ipw = 1) {
   if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
   }
+  if (length(ipw) != nrow(risk_contributions)) {
+    ipw = rep(1,nrow(risk_contributions))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
   if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
-    prev <- sum(sub_groups==i)/length(sub_groups)
+    prev <- sum(ipw[sub_groups==i])/sum(ipw)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
     prev0 = prev + prev0
     total = total + risk * prev
@@ -617,13 +621,13 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   text(c(-ncol(d)):c(-1),0,rev(colnames(d)),srt=25,cex=st)
   text(-ncol(d)-6,0,"Mean risk contributions by sub-group\n(Standard deviation)\n[mean risk contribution if other exposures are set to 0]",pos=4,cex=st)
   for (i in 1:max(sub_groups)) {
-    prev <- sum(sub_groups==i)/length(sub_groups)
+    prev <- sum(ipw[sub_groups==i])/sum(ipw)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,]),na.rm=T))
-    risk_obs <- mean(outcome_data[sub_groups==i])
-    text(-ncol(d)-6,-i,paste0("Sub-group ",i,": ","n=",sum(sub_groups==i),", e=",sum(outcome_data[sub_groups==i]),",Prev=",format(round(prev*100,1),nsmall=1),"%, risk=",format(round(risk*100,1),nsmall=1),"%,\nexcess=",
+    risk_obs <- sum(ipw[sub_groups==i]*outcome_data[sub_groups==i])/sum(ipw[sub_groups==i])
+    text(-ncol(d)-6,-i,paste0("Sub-group ",i,": ","n=",round(sum(ipw[sub_groups==i]),1),", e=",round(sum(ipw[sub_groups==i]*outcome_data[sub_groups==i]),1),",Prev=",format(round(prev*100,1),nsmall=1),"%, risk=",format(round(risk*100,1),nsmall=1),"%,\nexcess=",
                               format(round(prev*(risk-mean(risk_contributions$Baseline_risk))/total*100,1),nsmall=1),
                               "%, Obs risk=",format(round(risk_obs*100,1),nsmall=1),"% (",
-                              paste0(format(round(prop.test(sum(outcome_data[sub_groups==i]),length(t(outcome_data)[sub_groups==i]))$conf.int*100,1),nsmall=1),collapse="-"),
+                              paste0(format(round(prop.test(sum(ipw[sub_groups==i]*outcome_data[sub_groups==i]),sum(ipw[sub_groups==i]))$conf.int*100,1),nsmall=1),collapse="-"),
                               "%)\n",
                               "Risk based on the sum of individual effects =",
                               format(round(mean(CoOL_6_sum_of_individual_effects(exposure_data,model=model)[sub_groups==i])*100,1),nsmall=1),
