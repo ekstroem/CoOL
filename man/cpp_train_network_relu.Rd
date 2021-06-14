@@ -38,7 +38,7 @@ cpp_train_network_relu(
 
 \item{B2_input}{Bias for the output layer (the baseline risk) af shape (1, 1)}
 
-\item{ipw}{a vector of weights per observation to allow for inverse probability weighting to correct for selection bias}
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 
 \item{lr}{Initial learning rate}
 

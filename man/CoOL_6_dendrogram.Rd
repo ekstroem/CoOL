@@ -8,7 +8,8 @@ CoOL_6_dendrogram(
   risk_contributions,
   number_of_subgroups = 3,
   title = "Dendrogram",
-  colours = NA
+  colours = NA,
+  ipw = 1
 )
 }
 \arguments{

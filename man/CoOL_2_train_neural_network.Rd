@@ -54,7 +54,7 @@ CoOL_2_train_neural_network(
 
 \item{fix_baseline_risk}{To fix the baseline risk at a value.}
 
-\item{ipw}{a vector of weights per observation to allow for inverse probability weighting to correct for selection bias}
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
 \value{
 An updated list of connection weights, bias weights and meta data.

@@ -31,7 +31,7 @@ rcpprelu_neg <- function(x) {
 #' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
 #' @param lr Initial learning rate
 #' @param maxepochs The maximum number of epochs
-#' @param ipw a vector of weights per observation to allow for inverse probability weighting to correct for selection bias
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @param input_parameter_reg Regularisation decreasing parameter value at each iteration for the input parameters
 #' @param drop_out To drop connections if their weights reaches zero.
 #' @param fix_baseline_risk To fix the baseline risk at a value.

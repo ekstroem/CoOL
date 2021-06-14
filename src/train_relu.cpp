@@ -146,7 +146,7 @@ Rcpp::List cpp_train_network_relu(
       // All calculations done. Now do the updating
   if (drop_out==0) {
       for (size_t g=0; g<W1.n_rows; g++) {
-        W1.row(g) = rcpprelu(W1.row(g) - ipw(row) * lr * E_outO * (netO_outH % (h>0)) * x(row, g) - lr * input_parameter_reg); // L1 regularized - penalized
+        W1.row(g) = rcpprelu(W1.row(g) - ipw(row) * lr * E_outO * (netO_outH % (h>0)) * x(row, g) - ipw(row) * lr * input_parameter_reg); // L1 regularized - penalized
 }}
   if (drop_out==1) {
       for (size_t g=0; g<W1.n_rows; g++) {
