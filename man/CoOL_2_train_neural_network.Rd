@@ -9,6 +9,8 @@ CoOL_2_train_neural_network(
   Y_train,
   X_test,
   Y_test,
+  C_train = 1,
+  C_test = 1,
   model,
   lr = c(1e-04, 1e-05, 1e-06),
   epochs = 2000,
@@ -31,6 +33,10 @@ CoOL_2_train_neural_network(
 \item{X_test}{The exposure data for the test data (currently the training data is used).}
 
 \item{Y_test}{The outcome data for the test data (currently the training data is used).}
+
+\item{C_train}{One variable to adjust the analysis for such as calendar time (training data).}
+
+\item{C_test}{One variable to adjust the analysis for such as calendar time (currently the training data is used).}
 
 \item{model}{The fitted non-negative neural network.}
 

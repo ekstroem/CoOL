@@ -10,7 +10,8 @@ CoOL_7_prevalence_and_mean_risk_plot(
   title = "Prevalence and mean risk\\nof sub-groups",
   y_max = NA,
   restore_par_options = TRUE,
-  colours = NA
+  colours = NA,
+  ipw = 1
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ CoOL_7_prevalence_and_mean_risk_plot(
 \item{restore_par_options}{Restore par options.}
 
 \item{colours}{Colours indicating each sub-group.}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
 \value{
 A plot with prevalence and mean risks by sub-groups.

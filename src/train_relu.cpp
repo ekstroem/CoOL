@@ -36,12 +36,15 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 //' @description Non-negative neural network
 //' @param x A matrix of predictors for the training dataset of shape (nsamples, nfeatures)
 //' @param y A vector of output values for the training data with a length similar to the number of rows of x
+//' @param c A vector of the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.
 //' @param testx A matrix of predictors for the test dataset of shape (nsamples, nfeatures)
 //' @param testy A vector of output values for the test data with a length similar to the number of rows of x
+//' @param testc A vector the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.
 //' @param W1_input Input-hidden layer weights of shape (nfeatuers, hidden) 
 //' @param B1_input Biases for the hidden layer of shape (1, hidden) 
 //' @param W2_input Hidden-output layer weights of shape (hidden, 1) 
 //' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
+//' @param C2_input Bias for the data to adjust the analysis for 
 //' @param lr Initial learning rate
 //' @param maxepochs The maximum number of epochs
 //' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
@@ -56,12 +59,15 @@ arma::mat rcpprelu_neg(const arma::mat & x) {
 Rcpp::List cpp_train_network_relu(
   const arma::mat & x,
   const arma::vec & y,
+  const arma::vec & c,
   const arma::mat & testx,
   const arma::vec & testy,
+  const arma::vec & testc,
   const arma::mat & W1_input,
   const arma::mat & B1_input,
   const arma::mat & W2_input,
   const arma::mat & B2_input,
+  const arma::mat & C2_input,
   const arma::vec & ipw,
   double lr=0.01,
   double maxepochs = 100,
@@ -90,6 +96,8 @@ Rcpp::List cpp_train_network_relu(
   if(fix_baseline_risk>=0) {
     B2 = fix_baseline_risk;
   }
+  arma::mat C2(1, 1, arma::fill::zeros);
+  C2 = C2_input;
 
   // W1 for the test data parameter qualification
   arma::mat W1_previous_step(nfeatures, hidden, arma::fill::zeros);  // Filled with standard normals
@@ -136,7 +144,7 @@ Rcpp::List cpp_train_network_relu(
       h = rcpprelu((x.row(row) * (W1)) + B1);
 
       // Now do the same to get the output layer
-      o(row) = rcpprelu(h * W2 + B2)(0,0); // the relu function is redundant
+      o(row) = rcpprelu(h * W2 + B2 + c(row)*C2)(0,0); // the relu function is redundant
 
       // Step 2: Backwards pass to update the parameters W1, B1, B2
       double E_outO = - (y(row) - o(row));
@@ -156,17 +164,21 @@ Rcpp::List cpp_train_network_relu(
       B1 = rcpprelu_neg(B1 - ipw(row) * lr * E_outO * (netO_outH % (h>0)));
       if(fix_baseline_risk<0) {
       B2 = rcpprelu(B2 - ipw(row) * lr / 10 *  E_outO);
-      }
 
+      // Update confounder weight
+      netO_wHO = c(row);
+      C2 = rcpprelu(C2(0,0) - ipw(row) * lr / 10 * E_outO * netO_wHO);
+
+      }
     } // Row
  
     // Compute performance
     arma::mat tmp = x * W1;
-    double mean_perform = 0.5*accu(square(y - (rcpprelu(rcpprelu(tmp.each_row() + B1) * W2 + B2(0,0)))))/nsamples;
+    double mean_perform = 0.5*accu(square(y - (rcpprelu(rcpprelu(tmp.each_row() + B1) * W2 + B2(0,0) + C2(0,0) * c ))))/nsamples;
 
     // Compute performance on the validation (test) set    
     tmp = testx * W1;
-    double mean_val_perform = 0.5*accu(square(testy - (rcpprelu(rcpprelu(tmp.each_row() + B1) * W2 + B2(0,0)) )))/nsamples;
+    double mean_val_perform = 0.5*accu(square(testy - (rcpprelu(rcpprelu(tmp.each_row() + B1) * W2 + B2(0,0) + C2(0,0) * testc ))))/nsamples;
 
     trainperf(epoch) = mean_perform;
     testperf(epoch) = mean_val_perform;
@@ -210,6 +222,7 @@ Rcpp::List cpp_train_network_relu(
     Rcpp::Named("B1")=B1,
     Rcpp::Named("W2")=W2,
     Rcpp::Named("B2")=B2,
+    Rcpp::Named("C2")=C2,
     Rcpp::Named("train_performance")=trainp,
     Rcpp::Named("test_performance")=testp,
     Rcpp::Named("weight_performance")=trainp_weights,

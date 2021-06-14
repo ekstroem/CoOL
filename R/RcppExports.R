@@ -23,12 +23,15 @@ rcpprelu_neg <- function(x) {
 #' @description Non-negative neural network
 #' @param x A matrix of predictors for the training dataset of shape (nsamples, nfeatures)
 #' @param y A vector of output values for the training data with a length similar to the number of rows of x
+#' @param c A vector of the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.
 #' @param testx A matrix of predictors for the test dataset of shape (nsamples, nfeatures)
 #' @param testy A vector of output values for the test data with a length similar to the number of rows of x
+#' @param testc A vector the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.
 #' @param W1_input Input-hidden layer weights of shape (nfeatuers, hidden) 
 #' @param B1_input Biases for the hidden layer of shape (1, hidden) 
 #' @param W2_input Hidden-output layer weights of shape (hidden, 1) 
 #' @param B2_input Bias for the output layer (the baseline risk) af shape (1, 1)
+#' @param C2_input Bias for the data to adjust the analysis for 
 #' @param lr Initial learning rate
 #' @param maxepochs The maximum number of epochs
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
@@ -39,7 +42,7 @@ rcpprelu_neg <- function(x) {
 #' @author Andreas Rieckmann, Piotr Dworzynski, Leila Arras, Claus Ekstrøm
 #'
 #' @export
-cpp_train_network_relu <- function(x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, ipw, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L, fix_baseline_risk = -1) {
-    .Call(`_CoOL_cpp_train_network_relu`, x, y, testx, testy, W1_input, B1_input, W2_input, B2_input, ipw, lr, maxepochs, input_parameter_reg, drop_out, fix_baseline_risk)
+cpp_train_network_relu <- function(x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, ipw, lr = 0.01, maxepochs = 100, input_parameter_reg = 0.000001, drop_out = 0L, fix_baseline_risk = -1) {
+    .Call(`_CoOL_cpp_train_network_relu`, x, y, c, testx, testy, testc, W1_input, B1_input, W2_input, B2_input, C2_input, ipw, lr, maxepochs, input_parameter_reg, drop_out, fix_baseline_risk)
 }
 

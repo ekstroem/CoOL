@@ -12,7 +12,8 @@ CoOL_8_mean_risk_contributions_by_sub_group(
   model,
   exclude_below = 0.001,
   restore_par_options = TRUE,
-  colours = NA
+  colours = NA,
+  ipw = 1
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ CoOL_8_mean_risk_contributions_by_sub_group(
 \item{restore_par_options}{Restore par options.}
 
 \item{colours}{Colours indicating each sub-group.}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
 \description{
 Table with the mean risk contributions by sub-groups.

@@ -4,12 +4,14 @@
 \alias{CoOL_6_sub_groups}
 \title{Assign sub-groups}
 \usage{
-CoOL_6_sub_groups(risk_contributions, number_of_subgroups = 3)
+CoOL_6_sub_groups(risk_contributions, number_of_subgroups = 3, ipw = 1)
 }
 \arguments{
 \item{risk_contributions}{The risk contributions.}
 
 \item{number_of_subgroups}{The number of sub-groups chosen (Visual inspection is necessary).}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
 \value{
 A vector [number of individuals] with an assigned sub-group.

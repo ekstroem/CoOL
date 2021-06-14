@@ -20,6 +20,8 @@ CoOL_6_dendrogram(
 \item{title}{The title of the plot.}
 
 \item{colours}{Colours indicating each sub-group.}
+
+\item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
 \value{
 A dendrogram illustrating similarities between individuals based on their risk contributions.

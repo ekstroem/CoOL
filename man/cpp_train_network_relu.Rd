@@ -7,12 +7,15 @@
 cpp_train_network_relu(
   x,
   y,
+  c,
   testx,
   testy,
+  testc,
   W1_input,
   B1_input,
   W2_input,
   B2_input,
+  C2_input,
   ipw,
   lr = 0.01,
   maxepochs = 100,
@@ -26,9 +29,13 @@ cpp_train_network_relu(
 
 \item{y}{A vector of output values for the training data with a length similar to the number of rows of x}
 
+\item{c}{A vector of the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.}
+
 \item{testx}{A matrix of predictors for the test dataset of shape (nsamples, nfeatures)}
 
 \item{testy}{A vector of output values for the test data with a length similar to the number of rows of x}
+
+\item{testc}{A vector the data to adjust the analysis for such as calendar time (training data) with the same number of rows as x.}
 
 \item{W1_input}{Input-hidden layer weights of shape (nfeatuers, hidden)}
 
@@ -37,6 +44,8 @@ cpp_train_network_relu(
 \item{W2_input}{Hidden-output layer weights of shape (hidden, 1)}
 
 \item{B2_input}{Bias for the output layer (the baseline risk) af shape (1, 1)}
+
+\item{C2_input}{Bias for the data to adjust the analysis for}
 
 \item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 
