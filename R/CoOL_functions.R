@@ -445,6 +445,7 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary).
 #' @param title The title of the plot.
 #' @param colours Colours indicating each sub-group.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @return A dendrogram illustrating similarities between individuals based on their risk contributions.
 #' @examples
 #' #See the example under CoOL_0_working_example
@@ -484,6 +485,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #'
 #' @param risk_contributions The risk contributions.
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary).
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @return A vector [number of individuals] with an assigned sub-group.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -532,6 +534,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' @param y_max Fix the axis of the risk of the outcome.
 #' @param restore_par_options Restore par options.
 #' @param colours Colours indicating each sub-group.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @return A plot with prevalence and mean risks by sub-groups.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
@@ -582,6 +585,7 @@ risk_max = 0
 #' @param exclude_below A lower cut-off for which risk contributions shown.
 #' @param restore_par_options Restore par options.
 #' @param colours Colours indicating each sub-group.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
 #' @examples
