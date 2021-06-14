@@ -538,10 +538,14 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
 #' #See the example under CoOL_0_working_example
 
 CoOL_7_prevalence_and_mean_risk_plot <- function(risk_contributions,sub_groups,
-  title="Prevalence and mean risk\nof sub-groups",y_max = NA, restore_par_options = TRUE, colours=NA) {
+  title="Prevalence and mean risk\nof sub-groups",y_max = NA, restore_par_options = TRUE, colours=NA, ipw = 1) {
   if (restore_par_options==TRUE) {
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
+  }
+  if (length(ipw) != nrow(X_train)) {
+    ipw = rep(1,nrow(X_train))
+    print("Equal weights are applied (assuming no selection bias)")
   }
   par(mar=c(5,3,2,2))
   if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
@@ -556,7 +560,7 @@ risk_max = 0
   rect(0,0,1,1)
   prev0 = 0; total = 0
   for (i in 1:max(sub_groups)) {
-    prev <- sum(sub_groups==i)/length(sub_groups)
+    prev <- sum(ipw[sub_groups==i])/sum(ipw)
     risk <- sum(colMeans(as.matrix(risk_contributions[sub_groups==i,])))
     rect(xleft = prev0,ybottom = 0,xright = prev+prev0,ytop = risk, col=colours[i])
     prev0 = prev + prev0
