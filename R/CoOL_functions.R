@@ -466,6 +466,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   pclus <- cutree(p_h_c, number_of_subgroups)
   id <- 1:nrow(risk_contributions)
   temp <- merge(cbind(id,risk_contributions),cbind(p,pclus))
+  temp <- temp[duplicated(temp)==FALSE,]
   clus <- temp$pclus[order(temp$id)]
   table(clus)
   if (is.na(colours[1])) colours <- c("grey",wes_palette("Darjeeling1"))
@@ -504,6 +505,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
   x <- data.frame(cbind(id,risk_contributions))
   y <- data.frame(cbind(p,pclus))
   temp <- merge(x,y)
+  temp <- temp[duplicated(temp)==FALSE,]
   clus <- temp$pclus[order(temp$id)]
  # reordering
   clus_pred = NA
