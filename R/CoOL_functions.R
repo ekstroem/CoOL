@@ -461,7 +461,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
   p$ipw <- ipw
   p <- plyr::count(p, wt_var = "ipw")
   pfreq <- p$freq
-  p <- p[,-c(ncol(p))]
+  p <- p[,1:c(ncol(p)-3)]
   p_h_c <- hclustgeo(dist(p,method = "manhattan"), wt=pfreq)
   pclus <- cutree(p_h_c, number_of_subgroups)
   id <- 1:nrow(risk_contributions)
@@ -489,10 +489,15 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #' #See the example under CoOL_0_working_example
 
 CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3) {
+  if (length(ipw) != nrow(risk_contributions)) {
+    ipw = rep(1,nrow(risk_contributions))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
   p <- cbind(risk_contributions)
-  p <- plyr::count(p)
+  p$ipw <- ipw
+  p <- plyr::count(p, wt_var = "ipw")
   pfreq <- p$freq
-  p <- p[,-c(ncol(p))]
+  p <- p[,1:c(ncol(p)-3)]
   p_h_c <- hclustgeo(dist(p,method = "manhattan"), wt=pfreq)
   pclus <- cutree(p_h_c, number_of_subgroups)
   id <- 1:nrow(risk_contributions)
