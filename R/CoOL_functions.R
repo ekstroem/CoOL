@@ -451,10 +451,15 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 
 
 
-CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram", colours=NA) {
+CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = "Dendrogram", colours=NA, ipw = 1) {
   requireNamespace("ggtree")
+  if (length(ipw) != nrow(risk_contributions)) {
+    ipw = rep(1,nrow(risk_contributions))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
   p <- cbind(risk_contributions)
-  p <- plyr::count(p)
+  p$ipw <- ipw
+  p <- plyr::count(p, wt_var = "ipw")
   pfreq <- p$freq
   p <- p[,-c(ncol(p))]
   p_h_c <- hclustgeo(dist(p,method = "manhattan"), wt=pfreq)
