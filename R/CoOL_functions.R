@@ -215,8 +215,8 @@ if (length(ipw) != nrow(X_train)) {
   print("Equal weights are applied (assuming no selection bias)")
 }
 if (length(C_train) != nrow(X_train)) {
-  C_train = rep(1,nrow(X_train))
-  C_test = rep(1,nrow(X_train))
+  C_train = rep(0,nrow(X_train))
+  C_test = rep(0,nrow(X_train))
     print("Not adjusting for calendar time")
 }
 for (lr_set in lr) {
