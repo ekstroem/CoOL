@@ -199,7 +199,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' #See the example under CoOL_0_working_example
 
 
-CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, C_train=1, C_test=1, model, lr = c(1e-4,1e-5,1e-6),
+CoOL_2_train_neural_network <- function(X_train, Y_train, X_test, Y_test, C_train=0, C_test=0, model, lr = c(1e-4,1e-5,1e-6),
                             epochs = 2000, patience = 100,monitor = TRUE,
                             plot_and_evaluation_frequency = 50, input_parameter_reg = 1e-3, spline_df=10, restore_par_options = TRUE, drop_out = 0, fix_baseline_risk = -1,
                             ipw = 1) {
@@ -218,6 +218,7 @@ if (length(C_train) != nrow(X_train)) {
   C_train = rep(0,nrow(X_train))
   C_test = rep(0,nrow(X_train))
     print("Not adjusting for calendar time")
+  model[[5]] = matrix(0) # To illustrate that there is no adjustment for calendar time
 }
 for (lr_set in lr) {
   print(paste0("############################## Learning rate: ",lr_set," ##############################"))
