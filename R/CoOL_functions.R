@@ -44,7 +44,7 @@ relu <- function(input) {
 #'
 #' @param n number of observations for the synthetic data.
 #' @return A data frame with the columns Y, sex, drug_a, drug_b and rows equal to n.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' 	while (FALSE) {
 #'  library(CoOL)
@@ -114,7 +114,7 @@ CoOL_0_working_example <- function(n) {
 #'
 #' @param exposure_data The exposure data set.
 #' @return Data frame with the expanded exposure data, where all variables are binary encoded.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 #'
@@ -143,7 +143,7 @@ CoOL_0_binary_encode_exposure_data <- function(exposure_data) {
 #' P(Y=1|X^+)=\sum_{j}\Big(w_{j,k}^+ReLU_j\big(\sum_{i}(w_{i,j}^+X_i^+) + b_j^-\big)\Big) + R^{b}
 #' }
 #'
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 #'
@@ -194,7 +194,7 @@ CoOL_1_initiate_neural_network <- function(inputs,output,hidden=10) {
 #' @param drop_out To drop connections if their weights reaches zero.
 #' @param fix_baseline_risk To fix the baseline risk at a value.
 #' @return An updated list of connection weights, bias weights and meta data.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -274,7 +274,7 @@ for (lr_set in lr) {
 #' @param arrow_size Define the arrow_size for the model illustration in the reported training progress.
 #' @param restore_par_options Restore par options.
 #' @return A plot visualizing the connection weights.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -321,7 +321,7 @@ CoOL_3_plot_neural_network <- function(model,names,arrow_size = NA,
 #' @param X The exposure data.
 #' @param model The fitted the non-negative neural network.
 #' @return A vector with the predicted risk of the outcome for each individual.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -344,7 +344,7 @@ CoOL_4_predict_risks <- function(X,model) {
 #' @param title Title on the plot.
 #' @param restore_par_options Restore par options.
 #' @return A plot of the ROC and the ROC AUC value.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -390,7 +390,7 @@ CoOL_4_AUC <- function(outcome_data,exposure_data,model,title="Receiver operatin
 #' This creates a dataset with the dimensions equal to the number of individuals times the number of exposures plus a baseline risk value, which can be termed a risk contribution matrix. Instead of exposure values, individuals are given risk contributions, R^X_i.
 #'
 #' @return A data frame with the risk contribution matrix [number of individuals, risk contributors + the baseline risk].
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -498,7 +498,7 @@ CoOL_6_dendrogram <- function(risk_contributions,number_of_subgroups=3, title = 
 #' @param number_of_subgroups The number of sub-groups chosen (Visual inspection is necessary).
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @return A vector [number of individuals] with an assigned sub-group.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -547,7 +547,7 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3,ipw=1) {
 #' @param colours Colours indicating each sub-group.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @return A plot with prevalence and mean risks by sub-groups.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -598,7 +598,7 @@ risk_max = 0
 #' @param colours Colours indicating each sub-group.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
 #' @export
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -671,7 +671,7 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #' @param X The exposure data.
 #' @param model The fitted the non-negative neural network.
 #' @return A value the sum of indivisual effects, had there been no interactions between exposures.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -696,7 +696,7 @@ return(sum_of_individial_effects)
 #' @param X The exposure data.
 #' @param model The fitted the non-negative neural network.
 #' @return  A matrix [Number of individuals, exposures] with the estimated individual effects by each exposure had all other values been set to zero.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
@@ -726,7 +726,7 @@ CoOL_6_individual_effects_matrix <- function(X,model) {
 #' @param monitor Whether monitoring plots will be shown in R.
 #' @param epochs The maximum number of epochs.
 #' @return A series of plots across the full Causes of Outcome Learning approach.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' # Not run
 #' while (FALSE) {
@@ -780,7 +780,7 @@ CoOL_default <- function(data,sub_groups=3,exclude_below=0.01, input_parameter_r
 #'
 #' @param n number of observations for the synthetic data.
 #' @return A data frame with the columns Y, Physically_active, Low_SES, Mutation_X, LDL, Night_shifts, Air_pollution and n rows.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 
 CoOL_0_complex_simulation <- function(n) {
   #n = 20000
@@ -837,7 +837,7 @@ CoOL_0_complex_simulation <- function(n) {
 #'
 #' @param n number of observations for the synthetic data.
 #' @return A data frame with the columns Y, A, B, C, D, E, F and n rows.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 
 CoOL_0_common_simulation <- function(n) {
   #n = 20000
@@ -867,7 +867,7 @@ CoOL_0_common_simulation <- function(n) {
 #'
 #' @param n number of observations for the synthetic data.
 #' @return A data frame with the columns Y, A,B ,C, D, E, F and n rows.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 
 CoOL_0_mediation_simulation <- function(n) {
   #n = 20000
@@ -892,7 +892,7 @@ CoOL_0_mediation_simulation <- function(n) {
 #'
 #' @param n number of observations for the synthetic data.
 #' @return A data frame with the columns Y, A, B, C, D, E, F and n rows.
-#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 
 CoOL_0_confounding_simulation <- function(n) {
   #n = 20000
