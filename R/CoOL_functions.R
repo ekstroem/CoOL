@@ -76,17 +76,21 @@ relu <- function(input) {
 #'  title = "C) Receiver operating\ncharacteristic curve") # AUC
 #'  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
 #'  ) # Risk contributions
+#'  CoOL_6_number_of_sub_groups(risk_contributions = risk_contributions, low_number = 1, high_number = 5)
 #'  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
 #'  title = "D) Dendrogram with 3 sub-groups") # Dendrogram
 #'  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
 #'  ) # Assign sub-groups
+#'  CoOL_6_calibration_plot(exposure_data = exposure_data,
+#'  outcome_data = outcome_data, model = model, sub_groups = sub_groups)
 #'  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,
 #'  title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
-#'  CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
+#'  results <- CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
 #'  sub_groups,outcome_data = outcome_data,exposure_data = exposure_data,
 #'  model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+#' 	CoOL_9_visualised_mean_risk_contributions(results = results,  sub_groups = sub_groups)
+#' 	CoOL_9_visualised_mean_risk_contributions_legend(results = results)
 #' 	}
-
 
 CoOL_0_working_example <- function(n) {
   drug_a = sample(1:0,n,prob=c(0.2,0.8),replace=TRUE)
@@ -448,6 +452,58 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 }
 
 
+
+
+#' Number of subgroups
+#'
+#' Calculates the mean distance by several number of subgroups to determine the optimal number of subgroups.
+#'
+#' @param risk_contributions The risk contributions.
+#' @param low_number The lowest number of subgroups.
+#' @param high_number The highest number of subgroups.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @return A plot of the mean distance by the number of subgroups. The mean distance converges when the optimal number of subgroups are found.
+#' @examples
+#' #See the example under CoOL_0_working_example
+
+
+CoOL_6_number_of_sub_groups <- function(risk_contributions, low_number = 1, high_number = 5, ipw = 1) {
+  library(ClustGeo)
+  mean_dist = NA
+  if (length(ipw) != nrow(risk_contributions)) {
+    ipw = rep(1, nrow(risk_contributions))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
+  p <- cbind(risk_contributions)
+  p$ipw <- ipw
+  p <- plyr::count(p, wt_var = "ipw")
+  pfreq <- p$freq
+  p <- p[, 1:c(ncol(p) - 3)]
+  p_h_c <- hclustgeo(dist(p, method = "manhattan"), wt = pfreq)
+  for (k in low_number:high_number) {
+    pclus <- cutree(p_h_c, k)
+    id <- 1:nrow(risk_contributions)
+    temp <- merge(cbind(id, risk_contributions), cbind(p, pclus))
+    temp <- temp[duplicated(temp) == FALSE, ]
+    clusters <- temp$pclus[order(temp$id)]
+    print(paste0(k," groups"))
+    temp = NA
+    N = NA
+    for (g in 1:k) {
+      temp[g] <- mean(as.matrix(dist(risk_contributions[clusters==g,], method = "manhattan")))
+      N[g] <- sum(clusters==g)
+    }
+    mean_dist[k] <- sum(temp * N) / sum(N)
+  }
+  par(mfrow=c(1,1));par(mar=c(5,5,1,0))
+  print(plot(mean_dist,pch=16,xlab="Sub-groups",ylab="Mean difference in risk contributions",axes=F,type='b')) # x groups
+  axis(2);axis(1,1:20,tick = F)
+  print("Plot printed")
+}
+
+
+
+
 #' Dendrogram and sub-groups
 #'
 #' Calculates presents a dendrogram coloured by the pre-defined number of sub-groups and provides the vector with sub-groups.
@@ -535,6 +591,44 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3,ipw=1) {
 }
 
 
+
+#' Calibration curve
+#'
+#' Shows the calibration curve e.i. the predicted risk vs the actual risk by subgroups.
+#'
+#' @param exposure_data The exposure dataset.
+#' @param outcome_data The outcome vector.
+#' @param model The fitted non-negative neural network.
+#' @param sub_groups The vector with the assigned sub_group numbers.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @return A calibration curve.
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
+#' @examples
+#' #See the example under CoOL_0_working_example
+
+CoOL_6_calibration_plot <- function (exposure_data, outcome_data, model, sub_groups, ipw = 1) {
+  if (length(ipw) != nrow(exposure_data)) {
+    ipw = rep(1, nrow(exposure_data))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
+  c_risk <- NA
+  c_pred <- NA
+  preds <-  CoOL_4_predict_risks(exposure_data, model)
+  for (i in 1:max(sub_groups)) {
+    c_pred[i] <- mean(preds[sub_groups==i])
+    c_risk[i] <- sum((outcome_data[sub_groups==i] * ipw[sub_groups==i])) / sum(ipw[sub_groups==i])
+  }
+  par(mfrow=c(1,1));par(mar=c(5,5,1,1))
+  plot(c_pred,c_risk,type='n',xlab="Predicted risk in each sub-group",ylab="Actual risk in each sub-group",xlim=c(0,min(c(max(c_pred)*1.2,1))),ylim=c(0,min(c(max(c_risk)*1.2,1))),xaxs='i',yaxs='i',axes=F)
+  axis(1);axis(2)
+  text(c_pred,c_risk,1:max(sub_groups),cex=1.5)
+  abline(0,1)
+}
+
+
+
+
+
 #' Prevalence and mean risk plot
 #'
 #' This plot shows the prevalence and mean risk for each sub-group. Its distribution hits at sub-groups with great public health potential.
@@ -597,6 +691,7 @@ risk_max = 0
 #' @param restore_par_options Restore par options.
 #' @param colours Colours indicating each sub-group.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @return A plot and a dataset with the mean risk contributions by sub-groups.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
@@ -661,6 +756,66 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
   }}
   return(t(d))
   }
+
+
+
+
+
+#' Visualisation of the mean risk contributions by sub-groups
+#'
+#' Visualisation of the mean risk contributions by sub-groups. The function uses the output
+#'
+#' @param results CoOL_8_mean_risk_contributions_by_sub_group.
+#' @param sub_groups The vector with the sub-groups.
+#' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @export
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
+#' @examples
+#' #See the example under CoOL_0_working_example
+
+CoOL_9_visualised_mean_risk_contributions <- function(results, sub_groups, ipw = 1) {
+  if (length(ipw) != nrow(risk_contributions)) {
+    ipw = rep(1, nrow(risk_contributions))
+    print("Equal weights are applied (assuming no selection bias)")
+  }
+  labels <- NA
+  for (i in 1:ncol(results)) {  labels[i] <- paste0("Group ",i," (", format(round(100*sum(ipw[sub_groups==i])/sum(ipw),1),nsmall=1),"%)")}
+  colnames(results) <- labels
+  res <- results
+  res <- round(res*1000)
+  res <- res * 1000 / max(res)
+  res <- res[-nrow(res),]
+  par(mfrow=c(1,1))
+  farver <- colorRampPalette(c("white","orange","orange",rep("red",3),"black"))(1000)
+  par(mar=c(10,20,.5,.5))
+  plot(0,0,xlim=c(0.5,ncol(res)+.5),ylim=c(0,nrow(res)+1),axes=F,ylab="",xlab="",type='n')
+  axis(1,at=1:ncol(res),labels=colnames(res),tick=F,las=3)
+  axis(2,at=1:nrow(res),labels=rownames(res),tick=F,las=2)
+  for(r in 1:nrow(res)) {
+    for(c in 1:ncol(res)) {
+      rect(c-.5,r-.5,c+.5,r+.5, col=farver[res[r,c]])
+    }
+  }
+}
+
+
+
+#' Legend to the visualisation of the mean risk contributions by sub-groups
+#'
+#' Legend to the visualisation of the mean risk contributions by sub-groups. The function uses the output
+#'
+#' @param results CoOL_8_mean_risk_contributions_by_sub_group.
+#' @export
+#' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
+#' @examples
+#' #See the example under CoOL_0_working_example
+
+CoOL_9_visualised_mean_risk_contributions_legend <- function(results) {
+  par(mar=c(1,5,1,1))
+  plot(0,0,type='n',ylim=c(0,100),xlim=c(0,1),axes=F,xlab="",ylab="Average risk contributions"); axis(2,at=seq(0,100,length.out=5),labels=round(seq(0,max(results),length.out=5),2),las=2)
+  farver <- colorRampPalette(c("white","orange","orange",rep("red",3),"black"))(100)
+  for(i in 1:100) rect(0,i-1,1,i,border=farver[i],col=farver[i])
+}
 
 
 

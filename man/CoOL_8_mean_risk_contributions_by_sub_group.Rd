@@ -35,6 +35,9 @@ CoOL_8_mean_risk_contributions_by_sub_group(
 
 \item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
 }
+\value{
+A plot and a dataset with the mean risk contributions by sub-groups.
+}
 \description{
 Table with the mean risk contributions by sub-groups.
 }
@@ -42,5 +45,5 @@ Table with the mean risk contributions by sub-groups.
 #See the example under CoOL_0_working_example
 }
 \references{
-Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 }

@@ -46,17 +46,22 @@ To reproduce the CoOL working example with sex, drug A, and drug B.
  title = "C) Receiver operating\ncharacteristic curve") # AUC
  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
  ) # Risk contributions
+ CoOL_6_number_of_sub_groups(risk_contributions = risk_contributions, low_number = 1, high_number = 5)
  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
  title = "D) Dendrogram with 3 sub-groups") # Dendrogram
  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
  ) # Assign sub-groups
+ CoOL_6_calibration_plot(exposure_data = exposure_data,
+ outcome_data = outcome_data, model = model, sub_groups = sub_groups)
  CoOL_7_prevalence_and_mean_risk_plot(risk_contributions,sub_groups,
  title = "E) Prevalence and mean risk of sub-groups") # Prevalence and mean risk plot
- CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
+ results <- CoOL_8_mean_risk_contributions_by_sub_group(risk_contributions,
  sub_groups,outcome_data = outcome_data,exposure_data = exposure_data,
  model=model,exclude_below = 0.01) #  Mean risk contributions by sub-groups
+	CoOL_9_visualised_mean_risk_contributions(results = results,  sub_groups = sub_groups)
+	CoOL_9_visualised_mean_risk_contributions_legend(results = results)
 	}
 }
 \references{
-Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. medRxiv (2020) <doi:10.1101/2020.12.10.20225243>
+Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 }
