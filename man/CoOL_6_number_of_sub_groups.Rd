@@ -8,7 +8,8 @@ CoOL_6_number_of_sub_groups(
   risk_contributions,
   low_number = 1,
   high_number = 5,
-  ipw = 1
+  ipw = 1,
+  restore_par_options = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ CoOL_6_number_of_sub_groups(
 \item{high_number}{The highest number of subgroups.}
 
 \item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
+
+\item{restore_par_options}{Restore par options.}
 }
 \value{
 A plot of the mean distance by the number of subgroups. The mean distance converges when the optimal number of subgroups are found.

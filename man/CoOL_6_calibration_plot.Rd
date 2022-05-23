@@ -9,7 +9,8 @@ CoOL_6_calibration_plot(
   outcome_data,
   model,
   sub_groups,
-  ipw = 1
+  ipw = 1,
+  restore_par_options = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ CoOL_6_calibration_plot(
 \item{sub_groups}{The vector with the assigned sub_group numbers.}
 
 \item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
+
+\item{restore_par_options}{Restore par options.}
 }
 \value{
 A calibration curve.

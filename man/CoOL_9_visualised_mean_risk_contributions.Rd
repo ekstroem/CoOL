@@ -4,7 +4,12 @@
 \alias{CoOL_9_visualised_mean_risk_contributions}
 \title{Visualisation of the mean risk contributions by sub-groups}
 \usage{
-CoOL_9_visualised_mean_risk_contributions(results, sub_groups, ipw = 1)
+CoOL_9_visualised_mean_risk_contributions(
+  results,
+  sub_groups,
+  ipw = 1,
+  restore_par_options = TRUE
+)
 }
 \arguments{
 \item{results}{CoOL_8_mean_risk_contributions_by_sub_group.}
@@ -12,6 +17,8 @@ CoOL_9_visualised_mean_risk_contributions(results, sub_groups, ipw = 1)
 \item{sub_groups}{The vector with the sub-groups.}
 
 \item{ipw}{a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 Visualisation of the mean risk contributions by sub-groups. The function uses the output

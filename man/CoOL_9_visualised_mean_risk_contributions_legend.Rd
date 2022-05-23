@@ -4,10 +4,15 @@
 \alias{CoOL_9_visualised_mean_risk_contributions_legend}
 \title{Legend to the visualisation of the mean risk contributions by sub-groups}
 \usage{
-CoOL_9_visualised_mean_risk_contributions_legend(results)
+CoOL_9_visualised_mean_risk_contributions_legend(
+  results,
+  restore_par_options = TRUE
+)
 }
 \arguments{
 \item{results}{CoOL_8_mean_risk_contributions_by_sub_group.}
+
+\item{restore_par_options}{Restore par options.}
 }
 \description{
 Legend to the visualisation of the mean risk contributions by sub-groups. The function uses the output

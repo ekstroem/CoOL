@@ -462,13 +462,17 @@ CoOL_5_layerwise_relevance_propagation <- function(X,model) {
 #' @param low_number The lowest number of subgroups.
 #' @param high_number The highest number of subgroups.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @param restore_par_options Restore par options.
 #' @return A plot of the mean distance by the number of subgroups. The mean distance converges when the optimal number of subgroups are found.
 #' @examples
 #' #See the example under CoOL_0_working_example
 
 
-CoOL_6_number_of_sub_groups <- function(risk_contributions, low_number = 1, high_number = 5, ipw = 1) {
-  library(ClustGeo)
+CoOL_6_number_of_sub_groups <- function(risk_contributions, low_number = 1, high_number = 5, ipw = 1, restore_par_options = TRUE) {
+    if (restore_par_options==TRUE) {
+      oldpar <- par(no.readonly = TRUE)
+      on.exit(par(oldpar))
+    }
   mean_dist = NA
   if (length(ipw) != nrow(risk_contributions)) {
     ipw = rep(1, nrow(risk_contributions))
@@ -601,12 +605,17 @@ CoOL_6_sub_groups <- function(risk_contributions,number_of_subgroups=3,ipw=1) {
 #' @param model The fitted non-negative neural network.
 #' @param sub_groups The vector with the assigned sub_group numbers.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @param restore_par_options Restore par options.
 #' @return A calibration curve.
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_6_calibration_plot <- function (exposure_data, outcome_data, model, sub_groups, ipw = 1) {
+CoOL_6_calibration_plot <- function (exposure_data, outcome_data, model, sub_groups, ipw = 1, restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
   if (length(ipw) != nrow(exposure_data)) {
     ipw = rep(1, nrow(exposure_data))
     print("Equal weights are applied (assuming no selection bias)")
@@ -768,14 +777,19 @@ CoOL_8_mean_risk_contributions_by_sub_group <- function(risk_contributions,sub_g
 #' @param results CoOL_8_mean_risk_contributions_by_sub_group.
 #' @param sub_groups The vector with the sub-groups.
 #' @param ipw a vector of weights per observation to allow for inverse probability of censoring weighting to correct for selection bias
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_9_visualised_mean_risk_contributions <- function(results, sub_groups, ipw = 1) {
-  if (length(ipw) != nrow(risk_contributions)) {
-    ipw = rep(1, nrow(risk_contributions))
+CoOL_9_visualised_mean_risk_contributions <- function(results, sub_groups, ipw = 1, restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
+  if (length(ipw) != length(sub_groups)) {
+    ipw = rep(1, length(sub_groups))
     print("Equal weights are applied (assuming no selection bias)")
   }
   labels <- NA
@@ -805,12 +819,17 @@ CoOL_9_visualised_mean_risk_contributions <- function(results, sub_groups, ipw =
 #' Legend to the visualisation of the mean risk contributions by sub-groups. The function uses the output
 #'
 #' @param results CoOL_8_mean_risk_contributions_by_sub_group.
+#' @param restore_par_options Restore par options.
 #' @export
 #' @references Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>
 #' @examples
 #' #See the example under CoOL_0_working_example
 
-CoOL_9_visualised_mean_risk_contributions_legend <- function(results) {
+CoOL_9_visualised_mean_risk_contributions_legend <- function(results, restore_par_options = TRUE) {
+  if (restore_par_options==TRUE) {
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+  }
   par(mar=c(1,5,1,1))
   plot(0,0,type='n',ylim=c(0,100),xlim=c(0,1),axes=F,xlab="",ylab="Average risk contributions"); axis(2,at=seq(0,100,length.out=5),labels=round(seq(0,max(results),length.out=5),2),las=2)
   farver <- colorRampPalette(c("white","orange","orange",rep("red",3),"black"))(100)

@@ -1,8 +1,8 @@
 Package: CoOL
 Type: Package
 Title: Causes of Outcome Learning
-Version: 1.1.1
-Date: 2022-05-20
+Version: 1.1.2
+Date: 2022-05-23
 Authors@R: c(
    person("Andreas", "Rieckmann", role = c("aut","cre"), email = "aric@sund.ku.dk"),
    person("Piotr", "Dworzynski", role = "aut", email = "piotr@sund.ku.dk"),
@@ -22,7 +22,8 @@ Imports:
     plyr,
     ggplot2,
     ClustGeo,
-    wesanderson
+    wesanderson,
+    grDevices
 Suggests:
     ggtree,
     imager
