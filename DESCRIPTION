@@ -9,7 +9,7 @@ Authors@R: c(
    person("Leila", "Arras", role = "ctb", email = "leila.arras@hhi.fraunhofer.de"),
    person(c("Claus","Thorn"), "Ekstrom", role = "aut", email = "ekstrom@sund.ku.dk"))
 Maintainer: Andreas Rieckmann <aric@sund.ku.dk>
-Description: Implementing the computational phase of the Causes of Outcome Learning approach as described in Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <https://doi.org/10.1093/ije/dyac078>. The optional 'ggtree' package can be obtained through Bioconductor.
+Description: Implementing the computational phase of the Causes of Outcome Learning approach as described in Rieckmann, Dworzynski, Arras, Lapuschkin, Samek, Arah, Rod, Ekstrom. 2022. Causes of outcome learning: A causal inference-inspired machine learning approach to disentangling common combinations of potential causes of a health outcome. International Journal of Epidemiology <doi.10.1093/ije/dyac078>. The optional 'ggtree' package can be obtained through Bioconductor.
 URL: https://bioconductor.org
 License: GPL-2
 Imports: 

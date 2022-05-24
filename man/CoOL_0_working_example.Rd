@@ -46,7 +46,8 @@ To reproduce the CoOL working example with sex, drug A, and drug B.
  title = "C) Receiver operating\ncharacteristic curve") # AUC
  risk_contributions <- CoOL_5_layerwise_relevance_propagation(exposure_data,model
  ) # Risk contributions
- CoOL_6_number_of_sub_groups(risk_contributions = risk_contributions, low_number = 1, high_number = 5)
+ CoOL_6_number_of_sub_groups(risk_contributions = risk_contributions,
+ low_number = 1, high_number = 5)
  CoOL_6_dendrogram(risk_contributions,number_of_subgroups = 3,
  title = "D) Dendrogram with 3 sub-groups") # Dendrogram
  sub_groups <- CoOL_6_sub_groups(risk_contributions,number_of_subgroups = 3
